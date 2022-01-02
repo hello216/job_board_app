@@ -1,0 +1,196 @@
+/* * {
+  outline: 1px dashed red;
+} */
+
+body {
+  background-color: #979797;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: #5523AA;
+  padding: 0.5%;
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+nav .btn-danger {
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+}
+
+nav a:link, a:visited {
+  color: white;
+}
+
+nav .btn:hover {
+  transform: scale(1.2);
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+main h3 {
+  color: white;
+  margin: 2%;
+}
+
+main table {
+  background-color: #5523AA;
+  font-size: 1.0rem;
+  width: 100%;
+  margin: 0 3%;
+  border-radius: 5px;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+main table tr {
+  color: white;
+}
+
+main .table tr:hover {
+  color: #5523AA;
+  background-color: white;
+}
+
+main table #actions {
+  display: flex;
+  justify-content: center;
+}
+
+main table #actions button:hover {
+  background-color: #5523AA;
+  color: white;
+}
+
+main table #actions form {
+  margin: 0 1%;
+}
+
+main #add-job {
+  width: 100%;
+  margin: 2% 0;
+}
+
+main #add-job .btn-light {
+  background-color: #5523AA;
+  border: none;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+main #jobs-viewed {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  color: white;
+}
+
+main #viewed-jobs-prompt {
+  color: #5523AA;
+}
+
+main #jobs-viewed h6 {
+  width: 100%;
+  margin: 3% 0 0 1%;
+}
+
+main #jobs-viewed #job-card {
+  width: 30%;
+  margin: 1%;
+  background-color: white;
+  border: 2px solid white;
+  border-radius: 5px;
+  color: #5523AA;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+main #jobs-viewed #job-card .btn {
+  background-color: #5523AA;
+  color: white;
+  margin: 1%;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+main #jobs-viewed #paginator, #table-paginator {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 1% 0;
+}
+
+main #jobs-viewed #paginator a, #table-paginator a {
+  margin: 0 2% 1% 2%;
+}
+
+main #paginator a, #table-paginator a {
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: #5523AA;
+  padding: 0.5%;
+  box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+@media only screen and (max-width: 1280px) {
+
+  .hide {
+    display: None;
+  }
+
+  nav {
+    transform: scale(1.5);
+    justify-content: space-around;
+    width: 63%;
+  }
+
+  main h3 {
+    font-size: 300%;
+    margin: 5% 0 1% 0;
+  }
+
+  main table {
+    font-size: 175%;
+  }
+
+  main table #actions {
+    display: block;
+  }
+
+  main #add-job a {
+    font-size: 200%;
+  }
+
+  main #jobs-viewed {
+    font-size: 175%;
+  }
+
+  main #jobs-viewed h6 {
+    font-size: 150%;
+  }
+
+  main #jobs-viewed #job-card {
+    width: 80%;
+  }
+
+  main #jobs-viewed #job-card form input[type='radio'] {
+    transform: scale(3);
+    margin: 0 5%;
+  }
+
+  main #jobs-viewed #job-card button {
+    font-size: 100%;
+  }
+
+}
