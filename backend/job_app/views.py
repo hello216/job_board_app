@@ -45,7 +45,8 @@ def register_user(request):
 # renders the login page
 def login(request):
 
-    return render(request, 'login.html')
+    # return render(request, 'login.html')
+    return redirect('/home')
 
 def logout(request):
     request.session.clear()
