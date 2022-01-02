@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <title>Register</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/log_style.css' %}">
+  </head>
+  <body>
+
+    <main>
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li {% if message.tags %} class="{{ message.tags }} alert-danger"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <div id="registration">
+        <h2>Register</h2>
+        <form action="/register_user" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" name="username">
+
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password">
+
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" class="form-control" name="confirm_password">
+
+            <button type="submit" class="btn btn-light">Register</button>
+          </div>
+        </form>
+        <button class="btn btn-light"><a href="/" id="login-link">Go back</a></button>
+      </div>
+    </main>
+
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+</html>
