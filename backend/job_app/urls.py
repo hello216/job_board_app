@@ -4,8 +4,9 @@ from rest_framework import routers
 from job_app.views import UserView
 
 router = routers.DefaultRouter()
-router.register('users', UserView, 'user')
+router.register('users', UserView)
 
+# https://www.django-rest-framework.org/api-guide/routers/
 urlpatterns = [
     path('api/', include(router.urls))
 
