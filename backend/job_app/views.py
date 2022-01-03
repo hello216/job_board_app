@@ -11,6 +11,16 @@ from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 import bleach
+from rest_framework import viewsets
+from job_app.models import User
+from job_app.serializers import UserModelSerializer
+
+class UserView(viewsets.ModelViewSet):
+    serializer_class = UserModelSerializer
+    queryset = User.objects.all()
+    print("user view queryset:")
+    print(queryset)
+
 
 def register(request):
 
