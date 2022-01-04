@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login
 import bleach
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from job_app.models import User
 
 @api_view(['GET'])
@@ -41,7 +42,7 @@ def create_user(request):
         print("error messages:")
         print(errors)
         # redirect the user back to the form to fix the errors
-        return Response({"errors":errors})
+        return Response({"errors":errors} ,status=status.HTTP_400_BAD_REQUEST)
 
     else:
         _username = request.data['username']
