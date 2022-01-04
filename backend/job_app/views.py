@@ -1,6 +1,5 @@
 from job_app.models import ValidatorManager, User, Jobs
 from django.contrib import messages
-import bcrypt
 import requests
 import sys
 import dotenv
@@ -13,21 +12,14 @@ import bleach
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from job_app.models import User
+# from job_app.models import User
+from django.contrib.auth.models import User
 
 @api_view(['GET'])
 def logout(request):
     request.session.clear()
+
     return Response("Session clear")
-
-@api_view(['GET'])
-def get_user(request):
-    print("inside get_user()")
-    user = User.objects.get(username="test3")
-
-    data = {"username": user.username, "password": user.password}
-
-    return Response(data)
 
 @api_view(['POST'])
 def log_user(request):
@@ -54,13 +46,37 @@ def log_user(request):
                 request.session['userid'] = logged_user.id
                 request.session['username'] = request.data['username']
 
-                return Response("user logged")
+                print("sessions:")
+                print(request.session['userid'])
+                print(request.session['username'])
+
+                if request.session['username']:
+                    print("username save in sessions")
+
+                return Response("user is logged")
             else:
                 error = {"username":"You enter the wrong username or password. Try again"}
                 return Response({"errors":error}, status=status.HTTP_400_BAD_REQUEST)
 
     # if we didn't find anything in the database by searching by username or if the passwords don't match,
-    return redirect('/')
+    error = {"username":"You enter the wrong username or password. Try again"}
+    return Response({"errors":error}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_user(request):
+    print("inside get_user()")
+
+    if request.user.is_authenticated:
+        print("user is authenticated")
+        user = User.objects.filter(username="test6")
+
+        data = {"username": user.username, "password": user.password}
+
+        return Response(data)
+    else:
+        print("user not authenticated")
+        print(request.user)
+        return Response("user not auth")
 
 
 @api_view(['POST'])
@@ -68,25 +84,16 @@ def create_user(request):
     print("inside create_user")
     print(request.data)
 
-    errors = User.objects.user_register_val(request.data)
-    # check if the errors dictionary has anything in it
-    if len(errors) > 0:
-        print("error messages:")
-        print(errors)
-        # return a 400 error to the client if the input does not pass validations
-        return Response({"errors":errors} ,status=status.HTTP_400_BAD_REQUEST)
-
-    else:
-        _username = request.data['username']
-        _password = request.data['password']
-
-        pw_hash = bcrypt.hashpw(_password.encode(), bcrypt.gensalt()).decode()
-
-        user = User.objects.create(username=_username, password=pw_hash)
+    username = request.data['username']
+    password = request.data['password']
+    try:
+        user = User.objects.create_user(username, password)
 
         print("User Created:")
         print(User.objects.last().username)
 
         request.session['userid'] = user.id
 
-        return Response({"username":user.username, "id":user.id})
+        return Response({"username":user.username})
+    except:
+        return Response("Backend Error")

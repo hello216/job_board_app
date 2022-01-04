@@ -3,15 +3,18 @@ import axios from 'axios';
 import cookie from "react-cookies";
 
 export default props => {
+  const [user, setUser] = useState([]);
 
   useEffect(() => {
 
-    axios.get('http://localhost:8000/api/get_jobs')
+    axios.get('http://localhost:8000/api/get_user')
     .then(response => {
-      console.log(response)
+      setUser(response.data);
+      console.log("user:");
+      console.log(response.data);
     })
     .catch(error => {
-      console.log(error)
+      console.log(error);
     })
 
   }, []);
