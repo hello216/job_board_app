@@ -55,6 +55,6 @@ def create_user(request):
         print("User Created:")
         print(User.objects.last().username)
 
-        # request.session['userid'] = user.id
+        request.session['userid'] = user.id
 
-        return Response("User created")
+        return Response({"username":user.username, "id":user.id})
