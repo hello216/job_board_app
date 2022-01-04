@@ -38,11 +38,10 @@ def create_user(request):
     errors = User.objects.user_register_val(request.data)
     # check if the errors dictionary has anything in it
     if len(errors) > 0:
-        # if the errors dictionary contains anything, loop through each key-value pair and make a flash message
-        for key, value in errors.items():
-            messages.error(request, value)
+        print("error messages:")
+        print(errors)
         # redirect the user back to the form to fix the errors
-        return Response("Input has errors")
+        return Response({"errors":errors})
 
     else:
         _username = request.data['username']
