@@ -21,7 +21,9 @@ export default props => {
     })
     .then(response => {
       console.log(response)
-      window.location.href = "/home";
+      if (response.status === 200) {
+        window.location.href = "/home";
+      }
     })
     .catch(error => {
       console.log(error)
