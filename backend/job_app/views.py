@@ -20,7 +20,7 @@ from job_app.models import User
 @api_view(['GET'])
 def get_user(request):
     print("inside get_user()")
-    user = User.objects.get(username="test")
+    user = User.objects.get(username="test3")
 
     data = {"username": user.username, "password": user.password}
 
@@ -37,5 +37,30 @@ def log_user(request):
 def create_user(request):
     print("inside create_user")
     print(request.data)
-    new_user = User.objects.create(username=request.data["username"], password=request.data["password"])
-    return Response("User created")
+
+    errors = User.objects.user_register_val(request.data)
+    # check if the errors dictionary has anything in it
+    if len(errors) > 0:
+        # if the errors dictionary contains anything, loop through each key-value pair and make a flash message
+        for key, value in errors.items():
+            messages.error(request, value)
+        # redirect the user back to the form to fix the errors
+        return Response("Input has errors")
+
+    else:
+        _username = request.data['username']
+        _password = request.data['password']
+
+        pw_hash = bcrypt.hashpw(_password.encode(), bcrypt.gensalt()).decode()
+
+        user = User.objects.create(username=_username, password=pw_hash)
+
+        print("User Created:")
+        print(User.objects.last().username)
+
+        # request.session['userid'] = user.id
+
+        return Response("User created")
+
+    # new_user = User.objects.create(username=request.data["username"], password=request.data["password"])
+    # return Response("User created")

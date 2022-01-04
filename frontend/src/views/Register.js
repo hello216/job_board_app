@@ -6,6 +6,7 @@ import cookie from "react-cookies";
 export default props => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -15,7 +16,8 @@ export default props => {
 
     axios.post('http://localhost:8000/api/create_user', {
       username: username,
-      password: password
+      password: password,
+      confirm_password: confirmPassword
     })
     .then(response => {
       console.log(response)
@@ -33,6 +35,9 @@ export default props => {
 
         <label htmlFor="password">Password:</label>
         <input type="password" name="password" onChange={(event) => { setPassword(event.target.value) }} required/>
+
+        <label htmlFor="confirmPassword">Confirm Password:</label>
+        <input type="password" name="confirmPassword" onChange={(event) => { setConfirmPassword(event.target.value) }} required/>
 
         <input
          type="hidden"
