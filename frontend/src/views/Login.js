@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router-dom';
 import cookie from "react-cookies";
 
 export default props => {
@@ -22,6 +21,7 @@ export default props => {
     })
     .then(response => {
       console.log(response)
+      window.location.href = "/home";
     })
     .catch(error => {
       console.log(error)
