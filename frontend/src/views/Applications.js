@@ -16,6 +16,18 @@ export default props => {
 
   }, []);
 
+  const logoutHandler = (event) => {
+    event.preventDefault();
+
+    axios.get('http://localhost:8000/api/logout')
+    .then(response => {
+      console.log(response)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+  }
+
   return (
     <div>
       <table>
@@ -28,6 +40,7 @@ export default props => {
             <th>Location</th>
             <th>Date Submitted</th>
             <th>Actions</th>
+            <button onClick={ logoutHandler }>logout</button>
           </tr>
         </thead>
         <tbody>

@@ -16,6 +16,11 @@ from rest_framework import status
 from job_app.models import User
 
 @api_view(['GET'])
+def logout(request):
+    request.session.clear()
+    return Response("Session clear")
+
+@api_view(['GET'])
 def get_user(request):
     print("inside get_user()")
     user = User.objects.get(username="test3")
