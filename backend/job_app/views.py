@@ -29,7 +29,34 @@ def log_user(request):
     print("yay!!!!!!!!!!!!!!!!!!!!!!!!!! " + "\n")
     print("request:")
     print(request.data)
-    return Response("response from log_user method")
+
+    errors = User.objects.user_login_validator(request.data)
+    # check if the errors dictionary has anything in it
+    if len(errors) > 0:
+        print("error messages:")
+        print(errors)
+        # return a 400 error to the client if the input does not pass validations
+        return Response({"errors":errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        # see if the username provided exists in the database
+        user = User.objects.filter(username=request.data['username'])
+
+        if len(user) > 0:
+            logged_user = user[0]
+
+            if bcrypt.checkpw(request.data['password'].encode(), logged_user.password.encode()):
+                request.session['userid'] = logged_user.id
+                request.session['username'] = request.data['username']
+
+                return Response("user logged")
+            else:
+                error = {"username":"You enter the wrong username or password. Try again"}
+                return Response({"errors":error}, status=status.HTTP_400_BAD_REQUEST)
+
+    # if we didn't find anything in the database by searching by username or if the passwords don't match,
+    return redirect('/')
+
 
 @api_view(['POST'])
 def create_user(request):
