@@ -31,6 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+
 
 # Application definition
 
@@ -68,6 +70,8 @@ ROOT_URLCONF = 'backend.urls'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+# CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {

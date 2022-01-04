@@ -36,8 +36,6 @@ export default props => {
           : <h1>No data</h1>
         )
       }
-      <p>end of div</p>
     </div>
   )
-
 }
