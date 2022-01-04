@@ -58,6 +58,3 @@ def create_user(request):
         # request.session['userid'] = user.id
 
         return Response("User created")
-
-    # new_user = User.objects.create(username=request.data["username"], password=request.data["password"])
-    # return Response("User created")
