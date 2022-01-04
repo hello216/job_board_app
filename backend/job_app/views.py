@@ -11,21 +11,20 @@ from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 import bleach
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import HttpResponse, JsonResponse
 from job_app.models import User
-from job_app.serializers import UserModelSerializer, JobModelSerializer
 
-class UserView(viewsets.ModelViewSet):
-    serializer_class = UserModelSerializer
-    queryset = User.objects.all()
-    print("user view queryset:")
-    print(queryset)
+@api_view(['GET'])
+def get_user(request):
+    print("inside get_user()")
+    user = User.objects.get(username="test")
 
-class JobView(viewsets.ModelViewSet):
-    print("inside JobView")
-    serializer_class = JobModelSerializer
+    data = {"username": user.username, "password": user.password}
+
+    return Response(data)
 
 @api_view(['POST'])
 def log_user(request):

@@ -10,5 +10,6 @@ router.register('users', UserView)
 # https://www.django-rest-framework.org/api-guide/routers/
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/log_user', views.log_user)
+    path('api/log_user', views.log_user),
+    path('api/get_user', views.get_user)
 ]
