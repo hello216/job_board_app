@@ -29,4 +29,13 @@ def get_user(request):
 @api_view(['POST'])
 def log_user(request):
     print("yay!!!!!!!!!!!!!!!!!!!!!!!!!! " + "\n")
+    print("request:")
+    print(request.data)
     return Response("response from log_user method")
+
+@api_view(['POST'])
+def create_user(request):
+    print("inside create_user")
+    print(request.data)
+    new_user = User.objects.create(username=request.data["username"], password=request.data["password"])
+    return Response("User created")
