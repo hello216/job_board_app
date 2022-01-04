@@ -41,7 +41,7 @@ def create_user(request):
     if len(errors) > 0:
         print("error messages:")
         print(errors)
-        # redirect the user back to the form to fix the errors
+        # return a 400 error to the client if the input does not pass validations
         return Response({"errors":errors} ,status=status.HTTP_400_BAD_REQUEST)
 
     else:
