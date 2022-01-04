@@ -1,0 +1,48 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import cookie from "react-cookies";
+
+export default props => {
+
+  useEffect(() => {
+
+    axios.get('http://localhost:8000/api/get_jobs')
+    .then(response => {
+      console.log(response)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+
+  }, []);
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Position</th>
+            <th>Company</th>
+            <th>Job URL</th>
+            <th>Location</th>
+            <th>Date Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
+
+}
