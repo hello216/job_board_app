@@ -12,7 +12,6 @@ import bleach
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-# from job_app.models import User
 from django.contrib.auth.models import User
 
 @api_view(['GET'])
