@@ -33,9 +33,6 @@ ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
-# this is the name of the csrf cookie in react: https://newbedev.com/csrf-with-django-react-redux-using-axios
-CSRF_COOKIE_NAME = "XSRF-TOKEN"
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,12 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'job_app',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +83,13 @@ TEMPLATES = [
         },
     },
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache_table',
+    }
+}
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 

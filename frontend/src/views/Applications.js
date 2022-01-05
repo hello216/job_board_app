@@ -22,7 +22,7 @@ export default props => {
   const logoutHandler = (event) => {
     event.preventDefault();
 
-    axios.get('http://localhost:8000/api/logout')
+    axios.post('http://localhost:8000/api/logout')
     .then(response => {
       console.log(response)
     })

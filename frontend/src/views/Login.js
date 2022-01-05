@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import CSRFToken from './csrftoken';
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [valErrors, setValErrors] = useState([]);
+
+  var csrftoken = Cookies.get('csrftoken');
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -14,6 +20,11 @@ export default props => {
     axios.post('http://localhost:8000/api/log_user', {
       username: username,
       password: password,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      }
     })
     .then(response => {
       console.log(response)
@@ -57,6 +68,7 @@ export default props => {
         }
       </div>
       <form onSubmit={ submitHandler }>
+        <CSRFToken />
         <label htmlFor="username">Username:</label>
         <input type="text" name="username" onChange={(event) => { setUsername(event.target.value) }} required/>
 
