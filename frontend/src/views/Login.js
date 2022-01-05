@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import cookie from "react-cookies";
 
 export default props => {
   const [username, setUsername] = useState("");
@@ -12,17 +11,14 @@ export default props => {
 
     let newErrors = [];
 
-    axios.defaults.xsrfCookieName = 'csrftoken'
-    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-
     axios.post('http://localhost:8000/api/log_user', {
       username: username,
-      password: password
+      password: password,
     })
     .then(response => {
       console.log(response)
       if (response.status === 200) {
-        window.location.href = "/home";
+        // window.location.href = "/";
       }
     })
     .catch(error => {
@@ -66,12 +62,6 @@ export default props => {
 
         <label htmlFor="password">Password:</label>
         <input type="password" name="password" onChange={(event) => { setPassword(event.target.value) }} required/>
-
-        <input
-         type="hidden"
-         value={cookie.load("csrftoken")}
-         name="csrfmiddlewaretoken"
-        />
 
         <button className="btn btn-primary" type="submit" id="login-btn">Login</button>
       </form>

@@ -12,11 +12,40 @@ from django.utils.html import strip_tags
 from django.core.paginator import Paginator, EmptyPage
 import bleach
 
-@api_view(['GET'])
+
+@api_view(['POST'])
 def logout(request):
     request.session.clear()
 
     return Response("Session clear")
+
+@api_view(['POST'])
+def create_user(request):
+    print("inside create_user")
+    print(request.data)
+
+    errors = User.objects.user_register_val(request.data)
+    # check if the errors dictionary has anything in it
+    if len(errors) > 0:
+        print("error messages:")
+        print(errors)
+        # return a 400 error to the client if the input does not pass validations
+        return Response({"errors":errors} ,status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        _username = request.data['username']
+        _password = request.data['password']
+
+        pw_hash = bcrypt.hashpw(_password.encode(), bcrypt.gensalt()).decode()
+
+        user = User.objects.create(username=_username, password=pw_hash)
+
+        print("User Created:")
+        print(User.objects.last().username)
+
+        request.session['username'] = user.username
+
+        return Response({"username":user.username, "id":user.id})
 
 @api_view(['POST'])
 def log_user(request):
@@ -61,43 +90,14 @@ def log_user(request):
 def get_user(request):
     print("inside get_user()")
 
-    if request.user.is_authenticated:
+    if request.session['username']:
         print("user is authenticated")
-        user = User.objects.filter(username="test6")
+        user = User.objects.filter(username=request.session['username'])
 
         data = {"username": user.username, "password": user.password}
-
+        print("user auth in get_user")
         return Response(data)
     else:
         print("user not authenticated")
         print(request.user)
         return Response("user not auth")
-
-
-@api_view(['POST'])
-def create_user(request):
-    print("inside create_user")
-    print(request.data)
-
-    errors = User.objects.user_register_val(request.data)
-    # check if the errors dictionary has anything in it
-    if len(errors) > 0:
-        print("error messages:")
-        print(errors)
-        # return a 400 error to the client if the input does not pass validations
-        return Response({"errors":errors} ,status=status.HTTP_400_BAD_REQUEST)
-
-    else:
-        _username = request.data['username']
-        _password = request.data['password']
-
-        pw_hash = bcrypt.hashpw(_password.encode(), bcrypt.gensalt()).decode()
-
-        user = User.objects.create(username=_username, password=pw_hash)
-
-        print("User Created:")
-        print(User.objects.last().username)
-
-        request.session['username'] = user.username
-
-        return Response({"username":user.username, "id":user.id})

@@ -6,7 +6,7 @@ export default props => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/get_user')
+    axios.post('http://localhost:8000/api/get_user')
     .then(response => {
       console.log("the response:")
       console.log(response);

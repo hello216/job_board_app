@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
+# this is the name of the csrf cookie in react: https://newbedev.com/csrf-with-django-react-redux-using-axios
+CSRF_COOKIE_NAME = "XSRF-TOKEN"
 
 # Application definition
 
