@@ -1,18 +1,16 @@
-from job_app.models import ValidatorManager, User, Jobs
+from job_app.models import Jobs, User
 from django.contrib import messages
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+import bcrypt
 import requests
 import sys
 import dotenv
 import os
 from django.utils.html import strip_tags
 from django.core.paginator import Paginator, EmptyPage
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
 import bleach
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
 
 @api_view(['GET'])
 def logout(request):
@@ -22,9 +20,11 @@ def logout(request):
 
 @api_view(['POST'])
 def log_user(request):
-    print("yay!!!!!!!!!!!!!!!!!!!!!!!!!! " + "\n")
     print("request:")
     print(request.data)
+
+    _username = request.data['username']
+    _password = request.data['password']
 
     errors = User.objects.user_login_validator(request.data)
     # check if the errors dictionary has anything in it
@@ -40,14 +40,10 @@ def log_user(request):
 
         if len(user) > 0:
             logged_user = user[0]
-
+            # check that hashed passwords match
             if bcrypt.checkpw(request.data['password'].encode(), logged_user.password.encode()):
                 request.session['userid'] = logged_user.id
                 request.session['username'] = request.data['username']
-
-                print("sessions:")
-                print(request.session['userid'])
-                print(request.session['username'])
 
                 if request.session['username']:
                     print("username save in sessions")
@@ -83,16 +79,25 @@ def create_user(request):
     print("inside create_user")
     print(request.data)
 
-    username = request.data['username']
-    password = request.data['password']
-    try:
-        user = User.objects.create_user(username, password)
+    errors = User.objects.user_register_val(request.data)
+    # check if the errors dictionary has anything in it
+    if len(errors) > 0:
+        print("error messages:")
+        print(errors)
+        # return a 400 error to the client if the input does not pass validations
+        return Response({"errors":errors} ,status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        _username = request.data['username']
+        _password = request.data['password']
+
+        pw_hash = bcrypt.hashpw(_password.encode(), bcrypt.gensalt()).decode()
+
+        user = User.objects.create(username=_username, password=pw_hash)
 
         print("User Created:")
         print(User.objects.last().username)
 
-        request.session['userid'] = user.id
+        request.session['username'] = user.username
 
-        return Response({"username":user.username})
-    except:
-        return Response("Backend Error")
+        return Response({"username":user.username, "id":user.id})
