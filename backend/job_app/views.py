@@ -113,3 +113,8 @@ def get_user(request):
     else:
         print("user not authenticated")
         return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
+
+ensure_csrf_cookie('create_job')
+@api_view(['POST'])
+def create_job(request):
+    pass
