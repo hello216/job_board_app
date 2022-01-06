@@ -6,7 +6,7 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
-  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState([]);
 
   var csrftoken = Cookies.get('csrftoken');
 
@@ -22,32 +22,17 @@ export default props => {
     .then(response => {
       console.log("the response:")
       console.log(response);
-      setUsers(response.data);
-      console.log("user:");
-      console.log(response.data);
+      setUser(response.data);
     })
     .catch(error => {
       console.log(error);
     })
   }
 
-  console.log(users.length)
-
   return (
     <div>
-      {
-        (users
-          ? users.map((user, idx) => {
-            return (
-              <div key={idx}>
-                <h1>{user.username}</h1>
-                <span>{user.created_at}</span>
-              </div>
-            )
-          })
-          : <h1>No data</h1>
-        )
-      }
+      <h2>User logged</h2>
+      <h3>{ user.username }</h3>
       <form onSubmit={ submitHandler }>
         <CSRFToken />
         <button className="btn btn-primary" type="submit">get user</button>
