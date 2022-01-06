@@ -1,5 +1,5 @@
 from job_app.models import Jobs, User
-from django.contrib import messages
+from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,7 +13,6 @@ from django.core.paginator import Paginator, EmptyPage
 import bleach
 
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.core.cache import cache
 
 ensure_csrf_cookie('logout')
 @api_view(['POST'])
@@ -117,4 +116,36 @@ def get_user(request):
 ensure_csrf_cookie('create_job')
 @api_view(['POST'])
 def create_job(request):
-    pass
+
+    if cache.get('username'):
+        _username = cache.get('username')
+        user = User.objects.filter(username=_username)
+        if user:
+            print("user is authenticated")
+            print("the user:")
+            print(user)
+
+            title = request.data['title']
+            company = request.data['company']
+            url = request.data['url']
+            location = request.data['location']
+
+            new_job = Jobs.objects.create(title=title, company=company, url=url, location=location, user_jobs=user[0])
+            print("new job created: " + str(new_job.title))
+
+            data = {"title":new_job.title, "company":new_job.company, "url":new_job.url, "location": new_job.location}
+
+            return Response(data)
+    else:
+        print("user not authenticated")
+        return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
+
+
+# status = models.CharField(max_length=20, default="Viewed")
+# title = models.CharField(max_length=50)
+# company = models.CharField(max_length=50)
+# url = models.CharField(max_length=255)
+# location = models.CharField(max_length=255)
+# date_submitted = models.DateField(default=date.today)
+# user_jobs = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE)
+# note = models.TextField(default="Enter text here")
