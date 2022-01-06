@@ -112,4 +112,4 @@ def get_user(request):
             return Response(data)
     else:
         print("user not authenticated")
-        return Response("user not auth")
+        return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
