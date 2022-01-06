@@ -62,13 +62,13 @@ export default props => {
       </div>
       <form onSubmit={ submitHandler }>
         <label htmlFor="username">Username:</label>
-        <input type="text" name="username" onChange={(event) => { setUsername(event.target.value) }} required/>
+        <input type="text" name="username" onChange={(event) => { setUsername(event.target.value) }} />
 
         <label htmlFor="password">Password:</label>
-        <input type="password" name="password" onChange={(event) => { setPassword(event.target.value) }} required/>
+        <input type="password" name="password" onChange={(event) => { setPassword(event.target.value) }} />
 
         <label htmlFor="confirmPassword">Confirm Password:</label>
-        <input type="password" name="confirmPassword" onChange={(event) => { setConfirmPassword(event.target.value) }} required/>
+        <input type="password" name="confirmPassword" onChange={(event) => { setConfirmPassword(event.target.value) }} />
 
         <input
          type="hidden"

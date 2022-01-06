@@ -11,6 +11,7 @@ export default props => {
   const [company, setCompany] = useState("");
   const [url, setUrl] = useState("");
   const [location, setLocation] = useState("");
+  const [valErrors, setValErrors] = useState([]);
 
   var csrftoken = Cookies.get('csrftoken');
 
@@ -43,6 +44,8 @@ export default props => {
   const submitHandler = (event) => {
     event.preventDefault();
 
+    let newErrors = [];
+
     axios.post('http://localhost:8000/api/create_job', {
       title: title,
       company: company,
@@ -59,6 +62,19 @@ export default props => {
     })
     .catch(error => {
       console.log(error)
+      console.log(error.response.status)
+      // if there is a validation error
+      if (error.response.status === 400) {
+        console.log(error.response.data.errors)
+        let errors = error.response.data.errors
+
+        // gets all error messages at append them to valErrors
+        const errorkeys = Object.keys(errors);
+        errorkeys.forEach((key, index) => {
+          newErrors.push(errors[key]);
+        })
+        setValErrors(newErrors);
+      }
     })
   }
 
@@ -80,6 +96,20 @@ export default props => {
         <tbody>
           <tr>
             <td>
+              <div id="validation-errors">
+                {
+                  (valErrors
+                    ? valErrors.map((msg, idx) => {
+                      return (
+                        <div key={idx}>
+                          <span id="val-msg">{ msg }</span>
+                        </div>
+                      )
+                    })
+                  : "NO DATA"
+                  )
+                }
+              </div>
               <form onSubmit={ submitHandler }>
                 <CSRFToken />
 

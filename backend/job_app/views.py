@@ -1,4 +1,4 @@
-from job_app.models import Jobs, User
+from job_app.models import Jobs, User, ValidatorManager
 from django.core.cache import cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -13,6 +13,8 @@ from django.core.paginator import Paginator, EmptyPage
 import bleach
 
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 ensure_csrf_cookie('logout')
 @api_view(['POST'])
@@ -29,7 +31,7 @@ def create_user(request):
 
     errors = User.objects.user_register_val(request.data)
     # check if the errors dictionary has anything in it
-    if len(errors) > 0:
+    if errors:
         print("error messages:")
         print(errors)
         # return a 400 error to the client if the input does not pass validations
@@ -61,7 +63,7 @@ def log_user(request):
 
     errors = User.objects.user_login_validator(request.data)
     # check if the errors dictionary has anything in it
-    if len(errors) > 0:
+    if errors:
         print("error messages:")
         print(errors)
         # return a 400 error to the client if the input does not pass validations
@@ -117,35 +119,46 @@ ensure_csrf_cookie('create_job')
 @api_view(['POST'])
 def create_job(request):
 
+    errors = {}
+
     if cache.get('username'):
-        _username = cache.get('username')
-        user = User.objects.filter(username=_username)
+        username = cache.get('username')
+        user = User.objects.filter(username=username)
+
         if user:
             print("user is authenticated")
-            print("the user:")
-            print(user)
 
             title = request.data['title']
             company = request.data['company']
             url = request.data['url']
             location = request.data['location']
 
-            new_job = Jobs.objects.create(title=title, company=company, url=url, location=location, user_jobs=user[0])
-            print("new job created: " + str(new_job.title))
+            # validators
+            if len(title) == 0:
+                errors['title'] = 'Please add a title'
 
-            data = {"title":new_job.title, "company":new_job.company, "url":new_job.url, "location": new_job.location}
+            if len(company) == 0:
+                errors['company'] = 'Please add the company'
 
-            return Response(data)
+            if len(url) == 0:
+                errors['url'] = 'Please add a URL'
+
+            if len(location) == 0:
+                errors['location'] = 'Please add a location'
+
+            print(errors)
+            # If there is validation errors
+            if errors:
+                # return a 400 error to the client if the input does not pass validations
+                return Response({"errors":errors}, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                new_job = Jobs.objects.create(title=title, company=company, url=url, location=location, user_jobs=user[0])
+                print("new job created: " + str(new_job.title))
+
+                data = {"title":new_job.title, "company":new_job.company, "url":new_job.url, "location": new_job.location}
+
+                return Response(data)
     else:
         print("user not authenticated")
         return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
-
-
-# status = models.CharField(max_length=20, default="Viewed")
-# title = models.CharField(max_length=50)
-# company = models.CharField(max_length=50)
-# url = models.CharField(max_length=255)
-# location = models.CharField(max_length=255)
-# date_submitted = models.DateField(default=date.today)
-# user_jobs = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE)
-# note = models.TextField(default="Enter text here")
