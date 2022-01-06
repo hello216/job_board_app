@@ -66,7 +66,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
@@ -88,6 +87,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'my_cache_table',
+        'TIMEOUT': '1800'
     }
 }
 
