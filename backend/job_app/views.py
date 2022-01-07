@@ -162,3 +162,28 @@ def create_job(request):
     else:
         print("user not authenticated")
         return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
+
+ensure_csrf_cookie('get_jobs')
+@api_view(['GET'])
+def get_jobs(request):
+
+    if cache.get('username'):
+        username = cache.get('username')
+        user = User.objects.filter(username=username)
+
+        if user:
+            print("user is authenticated")
+
+            jobs = Jobs.objects.get(user_jobs=user)
+            print("the jobs:")
+            print(jobs)
+
+            data = {"jobs":jobs}
+
+            return Response(data)
+        # else:
+        #     print("user not authenticated")
+        #     return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        print("user not authenticated")
+        return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)

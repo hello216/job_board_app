@@ -96,37 +96,6 @@ export default props => {
         <tbody>
           <tr>
             <td>
-              <div id="validation-errors">
-                {
-                  (valErrors
-                    ? valErrors.map((msg, idx) => {
-                      return (
-                        <div key={idx}>
-                          <span id="val-msg">{ msg }</span>
-                        </div>
-                      )
-                    })
-                  : "NO DATA"
-                  )
-                }
-              </div>
-              <form onSubmit={ submitHandler }>
-                <CSRFToken />
-
-                <label htmlFor="title">Title:</label>
-                <input type="text" name="title" onChange={(event) => { setTitle(event.target.value) }} />
-
-                <label htmlFor="company">Company:</label>
-                <input type="text" name="company" onChange={(event) => { setCompany(event.target.value) }} />
-
-                <label htmlFor="url">URL:</label>
-                <input type="text" name="url" onChange={(event) => { setUrl(event.target.value) }} />
-
-                <label htmlFor="location">Location:</label>
-                <input type="text" name="location" onChange={(event) => { setLocation(event.target.value) }} />
-
-                <button className="btn btn-primary" type="submit">Create Job</button>
-              </form>
             </td>
             <td></td>
             <td></td>
@@ -137,6 +106,37 @@ export default props => {
           </tr>
         </tbody>
       </table>
+      <div id="validation-errors">
+        {
+          (valErrors
+            ? valErrors.map((msg, idx) => {
+              return (
+                <div key={idx}>
+                  <span id="val-msg">{ msg }</span>
+                </div>
+              )
+            })
+          : "NO DATA"
+          )
+        }
+      </div>
+      <form onSubmit={ submitHandler }>
+        <CSRFToken />
+
+        <label htmlFor="title">Title:</label>
+        <input type="text" name="title" onChange={(event) => { setTitle(event.target.value) }} />
+
+        <label htmlFor="company">Company:</label>
+        <input type="text" name="company" onChange={(event) => { setCompany(event.target.value) }} />
+
+        <label htmlFor="url">URL:</label>
+        <input type="text" name="url" onChange={(event) => { setUrl(event.target.value) }} />
+
+        <label htmlFor="location">Location:</label>
+        <input type="text" name="location" onChange={(event) => { setLocation(event.target.value) }} />
+
+        <button className="btn btn-primary" type="submit">Create Job</button>
+      </form>
     </div>
   )
 
