@@ -12,6 +12,7 @@ export default props => {
   const [url, setUrl] = useState("");
   const [location, setLocation] = useState("");
   const [valErrors, setValErrors] = useState([]);
+  const [jobId, setJobId] = useState("");
 
   var csrftoken = Cookies.get('csrftoken');
 
@@ -79,7 +80,9 @@ export default props => {
 
   const editJob = (event) => {
     event.preventDefault();
-    axios.put('http://localhost:8000/api/edit_job')
+    axios.put(`http://localhost:8000/api/edit_job`, {
+      data: {"job_id": jobId}
+    })
     .then(response => {
       console.log(response);
     })
@@ -90,7 +93,9 @@ export default props => {
 
   const deleteJob = (event) => {
     event.preventDefault();
-    axios.delete('http://localhost:8000/api/delete_job')
+    axios.delete(`http://localhost:8000/api/delete_job`, {
+      data: {"job_id": jobId}
+    })
     .then(response => {
       console.log(response);
     })
@@ -129,11 +134,11 @@ export default props => {
                     <td>
                       <form onSubmit={ editJob }>
                         <CSRFToken />
-                        <button className="btn btn-primary" type="submit">Edit</button>
+                        <button className="btn btn-primary" type="submit" onClick={(event) => { setJobId(job.job_id) }}>Edit</button>
                       </form>
                       <form onSubmit={ deleteJob }>
                         <CSRFToken />
-                        <button className="btn btn-primary" type="submit">Delete</button>
+                        <button className="btn btn-primary" type="submit" onClick={(event) => { setJobId(job.job_id) }}>Delete</button>
                       </form>
                     </td>
                   </tr>
