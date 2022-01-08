@@ -6,7 +6,7 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
-  const [user, setUser] = useState([]);
+  const [jobs, setJobs] = useState("");
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [url, setUrl] = useState("");
@@ -17,11 +17,10 @@ export default props => {
 
   useEffect(() => {
 
-    axios.get('http://localhost:8000/api/get_user')
+    axios.get('http://localhost:8000/api/get_jobs')
     .then(response => {
-      setUser(response.data);
-      console.log("user:");
-      console.log(response.data);
+      setJobs(response.data.jobs);
+      console.log(response);
     })
     .catch(error => {
       console.log(error);

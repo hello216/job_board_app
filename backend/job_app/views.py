@@ -169,21 +169,25 @@ def get_jobs(request):
 
     if cache.get('username'):
         username = cache.get('username')
-        user = User.objects.filter(username=username)
+        user = User.objects.get(username=username)
 
         if user:
             print("user is authenticated")
 
-            jobs = Jobs.objects.get(user_jobs=user)
-            print("the jobs:")
-            print(jobs)
+            jobs = Jobs.objects.filter(user_jobs=user)
 
-            data = {"jobs":jobs}
+            # get all jobs
+            job_list = []
+            for job in jobs:
+                temp_obj = {'status': job.status, 'title': job.title, 'company': job.company,
+                'url': job.url, 'location': job.location, 'date_submitted': job.date_submitted,
+                'note': job.note}
+                job_list.append(temp_obj)
+
+            data = {"jobs":job_list}
 
             return Response(data)
-        # else:
-        #     print("user not authenticated")
-        #     return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
+
     else:
         print("user not authenticated")
         return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
