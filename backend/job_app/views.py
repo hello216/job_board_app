@@ -183,7 +183,8 @@ def get_jobs(request):
                 'url': job.url, 'location': job.location, 'date_submitted': job.date_submitted,
                 'note': job.note}
                 job_list.append(temp_obj)
-
+            print("jobs")
+            print(job_list)
             data = {"jobs":job_list}
 
             return Response(data)

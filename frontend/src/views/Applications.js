@@ -6,7 +6,7 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
-  const [jobs, setJobs] = useState("");
+  const [jobs, setJobs] = useState();
   const [title, setTitle] = useState("");
   const [company, setCompany] = useState("");
   const [url, setUrl] = useState("");
@@ -19,8 +19,8 @@ export default props => {
 
     axios.get('http://localhost:8000/api/get_jobs')
     .then(response => {
-      setJobs(response.data.jobs);
       console.log(response);
+      setJobs(response.data.jobs);
     })
     .catch(error => {
       console.log(error);
@@ -93,16 +93,32 @@ export default props => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          {
+            (jobs
+              ? jobs.map((job, idx) => {
+                return (
+                  <tr key={ idx }>
+                    <td>{ job.status }</td>
+                    <td>{ job.title }</td>
+                    <td>{ job.company }</td>
+                    <td>{ job.url }</td>
+                    <td>{ job.location }</td>
+                    <td>{ job.date_submitted }</td>
+                    <td>
+                      <form onSubmit={ submitHandler }>
+                        <CSRFToken />
+                        <label htmlFor="location">Location:</label>
+                        <input type="text" name="location"/>
+
+                        <button className="btn btn-primary" type="submit">yo</button>
+                      </form>
+                    </td>
+                  </tr>
+                )
+              })
+              : "NO DATA"
+            )
+          }
         </tbody>
       </table>
       <div id="validation-errors">
@@ -110,7 +126,7 @@ export default props => {
           (valErrors
             ? valErrors.map((msg, idx) => {
               return (
-                <div key={idx}>
+                <div key={ idx }>
                   <span id="val-msg">{ msg }</span>
                 </div>
               )
