@@ -77,6 +77,28 @@ export default props => {
     })
   }
 
+  const editJob = (event) => {
+    event.preventDefault();
+    axios.put('http://localhost:8000/api/edit_job')
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  }
+
+  const deleteJob = (event) => {
+    event.preventDefault();
+    axios.delete('http://localhost:8000/api/delete_job')
+    .then(response => {
+      console.log(response);
+    })
+    .catch(error => {
+      console.log(error);
+    })
+  }
+
   return (
     <div>
       <table>
@@ -105,12 +127,13 @@ export default props => {
                     <td>{ job.location }</td>
                     <td>{ job.date_submitted }</td>
                     <td>
-                      <form onSubmit={ submitHandler }>
+                      <form onSubmit={ editJob }>
                         <CSRFToken />
-                        <label htmlFor="location">Location:</label>
-                        <input type="text" name="location"/>
-
-                        <button className="btn btn-primary" type="submit">yo</button>
+                        <button className="btn btn-primary" type="submit">Edit</button>
+                      </form>
+                      <form onSubmit={ deleteJob }>
+                        <CSRFToken />
+                        <button className="btn btn-primary" type="submit">Delete</button>
                       </form>
                     </td>
                   </tr>
