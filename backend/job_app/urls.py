@@ -8,6 +8,6 @@ urlpatterns = [
     path('api/get_user', views.get_user),
     path('api/create_job', views.create_job),
     path('api/get_jobs', views.get_jobs),
-    path('api/edit_job/<str:job_title>', views.edit_job),
+    path('api/edit_job', views.edit_job),
     path('api/delete_job', views.delete_job)
 ]
