@@ -80,21 +80,18 @@ export default props => {
 
   const editJob = (event) => {
     event.preventDefault();
-    axios.put(`http://localhost:8000/api/edit_job`, {
-      data: {"job_id": jobId}
-    })
-    .then(response => {
-      console.log(response);
-    })
-    .catch(error => {
-      console.log(error);
-    })
+    window.location.href = `/editJob/${jobId}`;
   }
 
   const deleteJob = (event) => {
     event.preventDefault();
     axios.delete(`http://localhost:8000/api/delete_job`, {
-      data: {"job_id": jobId}
+      data: {'job_id': jobId},
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      }
     })
     .then(response => {
       console.log(response);

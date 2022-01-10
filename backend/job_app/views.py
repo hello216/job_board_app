@@ -197,32 +197,52 @@ ensure_csrf_cookie('edit_job')
 @api_view(['PUT'])
 def edit_job(request):
 
-    # if cache.get('username'):
-    #     username = cache.get('username')
-    #     user = User.objects.get(username=username)
-    #
-    #     if user:
-    #         print("user is authenticated")
-    #         print(request.data)
-    #
-    #         job = Jobs.objects.get(id=request.data['job_id'])
-    #
-    #         # check that user is has permission to edit instance, else 401
-    #         if job.user_jobs == user:
-    #             response = 'Job object with an id of: {id} was edited'.format(id=job.id)
-    #             job.delete()
-    #
-    #             print("Job edited")
-    #             return Response(response)
-    #
-    #         else:
-    #             print("User not authorized to delete this job instance")
-    #             return Response("User not authorized to delete this instance", status=status.HTTP_401_UNAUTHORIZED)
-    #
-    # else:
-    #     print("user not authenticated")
-    #     return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
-    pass
+
+    if cache.get('username'):
+        username = cache.get('username')
+        user = User.objects.get(username=username)
+
+        print("edit_job request data:")
+        print(request.data)
+
+        if user:
+            print("user is authenticated")
+
+            data = request.data['data']
+
+            job = Jobs.objects.get(id=data['job_id'])
+
+            # check that user has permission to edit instance, else 401
+            if job.user_jobs == user:
+
+                if 'title' in data:
+                    job.title = data['title']
+                    job.save()
+                    print("Job title edited")
+                if 'company' in data:
+                    job.company = data['company']
+                    job.save()
+                    print("Job company edited")
+                if 'url' in data:
+                    job.url = data['url']
+                    job.save()
+                    print("Job url edited")
+                if 'location' in data:
+                    job.location = data['location']
+                    job.save()
+                    print("Job location edited")
+
+                response = 'Job object with an id: {id} was edited'.format(id=job.id)
+
+                return Response(response)
+
+            else:
+                print("User not authorized to delete this job instance")
+                return Response("User not authorized to delete this instance", status=status.HTTP_401_UNAUTHORIZED)
+
+    else:
+        print("user not authenticated")
+        return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
 
 ensure_csrf_cookie('delete_job')
 @api_view(['DELETE'])
@@ -238,9 +258,9 @@ def delete_job(request):
 
             job = Jobs.objects.get(id=request.data['job_id'])
 
-            # check that user is has permission to delete instance, else 401
+            # check that user has permission to delete instance, else 401
             if job.user_jobs == user:
-                response = 'Job object with an id of: {id} was deleted from DB'.format(id=job.id)
+                response = 'Job object with an id: {id} was deleted from DB'.format(id=job.id)
                 job.delete()
 
                 print("Job deleted")
