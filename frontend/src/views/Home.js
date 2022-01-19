@@ -7,11 +7,12 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
   const [user, setUser] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   var csrftoken = Cookies.get('csrftoken');
 
-  const submitHandler = (event) => {
-    event.preventDefault();
+  useEffect(() => {
+
     axios.get('http://localhost:8000/api/get_user', {
       headers: {
         'Accept': 'application/json',
@@ -23,20 +24,21 @@ export default props => {
       console.log("the response:")
       console.log(response);
       setUser(response.data);
+      if (response.status === 200) {
+        setIsAuthenticated(true);
+        console.log("userAuthenticated")
+      }
     })
     .catch(error => {
       console.log(error);
+      window.location.href = '/login';
     })
-  }
+  }, []);
 
   return (
     <div>
       <h2>User:</h2>
       <h3>{ user.username }</h3>
-      <form onSubmit={ submitHandler }>
-        <CSRFToken />
-        <button className="btn btn-primary" type="submit">get user</button>
-      </form>
     </div>
   )
 }
