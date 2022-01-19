@@ -105,7 +105,6 @@ def get_user(request):
         _username = cache.get('username')
         user = User.objects.filter(username=_username)
         if user:
-
             data = {"username": _username}
             print("user auth in get_user")
             return Response(data)
