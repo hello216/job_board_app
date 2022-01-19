@@ -31,7 +31,7 @@ export default props => {
 
   return (
     <div>
-      <h2>User logged</h2>
+      <h2>User:</h2>
       <h3>{ user.username }</h3>
       <form onSubmit={ submitHandler }>
         <CSRFToken />
