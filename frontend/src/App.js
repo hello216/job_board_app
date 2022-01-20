@@ -35,10 +35,10 @@ function App() {
     })
     .catch(error => {
       console.log(error);
-      // Redirect user to '/login' if not authenticated'
+      // Redirect user to '/login' to get authenticated
       let url = window.location.pathname;
       console.log(url);
-      if (url !== '/login') {
+      if (url !== '/login' && url !== '/register') {
         console.log("user is not in login page")
         window.location.href = '/login';
       }
