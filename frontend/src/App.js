@@ -45,13 +45,14 @@ function App() {
     })
   }, []);
 
+  // <Route path="/home" element={<Home />} />
+
 
   if (isAuthenticated) {
     return (
       <div className="App">
         <BrowserRouter>
           <Routes>
-            <Route path="/home" element={<Home />} />
             <Route path="/Apps" element={<Applications />} />
             <Route path='/editJob/:jobId' element={<EditJob/>} />
           </Routes>
