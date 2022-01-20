@@ -13,6 +13,7 @@ export default props => {
   const [location, setLocation] = useState("");
   const [valErrors, setValErrors] = useState([]);
   const [jobId, setJobId] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   var csrftoken = Cookies.get('csrftoken');
 

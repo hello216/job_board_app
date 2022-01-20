@@ -7,7 +7,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
   const [user, setUser] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated } = props;
 
   var csrftoken = Cookies.get('csrftoken');
 
@@ -24,10 +24,6 @@ export default props => {
       console.log("the response:")
       console.log(response);
       setUser(response.data);
-      if (response.status === 200) {
-        setIsAuthenticated(true);
-        console.log("userAuthenticated")
-      }
     })
     .catch(error => {
       console.log(error);
