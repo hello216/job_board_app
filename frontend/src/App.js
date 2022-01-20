@@ -13,6 +13,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState([]);
 
   var csrftoken = Cookies.get('csrftoken');
 
@@ -26,6 +27,8 @@ function App() {
       }
     })
     .then(response => {
+      console.log(response);
+      setUser(response.data);
       if (response.status === 200) {
         setIsAuthenticated(true);
         console.log("userAuthenticated")
@@ -33,7 +36,6 @@ function App() {
     })
     .catch(error => {
       console.log(error);
-      window.location.href = '/login';
     })
   }, []);
 
