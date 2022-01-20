@@ -6,10 +6,13 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 export default props => {
-  const [user, setUser] = useState([]);
   const { isAuthenticated } = props;
+  const [user, setUser] = useState([]);
 
   var csrftoken = Cookies.get('csrftoken');
+
+  console.log("in Home.js");
+  console.log(isAuthenticated)
 
   useEffect(() => {
 

@@ -13,12 +13,12 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState([]);
 
   var csrftoken = Cookies.get('csrftoken');
 
-  useEffect(() => {
+  console.log("in App.js")
 
+  useEffect(() => {
     axios.get('http://localhost:8000/api/get_user', {
       headers: {
         'Accept': 'application/json',
@@ -28,7 +28,6 @@ function App() {
     })
     .then(response => {
       console.log(response);
-      setUser(response.data);
       if (response.status === 200) {
         setIsAuthenticated(true);
         console.log("userAuthenticated")
@@ -36,22 +35,42 @@ function App() {
     })
     .catch(error => {
       console.log(error);
+      // if user is not currently in login page then redirect to Login.js
+      let url = window.location.pathname;
+      console.log(url);
+      if (url !== '/login') {
+        console.log("user is not in login page")
+        window.location.href = '/login';
+      }
     })
   }, []);
 
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} isAuthenticated={isAuthenticated} />
-          <Route path="/Apps" element={<Applications />} />
-          <Route path='/editJob/:jobId' element={<EditJob/>} />
-        </Routes>
-      </BrowserRouter>
-    </div>
-  );
+
+  if (isAuthenticated) {
+    return (
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/home" element={<Home />} />
+            <Route path="/Apps" element={<Applications />} />
+            <Route path='/editJob/:jobId' element={<EditJob/>} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    )
+  } else {
+    return (
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    )
+  }
+
 }
 
 export default App;
