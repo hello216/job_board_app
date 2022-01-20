@@ -35,7 +35,7 @@ function App() {
     })
     .catch(error => {
       console.log(error);
-      // if user is not currently in login page then redirect to Login.js
+      // Redirect user to '/login' if not authenticated'
       let url = window.location.pathname;
       console.log(url);
       if (url !== '/login') {
