@@ -10,6 +10,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 export default props => {
   const [job, setJob] = useState("");
   const [valErrors, setValErrors] = useState([]);
+  const [status, setStatus] = useState(job.status);
   const [title, setTitle] = useState(job.title);
   const [company, setCompany] = useState(job.company);
   const [url, setUrl] = useState(job.url);
@@ -59,7 +60,7 @@ export default props => {
     event.preventDefault();
 
     axios.put(`http://localhost:8000/api/edit_job`, {
-      data: {'job_id': jobId, 'title': title, 'company': company, 'url': url, 'location': location},
+      data: {'job_id': jobId, 'status': status, 'title': title, 'company': company, 'url': url, 'location': location},
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -94,6 +95,9 @@ export default props => {
       </div>
       <form onSubmit={ editJob }>
         <CSRFToken />
+        <label htmlFor="status">Status</label>
+        <input type="text" name="status" placeholder={ job.status } onChange={(event) => { setStatus(event.target.value) }} />
+
         <label htmlFor="title">Title:</label>
         <input type="text" name="title" placeholder={ job.title } onChange={(event) => { setTitle(event.target.value) }} />
 
