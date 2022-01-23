@@ -53,6 +53,8 @@ function App() {
       <div className="App">
         <BrowserRouter>
           <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/Apps" element={<Applications />} />
             <Route path='/editJob/:jobId' element={<EditJob/>} />
           </Routes>
