@@ -212,6 +212,11 @@ def edit_job(request):
             # check that user has permission to edit instance, else 401
             if job.user_jobs == user:
 
+                if 'status' in data:
+                    job.status = data['status']
+                    job.save()
+                    print("Job status edited")
+
                 if 'title' in data:
                     job.title = data['title']
                     job.save()
