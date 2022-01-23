@@ -25,7 +25,7 @@ export default () => {
     <nav className="active">
       <ul id="nav">
         <li>
-          <button className="btn btn-primary" onClick={ redirectLogin }>Home</button>
+          <button className="btn btn-primary" onClick={ redirectLogin }>Login</button>
         </li>
         <li>
           <button className="btn btn-danger" onClick={ logoutHandler }>Logout</button>
