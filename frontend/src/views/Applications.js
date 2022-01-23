@@ -106,6 +106,7 @@ export default props => {
 
   return (
     <div>
+      <Nav />
       <table>
         <thead>
           <tr>
