@@ -1,0 +1,10 @@
+#nav {
+  display: flex;
+  justify-content: space-around;
+  list-style-type: none;
+  margin: 1%;
+  padding: 1%;
+  border: 0.1px solid white;
+  border-radius: 5px;
+  background-color: black;
+}

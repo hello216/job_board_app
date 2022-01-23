@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import '../stylesheets/navStyling.css';
 
 export default () => {
 
@@ -24,10 +25,10 @@ export default () => {
     <nav className="active">
       <ul id="nav">
         <li>
-          <button className="btn btn-light" onClick={ redirectLogin }>Home</button>
+          <button className="btn btn-primary" onClick={ redirectLogin }>Home</button>
         </li>
         <li>
-          <button className="btn btn-light" onClick={ logoutHandler }>Logout</button>
+          <button className="btn btn-danger" onClick={ logoutHandler }>Logout</button>
         </li>
       </ul>
     </nav>
