@@ -8,15 +8,15 @@ export default () => {
     window.location.href = '/login';
   }
 
-  const logout = () => {
-    axios.get('http://localhost:8000/api/logout')
+  const logoutHandler = (event) => {
+    event.preventDefault();
+
+    axios.post('http://localhost:8000/api/logout')
     .then(response => {
-      console.log("user logout");
-      navigate('/')
+      console.log(response)
     })
     .catch(error => {
-      console.log("Logout failed")
-      console.log(error.response)
+      console.log(error)
     })
   }
 
@@ -27,7 +27,7 @@ export default () => {
           <button className="btn btn-light" onClick={ redirectLogin }>Home</button>
         </li>
         <li>
-          <button className="btn btn-light" onClick={ logout }>Logout</button>
+          <button className="btn btn-light" onClick={ logoutHandler }>Logout</button>
         </li>
       </ul>
     </nav>

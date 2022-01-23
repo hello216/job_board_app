@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import Nav from '../components/Nav';
 import Cookies from 'js-cookie';
 import CSRFToken from './csrftoken';
 axios.defaults.xsrfCookieName = 'csrftoken'
