@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import CSRFToken from './csrftoken';
@@ -114,7 +115,7 @@ export default props => {
             <th>Location</th>
             <th>Date Submitted</th>
             <th>Actions</th>
-            <button onClick={ logoutHandler }>logout</button>
+            <button className="btn btn-danger" onClick={ logoutHandler }>logout</button>
           </tr>
         </thead>
         <tbody>
