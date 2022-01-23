@@ -67,6 +67,7 @@ export default props => {
     })
     .then(response => {
       console.log(response);
+      window.location.href = '/apps';
     })
     .catch(error => {
       console.log(error);
