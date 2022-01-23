@@ -117,7 +117,6 @@ export default props => {
             <th>Location</th>
             <th>Date Submitted</th>
             <th>Actions</th>
-            <button className="btn btn-danger" onClick={ logoutHandler }>logout</button>
           </tr>
         </thead>
         <tbody>
