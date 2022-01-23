@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Nav from '../components/Nav';
 import Cookies from 'js-cookie';
 import CSRFToken from './csrftoken';
 import { useParams } from 'react-router-dom';
@@ -67,6 +68,7 @@ export default props => {
     })
     .then(response => {
       console.log(response);
+      window.location.href = '/apps';
     })
     .catch(error => {
       console.log(error);
@@ -75,6 +77,7 @@ export default props => {
 
   return (
     <div>
+      <Nav />
       <div id="validation-errors">
         {
           (valErrors
