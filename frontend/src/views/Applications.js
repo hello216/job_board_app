@@ -155,7 +155,7 @@ export default props => {
             ? valErrors.map((msg, idx) => {
               return (
                 <div key={ idx }>
-                  <span id="val-msg">{ msg }</span>
+                  <span id="val-msg" style={{ color: 'red' }} >{ msg }</span>
                 </div>
               )
             })
