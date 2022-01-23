@@ -9,6 +9,11 @@ export default () => {
     window.location.href = '/login';
   }
 
+  const redirectApps = () => {
+    console.log("redirecting to aplications");
+    window.location.href = '/apps';
+  }
+
   const logoutHandler = (event) => {
     event.preventDefault();
 
@@ -26,6 +31,9 @@ export default () => {
       <ul id="nav">
         <li>
           <button className="btn btn-primary" onClick={ redirectLogin }>Login</button>
+        </li>
+        <li>
+          <button className="btn btn-primary" onClick={ redirectApps }>Applications</button>
         </li>
         <li>
           <button className="btn btn-danger" onClick={ logoutHandler }>Logout</button>
