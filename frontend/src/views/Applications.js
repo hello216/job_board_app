@@ -138,7 +138,7 @@ export default props => {
 
         <button className="btn btn-primary" type="submit">Create Job</button>
       </form>
-      <table>
+      <table className="table table-light table-hover table-bordered">
         <thead>
           <tr>
             <th>Status</th>
