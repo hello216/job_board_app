@@ -6,7 +6,7 @@ class TestUserModel(TestCase):
 
     def setUp(self):
         # create user instance
-        self.user = User.objects.create(username="testusername", password="123345678")
+        self.user = User.objects.create(username="testusername", password="123456789abc")
 
     # check attributes are the correct type
     def test_user_field(self):
