@@ -2,14 +2,14 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from job_app.views import *
 
-#   ./manage.py test job_board_app                  *activate virtualenv to run tests*
+#   ./manage.py test job_board_app
 
 class TestUrls(SimpleTestCase):
     pass
-    # # test url by: checking the url name resolves to the views method
-    # def test_register_url(self):
-    #     url = reverse("register")
-    #     self.assertEquals(resolve(url).func, register, "register url does not link to the method [register] in views")
+    # test url by: checking the url name resolves to the views method
+    def test_logout_url(self):
+        url = reverse("logout")
+        self.assertEquals(resolve(url).func, register, "register url does not link to the method [register] in views")
     #
     # def test_register_user_url(self):
     #     url = reverse("register_user")
