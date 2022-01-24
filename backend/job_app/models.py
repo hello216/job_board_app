@@ -12,8 +12,8 @@ class ValidatorManager(models.Manager):
         if len(postData['username']) >= 30:
             errors["username"] = "Username cannot be longer than 30 characters"
 
-        if len(postData['password']) < 8:
-            errors["password"] = "Password should be at least 8 characters"
+        if len(postData['password']) < 11:
+            errors["password"] = "Password should be at least 11 characters"
 
         if postData['password'] != postData['confirm_password']:
             errors["password"] = "Passwords do not match"
@@ -26,8 +26,8 @@ class ValidatorManager(models.Manager):
     def user_login_validator(self, postData):
         errors = {}
 
-        if len(postData['password']) < 8:
-            errors["password"] = "Password should be at least 8 characters"
+        if len(postData['password']) < 11:
+            errors["password"] = "Password should be at least 11 characters"
 
         if len(postData['username']) < 3:
             errors["username"] = "Username should be at least 3 characters long"
