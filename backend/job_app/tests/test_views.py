@@ -7,42 +7,33 @@ import bcrypt
 import json
 
 class TestViews(TestCase):
-    pass
-    # def setUp(self):
-    #     # create user instance to test views from
-    #     User.objects.create(username="testuser", password="12345678")
-    #     user = User.objects.get(id=User.objects.last().id)
-    #     self.user = user
-    #
-    #     session = self.client.session
-    #     session['userid'] = user.id
-    #     session.save()
-    #
-    #     # create a job instance for testing purposes
-    #     self.job = Jobs.objects.create(status="Applied", title="Software Dev", company="Some Tech Co.",
-    #     url="https://borelliarmando.com/", location="Austin, TX", user_jobs=user)
-    #
-    #     self.client = Client()
-    #
-    #     # FORMAT: self.[method_name]_url = reverse("[url_name]", [url_parameter])
-    #     self.register_url = reverse("register")
-    #     self.register_user_url = reverse("register_user")
-    #     self.login_url = reverse("login")
-    #     self.log_user_url = reverse("log_user")
-    #     self.jobs_url = reverse("render_jobs")
-    #     self.search_job_url = reverse("job_search_logic")
-    #     self.tracker_app_url = reverse("render_tracker_app")
-    #     self.set_job_url = reverse("save_job_info")
-    #     self.go_to_job_url = reverse("go_to_job")
-    #     self.viewed_jobs_handler_url = reverse("viewed_job_handler", args=[self.job.id])
-    #     self.edit_job_url = reverse("edit_job_form", args=[self.job.id])
-    #     self.update_job_url = reverse("update_job_logic", args=[self.job.id])
-    #     self.delete_job_url = reverse("delete_job", args=[self.job.id])
-    #     self.job_note_url = reverse("render_job_note", args=[self.job.id])
-    #     self.update_note_url = reverse("update_job_note", args=[self.job.id])
-    #     self.new_job_url = reverse("new_job_form")
-    #     self.add_job_url = reverse("add_job")
-    #
+
+    def setUp(self):
+        # create user instance to test views from
+        User.objects.create(username="testuser", password="12345678")
+        user = User.objects.get(id=User.objects.last().id)
+        self.user = user
+
+        session = self.client.session
+        session['userid'] = user.id
+        session.save()
+
+        # create a job instance for testing purposes
+        self.job = Jobs.objects.create(status="Applied", title="Software Dev", company="Tech Co.",
+        url="https://borelliarmando.com/", location="Dallas, TX", user_jobs=user)
+
+        self.client = Client()
+
+        # FORMAT: self.[method_name]_url = reverse("[url_name]", [url_parameter])
+        self.logout_url = reverse('logout')
+        self.create_user_url = reverse('create_user')
+        self.log_user_url = reverse('log_user')
+        self.get_user_url = reverse('get_user')
+        self.create_job_url = reverse('create_job')
+        self.get_jobs_url = reverse('get_jobs')
+        self.edit_job_url = reverse('edit_job')
+        self.delete_job_url = reverse('delete_job')
+
     # # FORMAT: test_[method_name]_view(self)
     # def test_register_view(self):
     #     response = self.client.get(self.register_url)
