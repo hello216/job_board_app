@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from job_app.models import *
+from django.core.cache import cache
 import bcrypt
 import json
 
@@ -10,13 +11,11 @@ class TestViews(TestCase):
 
     def setUp(self):
         # create user instance to test views from
-        User.objects.create(username="testuser", password="12345678")
+        User.objects.create(username="testuser", password="123456789ab")
         user = User.objects.get(id=User.objects.last().id)
         self.user = user
 
-        session = self.client.session
-        session['userid'] = user.id
-        session.save()
+        cache.set('username', 'testuser')
 
         # create a job instance for testing purposes
         self.job = Jobs.objects.create(status="Applied", title="Software Dev", company="Tech Co.",
@@ -34,7 +33,14 @@ class TestViews(TestCase):
         self.edit_job_url = reverse('edit_job')
         self.delete_job_url = reverse('delete_job')
 
-    # # FORMAT: test_[method_name]_view(self)
+    # FORMAT: test_[method_name]_view(self)
+    def test_logout_view(self):
+        response = self.client.get(self.logout_url)
+        # self.assertEquals(response.status_code, 200, "Page is not rendering. It's supposed to return a 200 code")
+        print("test_logout_view response:")
+        print(response)
+        # for this method I need to find how to test the functionality because rendering is handle by react in the frontend
+
     # def test_register_view(self):
     #     response = self.client.get(self.register_url)
     #     self.assertEquals(response.status_code, 200, "Page is not rendering. It's supposed to return a 200 code")
