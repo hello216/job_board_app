@@ -35,11 +35,8 @@ class TestViews(TestCase):
 
     # FORMAT: test_[method_name]_view(self)
     def test_logout_view(self):
-        response = self.client.get(self.logout_url)
-        # self.assertEquals(response.status_code, 200, "Page is not rendering. It's supposed to return a 200 code")
-        print("test_logout_view response:")
-        print(response)
-        # for this method I need to find how to test the functionality because rendering is handle by react in the frontend
+        response = self.client.post(self.logout_url)
+        self.assertEquals(cache.get('username'), None, "Cache was not cleared in logout()")
 
     # def test_register_view(self):
     #     response = self.client.get(self.register_url)
