@@ -64,32 +64,27 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 400, 'Method did not return 400 code after invalid POST request')
 
 
-    # def test_login_view(self):
-    #     response = self.client.get(self.login_url)
-    #     self.assertEquals(response.status_code, 200, "Page is not rendering. It's supposed to return a 200 code")    # checks that page is rendering
-    #     self.assertTemplateUsed(response, 'login.html', "Method render the wrong template")
-    #
-    # def test_log_user_view(self):
-    #     # creates user instance with hashed password for testing login method
-    #     pw_hash = bcrypt.hashpw("password".encode(), bcrypt.gensalt()).decode()
-    #     user = User.objects.create(username="test-user", password=pw_hash)
-    #
-    #     # succesful post request
-    #     response = self.client.post(self.log_user_url, {
-    #         "username": "test-user",
-    #         "password": "password"
-    #     })
-    #     self.assertEquals(response.status_code, 302, "Page did not redirect, it's supposed to return a 302 code")
-    #     self.assertEquals(response.url, "/tracker_app", "Method redirected to wrong URL")
-    #
-    #     # test invalid post request
-    #     response = self.client.post(self.log_user_url, {
-    #         "username": "test-another-user",
-    #         "password": "other-password"
-    #     })
-    #     self.assertEquals(response.status_code, 302, "Page did not redirect, it's supposed to return a 302 code")
-    #     self.assertEquals(response.url, "/", "Method redirected to wrong URL")
-    #
+    def test_log_user_view(self):
+        # creates user instance with hashed password for testing login method
+        pw_hash = bcrypt.hashpw('password123'.encode(), bcrypt.gensalt()).decode()
+        user = User.objects.create(username='test-user', password=pw_hash)
+
+        # succesful post request
+        response = self.client.post(self.log_user_url, {
+            'username': 'test-user',
+            'password': 'password123'
+        })
+        self.assertEquals(response.status_code, 200, 'log_user() did not execute succesfully with valid credentials, it did not return a 200 code')
+        self.assertTrue(cache.get('username') == user.username, 'Problems with username in cache after succesful login. Either wrong username or not username save at at all')
+
+        # test invalid post request
+        response = self.client.post(self.log_user_url, {
+            'username': 'test-another-user',
+            'password': 'other-password'
+        })
+        self.assertEquals(response.status_code, 400, 'log_user() did not return 400 bad request code with invalid user credentials')
+        self.assertTrue(len(response.data['errors']) > 0, 'log_user() did not return error messages after an request with invalid credentials')
+
     # def test_jobs_view(self):
     #     # test that if user is not logged id view will redirect to login page
     #     response = self.client.get(self.jobs_url)
