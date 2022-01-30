@@ -38,35 +38,32 @@ class TestViews(TestCase):
         response = self.client.post(self.logout_url)
         self.assertEquals(cache.get('username'), None, "Cache was not cleared in logout()")
 
-    # def test_register_view(self):
-    #     response = self.client.get(self.register_url)
-    #     self.assertEquals(response.status_code, 200, "Page is not rendering. It's supposed to return a 200 code")
-    #     self.assertTemplateUsed(response, 'register.html', "Method render the wrong template")
-    #
-    # def test_register_user_view(self):
-    #     # if POST request was succesful
-    #     response = self.client.post(self.register_user_url, {
-    #         "username": "testusername1001012349",
-    #         "password": "somepassword",
-    #         "confirm_password": "somepassword"
-    #     })
-    #     self.assertEquals(response.status_code, 302, "Page did not redirect, it's supposed to return a 302 code") # redirect() returns a 302 code instead of a 200
-    #     self.assertEquals(response.url, "/tracker_app", "Method redirected to wrong URL")
-    #     new_user = User.objects.last()
-    #     self.assertEquals(new_user.username, "testusername1001012349", "Username passed in POST req is not the same being saved in the DB")
-    #     self.assertNotEqual(new_user.password, "somepassword", "Literal user password is being saved in the DB(user password is not being hashed)") # checks that password is being hashed with bcrypt as we are not saving the literal password in the DB
-    #
-    #     # test if POST request is invalid(validation errors found)
-    #     response = self.client.post(self.register_user_url, {
-    #         "username": "us",
-    #         "password": "some",
-    #         "confirm_password": "somepassword"
-    #     })
-    #     last_user = User.objects.last()
-    #     self.assertNotEqual(last_user.username, "us", "When passed an invalid username in POST it did saved the user in the DB") # check that user data is not being saved in the DB if POST request contains validation errors
-    #     self.assertEquals(response.status_code, 302, "Page did not redirect, it's supposed to return a 302 code")
-    #     self.assertEquals(response.url, "/register", "Method redirected to wrong URL") # check the method redirect to right URL
-    #
+    def test_create_user_view(self):
+        # if POST request was succesful
+        response = self.client.post(self.create_user_url, {
+            "username": "testusername",
+            "password": "somepassword",
+            "confirm_password": "somepassword"
+        })
+        new_user = User.objects.last()
+        self.assertEquals(response.status_code, 200, 'Response not successful it should have returned a 200 code')
+        self.assertEquals(response.data['username'], new_user.username, 'Method did not return the username in the response data')
+        self.assertEquals(new_user.username, 'testusername', 'Username passed in POST req is not the same being saved in the DB')
+        self.assertNotEqual(new_user.password, 'somepassword', 'Plain Text password is being saved in the DB(password is not being hashed)')
+
+        # test if POST request is invalid(validation errors found)
+        response = self.client.post(self.create_user_url, {
+            "username": "us",
+            "password": "some",
+            "confirm_password": "somepassword"
+        })
+        last_user = User.objects.last()
+
+        self.assertNotEqual(last_user.username, 'us', 'When passed an invalid username in POST it saved the user in the DB')
+        self.assertEquals(len(response.data['errors']) > 0, True, 'Method did not found any errors when submitting invalid inputs')
+        self.assertEquals(response.status_code, 400, 'Method did not return 400 code after invalid POST request')
+
+
     # def test_login_view(self):
     #     response = self.client.get(self.login_url)
     #     self.assertEquals(response.status_code, 200, "Page is not rendering. It's supposed to return a 200 code")    # checks that page is rendering
