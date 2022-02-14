@@ -106,11 +106,11 @@ def get_user(request):
         user = User.objects.filter(username=_username)
         if user:
             data = {"username": _username}
-            print("user auth in get_user")
+            print("user authenticated in get_user")
             return Response(data)
     else:
         print("user not authenticated")
-        return Response("User not auth", status=status.HTTP_401_UNAUTHORIZED)
+        return Response("User not authenticated", status=status.HTTP_401_UNAUTHORIZED)
 
 ensure_csrf_cookie('create_job')
 @api_view(['POST'])
