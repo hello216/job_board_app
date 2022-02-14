@@ -85,6 +85,16 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 400, 'log_user() did not return 400 bad request code with invalid user credentials')
         self.assertTrue(len(response.data['errors']) > 0, 'log_user() did not return error messages after an request with invalid credentials')
 
+    def test_get_user_view(self):
+
+        response = self.client.get(self.get_user_url)
+        self.assertEquals(response.data['username'], self.user.username, 'get_user() did not return the correct user instance')
+
+        # check response if user is not authenticated
+        cache.clear()
+        response = self.client.get(self.get_user_url)
+        self.assertTrue(response.status_code == 401, 'get_user() did not return 401 code when an unauthenticated user accessed the method')
+
     # def test_jobs_view(self):
     #     # test that if user is not logged id view will redirect to login page
     #     response = self.client.get(self.jobs_url)
