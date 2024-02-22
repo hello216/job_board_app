@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: db_job_board_app
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASSWD}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5400:5400"
+volumes:
+  postgres-data:
+
+
+# Start that thing up!
+# 
+# docker-compose -f postgres.yaml up
