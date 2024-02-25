@@ -5,6 +5,6 @@ use axum::{routing::get, Router};
 async fn main() {
     let app = Router::new().route("/", get(|| async { "Hello, World!" }));
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:8000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind("localhost:8000").await.expect("Something wrong in the listener");
+    axum::serve(listener, app).await.expect("Something wrong in the serve fn");
 }
