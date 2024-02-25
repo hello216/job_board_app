@@ -6,6 +6,7 @@ use std::env;
 
 pub mod models;
 pub mod schema;
+pub mod handlers;
 
 
 pub fn establish_connection() -> PgConnection {
@@ -18,7 +19,9 @@ pub fn establish_connection() -> PgConnection {
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(|| async { "Hello, World!" }));
+    let app = Router::new()
+        .route("/", get(|| async { "Hello, World!" }))
+        .route("/all_users", get(handlers::user_handlers::all_users()));
 
     let listener = tokio::net::TcpListener::bind("localhost:8000").await.expect("Something wrong in the listener");
     axum::serve(listener, app).await.expect("Something wrong in the serve fn");
