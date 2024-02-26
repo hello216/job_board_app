@@ -41,5 +41,5 @@ async fn all_users() -> impl Responder {
 
     let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
 
-    HttpResponse::Ok().body("Hey there!")
+    HttpResponse::Ok().json(_all_users)
 }
