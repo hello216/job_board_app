@@ -15,12 +15,12 @@ fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-pub async fn all_users() -> Result<Json<Vec<User>>, diesel::result::Error> {
+pub async fn all_users() -> Result<Json<Vec<User>>, axum::Error> {
     let mut connection = establish_connection();
 
     let all_users: Vec<User> = match users.load::<User>(&mut connection) {
         Ok(loaded_users) => loaded_users,
-        Err(e) => return Err(e),
+        Err(_) => return Err(axum::Error::new("Something went wrong retrieving users")),
     };
 
     Ok(Json(all_users))
