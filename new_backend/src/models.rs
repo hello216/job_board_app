@@ -1,7 +1,31 @@
 use diesel::prelude::*;
 use crate::schema::users;
 use serde::{Serialize, Deserialize};
+use crate::schema::users::dsl::*;
+use diesel::pg::PgConnection;
+use dotenvy::dotenv;
+use std::env;
 
+
+fn establish_connection() -> PgConnection {
+    dotenv().ok();
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    PgConnection::establish(&database_url)
+        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+}
+
+use argon2::{
+    password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
+    Argon2,
+};
+
+pub async fn hash(password: &[u8]) -> String {
+    let salt = SaltString::generate(&mut OsRng);
+    Argon2::default()
+        .hash_password(password, &salt)
+        .expect("Unable to hash password.")
+        .to_string()
+}
 
 #[derive(Insertable)]
 #[diesel(table_name = users)]
