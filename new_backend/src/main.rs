@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
-use crate::models::User;
+use crate::models::{User, NewUser};
 use crate::schema::users::dsl::*;
 use diesel::pg::PgConnection;
 use dotenvy::dotenv;
@@ -41,4 +41,12 @@ async fn all_users() -> impl Responder {
     let mut connection = establish_connection();
     let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
     HttpResponse::Ok().json(_all_users)
+}
+
+async fn create_user(user: web::Json<User>) -> impl Responder {
+    let mut connection = establish_connection();
+    
+   let new_user = NewUser::create(user.into_inner()).await?;
+    
+    HttpResponse::Ok().json("User created")
 }
