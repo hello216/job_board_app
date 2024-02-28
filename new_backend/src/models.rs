@@ -69,7 +69,7 @@ impl NewUser {
             // Insert the user into the database
             let inserted_user = diesel::insert_into(users::table)
                 .values(&user)
-                .get_result(&mut connection)?;
+                .get_result(&mut connection).expect("Error occured while inserting new user in DB");
             Ok(inserted_user)
         }
     }
