@@ -3,6 +3,7 @@ use crate::schema::users;
 use serde::{Serialize, Deserialize};
 use crate::schema::users::dsl::*;
 use diesel::pg::PgConnection;
+use diesel::dsl::exists;
 use dotenvy::dotenv;
 use std::env;
 
@@ -29,9 +30,9 @@ pub async fn hash(password: &[u8]) -> String {
 
 #[derive(Insertable)]
 #[diesel(table_name = users)]
-pub struct NewUser<'a> {
-    pub username: &'a str,
-    pub password: &'a str,
+pub struct NewUser {
+    pub username: String,
+    pub password: String,
 }
 
 #[derive(Serialize, Deserialize, Queryable, Selectable)]

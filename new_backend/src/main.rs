@@ -46,7 +46,7 @@ async fn all_users() -> impl Responder {
 async fn create_user(user: web::Json<User>) -> impl Responder {
     let mut connection = establish_connection();
     
-   let new_user = NewUser::create(user.into_inner()).await?;
+   let new_user = NewUser::create(user.into_inner()).await;
     
     HttpResponse::Ok().json("User created")
 }
