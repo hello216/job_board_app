@@ -48,7 +48,7 @@ pub struct User {
 impl NewUser {
 
     pub async fn create(user: User) -> Result<Self, String> {
-        let mut conn = db::connection()?;
+        let mut connection = establish_connection();
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
         
@@ -61,7 +61,7 @@ impl NewUser {
         // Check username not in DB before creating
         let username = &user.username;  // Allows the username String to be copied
         let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(username))))
-            .get_result(&mut conn)?;
+            .get_result(&mut connection)?;
         
         if user_already_exists {
             Err(CustomError::new(409, String::from("Username already exists in the database")))
@@ -69,7 +69,7 @@ impl NewUser {
             // Insert the user into the database
             let inserted_user = diesel::insert_into(users::table)
                 .values(&user)
-                .get_result(&mut conn)?;
+                .get_result(&mut connection)?;
             Ok(inserted_user)
         }
     }
