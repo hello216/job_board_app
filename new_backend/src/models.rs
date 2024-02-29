@@ -85,6 +85,9 @@ impl NewUser {
             Ok(inserted_user)
         }
     }
+}
+
+// impl User {
 
 //     pub fn find(id: i32) -> Result<Self, CustomError> {
 //         let mut conn = db::connection()?;
@@ -113,4 +116,4 @@ impl NewUser {
 //         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut conn)?;
 //         Ok(res)
 //     }
-}
+// }
