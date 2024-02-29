@@ -53,7 +53,7 @@ impl User {
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
 
-        let user = NewUser {
+        let user = User {
             username: user.username,
             password: hashed_password,
             ..user
@@ -65,7 +65,7 @@ impl User {
             .get_result(&mut connection).expect("Error occured while checking for existince of user in DB");
 
         if user_already_exists {
-            Err(CustomError::new(409, String::from("Username already exists in the database")))
+            Err(String::from("Username already exists in the database"))
         } else {
             // Insert the user into the database
             let inserted_user = diesel::insert_into(users::table)
