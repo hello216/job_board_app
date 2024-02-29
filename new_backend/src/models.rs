@@ -53,7 +53,7 @@ impl User {
         let hashed_password = hash(user.password.as_bytes()).await;
 
         let user = User {   // TODO: Add auto generated id
-            // id: user.id,
+            // id: None,
             username: user.username,
             password: hashed_password,
             ..user
@@ -62,7 +62,7 @@ impl User {
         // Check username not in DB before creating
         let _username = &user.username;  // Allows the username String to be copied
         let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(_username))))
-            .get_result(&mut connection).expect("Error occured while checking for existince of user in DB");
+            .get_result(&mut connection).expect("Error occured while checking for existence of user in DB");
 
         if user_already_exists {
             Err(String::from("Username already exists in the database"))
