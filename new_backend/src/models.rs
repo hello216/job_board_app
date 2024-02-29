@@ -52,7 +52,8 @@ impl User {
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
 
-        let user = User {
+        let user = User {   // TODO: Add auto generated id
+            // id: user.id,
             username: user.username,
             password: hashed_password,
             ..user
