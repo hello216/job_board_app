@@ -24,6 +24,7 @@ async fn main() -> std::io::Result<()> {
             web::scope("/api")
                 .route("/", web::get().to(index))
                 .route("/all_users", web::get().to(all_users))
+                .route("/create_user", web::post().to(create_user))
         )
     })
     .bind(("127.0.0.1", 8000))?
@@ -45,6 +46,5 @@ async fn all_users() -> impl Responder {
 
 async fn create_user(user: web::Json<User>) -> impl Responder {    
    let new_user = User::create(user.into_inner()).await;
-    
-    HttpResponse::Ok().json("User created")
+    HttpResponse::Ok().json(new_user)
 }
