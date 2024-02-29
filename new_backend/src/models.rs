@@ -20,10 +20,10 @@ use argon2::{
     Argon2,
 };
 
-pub async fn hash(password: &[u8]) -> String {
+pub async fn hash(_password: &[u8]) -> String {
     let salt = SaltString::generate(&mut OsRng);
     Argon2::default()
-        .hash_password(password, &salt)
+        .hash_password(_password, &salt)
         .expect("Unable to hash password.")
         .to_string()
 }
@@ -60,8 +60,8 @@ impl User {
         };
 
         // Check username not in DB before creating
-        let username = &user.username;  // Allows the username String to be copied
-        let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(username))))
+        let _username = &user.username;  // Allows the username String to be copied
+        let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(_username))))
             .get_result(&mut connection).expect("Error occured while checking for existince of user in DB");
 
         if user_already_exists {
