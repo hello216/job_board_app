@@ -1,7 +1,6 @@
 use diesel::prelude::*;
 use crate::schema::users;
 use serde::{Serialize, Deserialize};
-use crate::schema::users::dsl::*;
 use diesel::pg::PgConnection;
 use diesel::dsl::exists;
 use dotenvy::dotenv;
