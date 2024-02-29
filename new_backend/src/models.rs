@@ -27,12 +27,23 @@ pub async fn hash(_password: &[u8]) -> String {
         .to_string()
 }
 
-#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
+#[derive(Serialize, Deserialize, Insertable)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct NewUser {
     pub username: String,
     pub password: String,
+}
+
+impl Queryable<(diesel::sql_types::Integer, diesel::sql_types::Text, diesel::sql_types::Text), diesel::pg::Pg> for NewUser {
+    type Row = (i32, String, String);
+
+    fn build(row: Self::Row) -> Result<Self, Box<dyn std::error::Error + Send + Sync + 'static>> {
+        Ok(NewUser {
+            username: row.1,
+            password: row.2,
+        })
+    }
 }
 
 #[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
@@ -52,8 +63,7 @@ impl NewUser {
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
 
-        let user = NewUser {   // TODO: Add auto generated id
-            // id: None,
+        let user = NewUser {
             username: user.username,
             password: hashed_password,
             ..user
@@ -70,7 +80,8 @@ impl NewUser {
             // Insert the user into the database
             let inserted_user = diesel::insert_into(users::table)
                 .values(&user)
-                .get_result(&mut connection).expect("Error occured while inserting new user in DB");
+                .get_result(&mut connection)
+                .expect("Error occured while inserting new user in DB");
             Ok(inserted_user)
         }
     }
