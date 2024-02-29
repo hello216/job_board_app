@@ -28,14 +28,15 @@ pub async fn hash(password: &[u8]) -> String {
         .to_string()
 }
 
-#[derive(Insertable)]
-#[diesel(table_name = users)]
-pub struct NewUser {
-    pub username: String,
-    pub password: String,
-}
+// #[derive(Insertable)]
+// #[diesel(table_name = crate::schema::users)]
+// #[diesel(check_for_backend(diesel::pg::Pg))]
+// pub struct NewUser {
+//     pub username: str,
+//     pub password: str,
+// }
 
-#[derive(Serialize, Deserialize, Queryable, Selectable)]
+#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct User {
@@ -45,24 +46,24 @@ pub struct User {
 }
 
 
-impl NewUser {
+impl User {
 
     pub async fn create(user: User) -> Result<Self, String> {
         let mut connection = establish_connection();
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
-        
-        let user = User {
+
+        let user = NewUser {
             username: user.username,
             password: hashed_password,
             ..user
         };
-        
+
         // Check username not in DB before creating
         let username = &user.username;  // Allows the username String to be copied
         let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(username))))
             .get_result(&mut connection).expect("Error occured while checking for existince of user in DB");
-        
+
         if user_already_exists {
             Err(CustomError::new(409, String::from("Username already exists in the database")))
         } else {
