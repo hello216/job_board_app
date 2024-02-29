@@ -27,13 +27,13 @@ pub async fn hash(_password: &[u8]) -> String {
         .to_string()
 }
 
-// #[derive(Insertable)]
-// #[diesel(table_name = crate::schema::users)]
-// #[diesel(check_for_backend(diesel::pg::Pg))]
-// pub struct NewUser {
-//     pub username: str,
-//     pub password: str,
-// }
+#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
+#[diesel(table_name = crate::schema::users)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct NewUser {
+    pub username: String,
+    pub password: String,
+}
 
 #[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::schema::users)]
@@ -45,14 +45,14 @@ pub struct User {
 }
 
 
-impl User {
+impl NewUser {
 
-    pub async fn create(user: User) -> Result<Self, String> {
+    pub async fn create(user: NewUser) -> Result<Self, String> {
         let mut connection = establish_connection();
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
 
-        let user = User {   // TODO: Add auto generated id
+        let user = NewUser {   // TODO: Add auto generated id
             // id: None,
             username: user.username,
             password: hashed_password,
