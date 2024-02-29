@@ -27,13 +27,24 @@ pub async fn hash(_password: &[u8]) -> String {
         .to_string()
 }
 
-// #[derive(Insertable)]
-// #[diesel(table_name = crate::schema::users)]
-// #[diesel(check_for_backend(diesel::pg::Pg))]
-// pub struct NewUser {
-//     pub username: str,
-//     pub password: str,
-// }
+#[derive(Serialize, Deserialize, Insertable)]
+#[diesel(table_name = crate::schema::users)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct NewUser {
+    pub username: String,
+    pub password: String,
+}
+
+impl Queryable<(diesel::sql_types::Integer, diesel::sql_types::Text, diesel::sql_types::Text), diesel::pg::Pg> for NewUser {
+    type Row = (i32, String, String);
+
+    fn build(row: Self::Row) -> Result<Self, Box<dyn std::error::Error + Send + Sync + 'static>> {
+        Ok(NewUser {
+            username: row.1,
+            password: row.2,
+        })
+    }
+}
 
 #[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::schema::users)]
@@ -45,15 +56,14 @@ pub struct User {
 }
 
 
-impl User {
+impl NewUser {
 
-    pub async fn create(user: User) -> Result<Self, String> {
+    pub async fn create(user: NewUser) -> Result<Self, String> {
         let mut connection = establish_connection();
         // Hash the password before storing it
         let hashed_password = hash(user.password.as_bytes()).await;
 
-        let user = User {   // TODO: Add auto generated id
-            // id: user.id,
+        let user = NewUser {
             username: user.username,
             password: hashed_password,
             ..user
@@ -62,7 +72,7 @@ impl User {
         // Check username not in DB before creating
         let _username = &user.username;  // Allows the username String to be copied
         let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(_username))))
-            .get_result(&mut connection).expect("Error occured while checking for existince of user in DB");
+            .get_result(&mut connection).expect("Error occured while checking for existence of user in DB");
 
         if user_already_exists {
             Err(String::from("Username already exists in the database"))
@@ -70,10 +80,14 @@ impl User {
             // Insert the user into the database
             let inserted_user = diesel::insert_into(users::table)
                 .values(&user)
-                .get_result(&mut connection).expect("Error occured while inserting new user in DB");
+                .get_result(&mut connection)
+                .expect("Error occured while inserting new user in DB");
             Ok(inserted_user)
         }
     }
+}
+
+// impl User {
 
 //     pub fn find(id: i32) -> Result<Self, CustomError> {
 //         let mut conn = db::connection()?;
@@ -102,4 +116,4 @@ impl User {
 //         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut conn)?;
 //         Ok(res)
 //     }
-}
+// }
