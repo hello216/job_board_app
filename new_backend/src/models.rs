@@ -87,33 +87,33 @@ impl NewUser {
     }
 }
 
-// impl User {
+impl User {
 
-//     pub fn find(id: i32) -> Result<Self, CustomError> {
-//         let mut conn = db::connection()?;
-//         let user = users::table.filter(users::id.eq(id)).first(&mut conn)?;
-//         Ok(user)
-//     }
+    pub async fn find(id: i32) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        let user = users::table.filter(users::id.eq(id)).first(&mut connection).expect("Error while retrieving user from users table");
+        Ok(user)
+    }
     
-//     pub fn find_by_username(username: &String) -> Result<Self, CustomError> {
-//         let mut conn = db::connection()?;
-//         let user = users::table.filter(users::username.eq(username)).first(&mut conn)?;
-//         Ok(user)
-//     }
+    // pub fn find_by_username(username: &String) -> Result<Self, CustomError> {
+    //     let mut conn = db::connection()?;
+    //     let user = users::table.filter(users::username.eq(username)).first(&mut conn)?;
+    //     Ok(user)
+    // }
 
-//     // TODO: Implement password hashing for update to user.password
-//     pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
-//         let mut conn = db::connection()?;
-//         let user = diesel::update(users::table)
-//             .filter(users::id.eq(id))
-//             .set(user)
-//             .get_result(&mut conn)?;
-//         Ok(user)
-//     }
+    // // TODO: Implement password hashing for update to user.password
+    // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
+    //     let mut conn = db::connection()?;
+    //     let user = diesel::update(users::table)
+    //         .filter(users::id.eq(id))
+    //         .set(user)
+    //         .get_result(&mut conn)?;
+    //     Ok(user)
+    // }
 
-//     pub fn delete(id: i32) -> Result<usize, CustomError> {
-//         let mut conn = db::connection()?;
-//         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut conn)?;
-//         Ok(res)
-//     }
-// }
+    // pub fn delete(id: i32) -> Result<usize, CustomError> {
+    //     let mut conn = db::connection()?;
+    //     let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut conn)?;
+    //     Ok(res)
+    // }
+}
