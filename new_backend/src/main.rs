@@ -48,3 +48,8 @@ async fn create_user(user: web::Json<NewUser>) -> impl Responder {
    let new_user = NewUser::create(user.into_inner()).await;
     HttpResponse::Ok().json(new_user)
 }
+
+async fn get_user(user: web::Json<User>) -> impl Responder {
+    let user = User::find(user.into_inner()).await;
+    HttpResponse::Ok().json(user)
+}
