@@ -50,7 +50,8 @@ async fn create_user(user: web::Json<NewUser>) -> impl Responder {
     HttpResponse::Ok().json(new_user)
 }
 
-async fn get_user(user: web::Json<User>) -> impl Responder {
-    let user = User::find(user.id).await;
+async fn get_user() -> impl Responder {
+    // get user from session, jwt, or whatever auth method
+    let user = User::find(1).await;
     HttpResponse::Ok().json(user)
 }
