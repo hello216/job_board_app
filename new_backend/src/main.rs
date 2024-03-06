@@ -25,6 +25,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/", web::get().to(index))
                 .route("/all_users", web::get().to(all_users))
                 .route("/create_user", web::post().to(create_user))
+                .route("/get_user", web::get().to(get_user))
         )
     })
     .bind(("127.0.0.1", 8000))?
@@ -47,4 +48,10 @@ async fn all_users() -> impl Responder {
 async fn create_user(user: web::Json<NewUser>) -> impl Responder {    
    let new_user = NewUser::create(user.into_inner()).await;
     HttpResponse::Ok().json(new_user)
+}
+
+async fn get_user() -> impl Responder {
+    // get user from session, jwt, or whatever auth method
+    let user = User::find(1).await;
+    HttpResponse::Ok().json(user)
 }
