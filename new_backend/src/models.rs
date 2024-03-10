@@ -95,11 +95,11 @@ impl User {
         Ok(user)
     }
     
-    // pub fn find_by_username(username: &String) -> Result<Self, CustomError> {
-    //     let mut conn = db::connection()?;
-    //     let user = users::table.filter(users::username.eq(username)).first(&mut conn)?;
-    //     Ok(user)
-    // }
+    pub fn find_by_username(username: &String) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        let user = users::table.filter(users::username.eq(username)).first(&mut connection).expect("Error while retrieving user from users table");
+        Ok(user)
+    }
 
     // // TODO: Implement password hashing for update to user.password
     // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
