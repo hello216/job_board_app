@@ -57,7 +57,7 @@ async fn get_user() -> impl Responder {
     HttpResponse::Ok().json(user)
 }
 
-async fn get_user_wt_username(param: web::Data<String>) -> impl Responder {
-    let user = User::find_by_username(&String::from("test-user1")).await;
+async fn get_user_wt_username(param: web::Json<User>) -> impl Responder {
+    let user = User::find_by_username(&param.username).await;
     HttpResponse::Ok().json(user)
 }
