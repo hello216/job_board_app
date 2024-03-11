@@ -95,7 +95,7 @@ impl User {
         Ok(user)
     }
     
-    pub fn find_by_username(username: &String) -> Result<Self, String> {
+    pub async fn find_by_username(username: &String) -> Result<Self, String> {
         let mut connection = establish_connection();
         let user = users::table.filter(users::username.eq(username)).first(&mut connection).expect("Error while retrieving user from users table");
         Ok(user)
