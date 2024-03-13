@@ -61,3 +61,8 @@ async fn get_user_wt_username(param: web::Json<User>) -> impl Responder {
     let user = User::find_by_username(&param.username).await;
     HttpResponse::Ok().json(user)
 }
+
+async fn delete_user(user_id: i32) -> impl Responder {
+    let user = User::delete(user_id).await;
+    HttpResponse::Ok().json(user)
+}
