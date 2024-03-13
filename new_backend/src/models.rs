@@ -111,7 +111,7 @@ impl User {
     //     Ok(user)
     // }
 
-    pub fn delete(id: i32) -> Result<usize, String> {
+    pub async fn delete(id: i32) -> Result<usize, String> {
         let mut connection = establish_connection();
         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut connection).expect("Error while deleting user");
         Ok(res)
