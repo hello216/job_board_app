@@ -27,6 +27,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/create_user", web::post().to(create_user))
                 .route("/get_user", web::get().to(get_user))
                 .route("/get_user_wt_username", web::get().to(get_user_wt_username))
+                .route("/delete_user", web::delete().to(delete_user))
         )
     })
     .bind(("127.0.0.1", 8000))?
@@ -62,7 +63,7 @@ async fn get_user_wt_username(param: web::Json<User>) -> impl Responder {
     HttpResponse::Ok().json(user)
 }
 
-async fn delete_user(user_id: i32) -> impl Responder {
-    let user = User::delete(user_id).await;
-    HttpResponse::Ok().json(user)
+async fn delete_user(user_id: web::Json<User>) -> impl Responder {
+    let res = User::delete(user_id.id).await;
+    HttpResponse::Ok().json(res)
 }
