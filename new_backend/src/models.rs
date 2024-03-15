@@ -5,6 +5,10 @@ use diesel::pg::PgConnection;
 use diesel::dsl::exists;
 use dotenvy::dotenv;
 use std::env;
+use actix_web::cookie::Cookie;
+use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde_json::json;
 
 
 fn establish_connection() -> PgConnection {
@@ -17,6 +21,7 @@ fn establish_connection() -> PgConnection {
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHasher, SaltString},
     Argon2,
+    PasswordVerifier,
 };
 
 pub async fn hash(_password: &[u8]) -> String {
