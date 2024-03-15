@@ -32,6 +32,58 @@ pub async fn hash(_password: &[u8]) -> String {
         .to_string()
 }
 
+// pub async fn verify_password(hash: &str, password: &[u8]) -> Result<(), argon2::password_hash::Error> {
+//     let parsed_hash = argon2::PasswordHash::new(hash)?;
+//     Argon2::default().verify_password(password, &parsed_hash)
+// }
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Claims {
+    sub: String, // Subject (whom the token refers to)
+    exp: usize,
+}
+
+#[derive(Deserialize)]
+struct JWT {
+    jwt: String,
+}
+
+#[derive(Serialize)]
+struct UserCookie {
+    id: i32,
+    jwt_auth: String,
+}
+
+// fn create_token(username: &str, secret: &[u8]) -> Result<String, CustomError> {
+//     let expiration = SystemTime::now()
+//         .duration_since(UNIX_EPOCH)
+//         .expect("Time went backwards")
+//         .as_secs() + 60 * 60; // Token expires in 1 hour
+
+//     let claims = Claims {
+//         sub: username.to_owned(),
+//         exp: expiration as usize,
+//     };
+//     encode(&Header::default(), &claims, &EncodingKey::from_secret(secret))
+//             .map_err(|_| CustomError::new(500, String::from("Error creating JWT")))
+// }
+
+// fn generate_jwt(id: i32, secret: &[u8]) -> Result<String, CustomError> {
+//     let user = User::find(id)?;
+//     let jwt_token = create_token(&user.username, secret)?;
+//     Ok(jwt_token)
+// }
+
+// async fn verify_jwt(token: &str) -> Result<HttpResponse, CustomError> {
+//     let secret = env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY not set in .env file");
+//     let jwt_data: Result<jsonwebtoken::TokenData<JWT>, jsonwebtoken::errors::Error> = decode::<JWT>(&token, &DecodingKey::from_secret(secret.as_ref()), &Validation::new(Algorithm::HS256));
+    
+//     match jwt_data {
+//         Ok(_) => Ok(HttpResponse::Ok().body("Token is valid")),
+//         Err(_) => Ok(HttpResponse::Unauthorized().body("Token is invalid")),
+//     }
+// }
+
 #[derive(Serialize, Deserialize, Insertable)]
 #[diesel(table_name = crate::schema::users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
