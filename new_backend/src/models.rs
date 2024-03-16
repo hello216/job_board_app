@@ -54,19 +54,26 @@ struct UserCookie {
     jwt_auth: String,
 }
 
-// fn create_token(username: &str, secret: &[u8]) -> Result<String, CustomError> {
-//     let expiration = SystemTime::now()
-//         .duration_since(UNIX_EPOCH)
-//         .expect("Time went backwards")
-//         .as_secs() + 60 * 60; // Token expires in 1 hour
+fn create_token(username: &str, secret: &[u8]) -> Result<String, String> {
+    let expiration = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("Time went backwards")
+        .as_secs() + 60 * 60; // Token expires in 1 hour
 
-//     let claims = Claims {
-//         sub: username.to_owned(),
-//         exp: expiration as usize,
-//     };
-//     encode(&Header::default(), &claims, &EncodingKey::from_secret(secret))
-//             .map_err(|_| CustomError::new(500, String::from("Error creating JWT")))
-// }
+    let claims = Claims {
+        sub: username.to_owned(),
+        exp: expiration as usize,
+    };
+    match encode(&Header::default(), &claims, &EncodingKey::from_secret(secret)){
+        Ok(yo) => {
+            return Ok(yo)
+        },
+        Err(_) => {
+            let error = String::from("Error arised while encoding token");
+            return Err(error)
+        },
+    }
+}
 
 // fn generate_jwt(id: i32, secret: &[u8]) -> Result<String, CustomError> {
 //     let user = User::find(id)?;
