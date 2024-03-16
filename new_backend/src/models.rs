@@ -75,11 +75,11 @@ fn create_token(username: &str, secret: &[u8]) -> Result<String, String> {
     }
 }
 
-// fn generate_jwt(id: i32, secret: &[u8]) -> Result<String, CustomError> {
-//     let user = User::find(id)?;
-//     let jwt_token = create_token(&user.username, secret)?;
-//     Ok(jwt_token)
-// }
+async fn generate_jwt(id: i32, secret: &[u8]) -> Result<String, String> {
+    let user = User::find(id).await.expect("Could not retreive user");
+    let jwt_token = create_token(&user.username, secret).expect("Error encountered while creating JWT token");
+    Ok(jwt_token)
+}
 
 // async fn verify_jwt(token: &str) -> Result<HttpResponse, CustomError> {
 //     let secret = env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY not set in .env file");
