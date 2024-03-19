@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
-use crate::models::{User, NewUser};
-use crate::schema::users::dsl::*;
+use crate::models::{Jobs, NewJob};
+use crate::schema::jobs::dsl::*;
 use diesel::pg::PgConnection;
 use dotenvy::dotenv;
 use std::env;
