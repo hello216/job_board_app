@@ -1,0 +1,12 @@
+CREATE TABLE jobs (
+  id SERIAL PRIMARY KEY,
+  status VARCHAR NOT NULL,
+  title VARCHAR NOT NULL,
+  company VARCHAR NOT NULL,
+  url VARCHAR NOT NULL,
+  location VARCHAR NOT NULL,
+  date_submitted VARCHAR NOT NULL,
+  note VARCHAR NOT NULL,
+  created_at VARCHAR NOT NULL,
+  updated_at VARCHAR NOT NULL
+)

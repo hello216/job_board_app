@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
-use crate::models::{User, NewUser};
-use crate::schema::users::dsl::*;
+use crate::models::{Jobs, NewJob};
+use crate::schema::jobs::dsl::*;
 use diesel::pg::PgConnection;
 use dotenvy::dotenv;
 use std::env;
@@ -23,11 +23,6 @@ async fn main() -> std::io::Result<()> {
         App::new().service(
             web::scope("/api")
                 .route("/", web::get().to(index))
-                .route("/all_users", web::get().to(all_users))
-                .route("/create_user", web::post().to(create_user))
-                .route("/get_user", web::get().to(get_user))
-                .route("/get_user_wt_username", web::get().to(get_user_wt_username))
-                .route("/delete_user", web::delete().to(delete_user))
         )
     })
     .bind(("127.0.0.1", 8000))?
@@ -41,29 +36,19 @@ async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
-async fn all_users() -> impl Responder {
-    let mut connection = establish_connection();
-    let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
-    HttpResponse::Ok().json(_all_users)
-}
+// async fn all_users() -> impl Responder {
+//     let mut connection = establish_connection();
+//     let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
+//     HttpResponse::Ok().json(_all_users)
+// }
 
-async fn create_user(user: web::Json<NewUser>) -> impl Responder {    
-   let new_user = NewUser::create(user.into_inner()).await;
-    HttpResponse::Ok().json(new_user)
-}
+// async fn create_user(user: web::Json<NewUser>) -> impl Responder {    
+//    let new_user = NewUser::create(user.into_inner()).await;
+//     HttpResponse::Ok().json(new_user)
+// }
 
-async fn get_user() -> impl Responder {
-    // get user from session, jwt, or whatever auth method
-    let user = User::find(1).await;
-    HttpResponse::Ok().json(user)
-}
-
-async fn get_user_wt_username(param: web::Json<User>) -> impl Responder {
-    let user = User::find_by_username(&param.username).await;
-    HttpResponse::Ok().json(user)
-}
-
-async fn delete_user(user_id: web::Json<User>) -> impl Responder {
-    let res = User::delete(user_id.id).await;
-    HttpResponse::Ok().json(res)
-}
+// async fn get_user() -> impl Responder {
+//     // get user from session, jwt, or whatever auth method
+//     let user = User::find(1).await;
+//     HttpResponse::Ok().json(user)
+// }
