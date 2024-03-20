@@ -16,7 +16,7 @@ fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
+#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable, AsChangeset)]
 #[diesel(table_name = crate::schema::jobs)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Jobs {
@@ -59,14 +59,14 @@ impl Jobs {
         Ok(job)
     }
 
-    // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
-    //     let mut conn = db::connection()?;
-    //     let user = diesel::update(users::table)
-    //         .filter(users::id.eq(id))
-    //         .set(user)
-    //         .get_result(&mut conn)?;
-    //     Ok(user)
-    // }
+    pub fn update(job: Jobs) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        let updated_job = diesel::update(jobs::table)
+            .filter(jobs::id.eq(&job.id))
+            .set(&job)
+            .get_result(&mut connection).expect("Error while updating job in DB");
+        Ok(updated_job)
+    }
 
     pub async fn delete(id: String) -> Result<usize, String> {
         let mut connection = establish_connection();
