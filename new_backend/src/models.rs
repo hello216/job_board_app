@@ -68,9 +68,9 @@ impl Jobs {
     //     Ok(user)
     // }
 
-    // pub async fn delete(id: i32) -> Result<usize, String> {
-    //     let mut connection = establish_connection();
-    //     let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut connection).expect("Error while deleting user");
-    //     Ok(res)
-    // }
+    pub async fn delete(id: String) -> Result<usize, String> {
+        let mut connection = establish_connection();
+        let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
+        Ok(res)
+    }
 }
