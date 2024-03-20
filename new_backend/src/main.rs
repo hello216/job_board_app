@@ -24,6 +24,7 @@ async fn main() -> std::io::Result<()> {
             web::scope("/api")
                 .route("/", web::get().to(index))
                 .route("/create_job", web::post().to(create_job))
+                .route("/all_jobs", web::get().to(all_jobs))
         )
     })
     .bind(("127.0.0.1", 8000))?
