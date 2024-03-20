@@ -23,6 +23,7 @@ async fn main() -> std::io::Result<()> {
         App::new().service(
             web::scope("/api")
                 .route("/", web::get().to(index))
+                .route("/create_job", web::post().to(create_job))
         )
     })
     .bind(("127.0.0.1", 8000))?
@@ -36,15 +37,15 @@ async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
+async fn create_job(job: web::Json<Jobs>) -> impl Responder {    
+   let new_job = Jobs::create(job.into_inner()).await;
+    HttpResponse::Ok().json(new_job)
+}
+
 // async fn all_users() -> impl Responder {
 //     let mut connection = establish_connection();
 //     let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
 //     HttpResponse::Ok().json(_all_users)
-// }
-
-// async fn create_user(user: web::Json<NewUser>) -> impl Responder {    
-//    let new_user = NewUser::create(user.into_inner()).await;
-//     HttpResponse::Ok().json(new_user)
 // }
 
 // async fn get_user() -> impl Responder {
