@@ -53,11 +53,11 @@ impl Jobs {
         }
     }
 
-    // pub async fn find(id: i32) -> Result<Self, String> {
-    //     let mut connection = establish_connection();
-    //     let user = users::table.filter(users::id.eq(id)).first(&mut connection).expect("Error while retrieving user from users table");
-    //     Ok(user)
-    // }
+    pub async fn find(id: String) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).expect("Error while retrieving job from DB");
+        Ok(job)
+    }
 
     // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
     //     let mut conn = db::connection()?;
