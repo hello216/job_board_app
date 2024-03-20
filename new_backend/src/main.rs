@@ -54,3 +54,8 @@ async fn get_job(data: web::Json<String>) -> impl Responder {
     let job = Jobs::find(data.0).await;
     HttpResponse::Ok().json(job)
 }
+
+async fn delete_job(data: web::Json<String>) -> impl Responder {
+    let response = Jobs::delete(data.0).await;
+    HttpResponse::Ok().json(response)
+}
