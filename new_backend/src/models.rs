@@ -5,7 +5,7 @@ use diesel::pg::PgConnection;
 use diesel::dsl::exists;
 use dotenvy::dotenv;
 use std::env;
-use serde_json::json;
+use uuid::Uuid;
 
 
 fn establish_connection() -> PgConnection {
@@ -15,42 +15,11 @@ fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-#[derive(Serialize, Deserialize, Insertable)]
-#[diesel(table_name = crate::schema::jobs)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct NewJob {
-    pub status: String,
-    pub title: String,
-    pub company: String,
-    pub url: String,
-    pub location: String,
-    pub date_submitted: String,
-    pub created_at: String,
-    pub updated_at: String,
-}
-
-impl Queryable<(diesel::sql_types::Integer, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text), diesel::pg::Pg> for NewJob {
-    type Row = (i32, String, String, String, String, String, String, String, String);
-
-    fn build(row: Self::Row) -> Result<Self, Box<dyn std::error::Error + Send + Sync + 'static>> {
-        Ok(NewJob {
-            status: row.1,
-            title: row.2,
-            company: row.3,
-            url: row.4,
-            location: row.5,
-            date_submitted: row.6,
-            created_at: row.7,
-            updated_at: row.8,
-        })
-    }
-}
-
-#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
+#[derive(Serialize, Deserialize, Queryable, Selectable, Insertable, AsChangeset)]
 #[diesel(table_name = crate::schema::jobs)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Jobs {
-    pub id: i32,
+    pub id: String,
     pub status: String,
     pub title: String,
     pub company: String,
@@ -62,65 +31,45 @@ pub struct Jobs {
     pub updated_at: String,
 }
 
+impl Jobs {
+    pub async fn create(mut job: Jobs) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        
+        job.id = Uuid::new_v4().to_string();    // Assign random id
+        
+        let _id = &job.id;  // Allows the String to be copied
+        let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(_id))))
+            .get_result(&mut connection).expect("Error occured while checking for existence of job in DB");
 
-// impl NewUser {
+        if job_already_exists {
+            Err(String::from("Job already exists in the database"))
+        } else {
+            let inserted_job = diesel::insert_into(jobs::table)
+                .values(&job)
+                .get_result(&mut connection)
+                .expect("Error occured while inserting new job in DB");
+            Ok(inserted_job)
+        }
+    }
 
-//     pub async fn create(user: NewUser) -> Result<Self, String> {
-//         let mut connection = establish_connection();
-//         // Hash the password before storing it
-//         let hashed_password = hash(user.password.as_bytes()).await;
+    pub async fn find(id: String) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).expect("Error while retrieving job from DB");
+        Ok(job)
+    }
 
-//         let user = NewUser {
-//             username: user.username,
-//             password: hashed_password,
-//             ..user
-//         };
+    pub async fn update(job: Jobs) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        let updated_job = diesel::update(jobs::table)
+            .filter(jobs::id.eq(&job.id))
+            .set(&job)
+            .get_result(&mut connection).expect("Error while updating job in DB");
+        Ok(updated_job)
+    }
 
-//         // Check username not in DB before creating
-//         let _username = &user.username;  // Allows the username String to be copied
-//         let user_already_exists = diesel::select(exists(users::table.filter(users::username.eq(_username))))
-//             .get_result(&mut connection).expect("Error occured while checking for existence of user in DB");
-
-//         if user_already_exists {
-//             Err(String::from("Username already exists in the database"))
-//         } else {
-//             // Insert the user into the database
-//             let inserted_user = diesel::insert_into(users::table)
-//                 .values(&user)
-//                 .get_result(&mut connection)
-//                 .expect("Error occured while inserting new user in DB");
-//             Ok(inserted_user)
-//         }
-//     }
-// }
-
-// impl User {
-
-//     pub async fn find(id: i32) -> Result<Self, String> {
-//         let mut connection = establish_connection();
-//         let user = users::table.filter(users::id.eq(id)).first(&mut connection).expect("Error while retrieving user from users table");
-//         Ok(user)
-//     }
-    
-//     pub async fn find_by_username(username: &String) -> Result<Self, String> {
-//         let mut connection = establish_connection();
-//         let user = users::table.filter(users::username.eq(username)).first(&mut connection).expect("Error while retrieving user from users table");
-//         Ok(user)
-//     }
-
-//     // // TODO: Implement password hashing for update to user.password
-//     // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
-//     //     let mut conn = db::connection()?;
-//     //     let user = diesel::update(users::table)
-//     //         .filter(users::id.eq(id))
-//     //         .set(user)
-//     //         .get_result(&mut conn)?;
-//     //     Ok(user)
-//     // }
-
-//     pub async fn delete(id: i32) -> Result<usize, String> {
-//         let mut connection = establish_connection();
-//         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut connection).expect("Error while deleting user");
-//         Ok(res)
-//     }
-// }
+    pub async fn delete(id: String) -> Result<usize, String> {
+        let mut connection = establish_connection();
+        let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
+        Ok(res)
+    }
+}

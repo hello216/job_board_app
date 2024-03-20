@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
-use crate::models::{Jobs, NewJob};
+use crate::models::Jobs;
 use crate::schema::jobs::dsl::*;
 use diesel::pg::PgConnection;
 use dotenvy::dotenv;
@@ -23,6 +23,11 @@ async fn main() -> std::io::Result<()> {
         App::new().service(
             web::scope("/api")
                 .route("/", web::get().to(index))
+                .route("/create_job", web::post().to(create_job))
+                .route("/all_jobs", web::get().to(all_jobs))
+                .route("/get_job", web::get().to(get_job))
+                .route("/delete_job", web::delete().to(delete_job))
+                .route("/update_job", web::put().to(update_job))
         )
     })
     .bind(("127.0.0.1", 8000))?
@@ -36,19 +41,28 @@ async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
-// async fn all_users() -> impl Responder {
-//     let mut connection = establish_connection();
-//     let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
-//     HttpResponse::Ok().json(_all_users)
-// }
+async fn create_job(job: web::Json<Jobs>) -> impl Responder {    
+   let new_job = Jobs::create(job.into_inner()).await;
+    HttpResponse::Ok().json(new_job)
+}
 
-// async fn create_user(user: web::Json<NewUser>) -> impl Responder {    
-//    let new_user = NewUser::create(user.into_inner()).await;
-//     HttpResponse::Ok().json(new_user)
-// }
+async fn all_jobs() -> impl Responder {
+    let mut connection = establish_connection();
+    let _all_jobs: Vec<Jobs> = jobs.load::<Jobs>(&mut connection).expect("Failed to load jobs");
+    HttpResponse::Ok().json(_all_jobs)
+}
 
-// async fn get_user() -> impl Responder {
-//     // get user from session, jwt, or whatever auth method
-//     let user = User::find(1).await;
-//     HttpResponse::Ok().json(user)
-// }
+async fn get_job(data: web::Json<String>) -> impl Responder {
+    let job = Jobs::find(data.0).await;
+    HttpResponse::Ok().json(job)
+}
+
+async fn update_job(job: web::Json<Jobs>) -> impl Responder {
+    let updated_job = Jobs::update(job.into_inner()).await;
+     HttpResponse::Ok().json(updated_job)
+}
+
+async fn delete_job(data: web::Json<String>) -> impl Responder {
+    let response = Jobs::delete(data.0).await;
+    HttpResponse::Ok().json(response)
+}
