@@ -15,36 +15,36 @@ fn establish_connection() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-#[derive(Serialize, Deserialize, Insertable)]
-#[diesel(table_name = crate::schema::jobs)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct NewJob {
-    pub status: String,
-    pub title: String,
-    pub company: String,
-    pub url: String,
-    pub location: String,
-    pub date_submitted: String,
-    pub created_at: String,
-    pub updated_at: String,
-}
+// #[derive(Serialize, Deserialize, Insertable)]
+// #[diesel(table_name = crate::schema::jobs)]
+// #[diesel(check_for_backend(diesel::pg::Pg))]
+// pub struct NewJob {
+//     pub status: String,
+//     pub title: String,
+//     pub company: String,
+//     pub url: String,
+//     pub location: String,
+//     pub date_submitted: String,
+//     pub created_at: String,
+//     pub updated_at: String,
+// }
 
-impl Queryable<(diesel::sql_types::Integer, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text), diesel::pg::Pg> for NewJob {
-    type Row = (i32, String, String, String, String, String, String, String, String);
+// impl Queryable<(diesel::sql_types::Integer, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text, diesel::sql_types::Text), diesel::pg::Pg> for NewJob {
+//     type Row = (i32, String, String, String, String, String, String, String, String);
 
-    fn build(row: Self::Row) -> Result<Self, Box<dyn std::error::Error + Send + Sync + 'static>> {
-        Ok(NewJob {
-            status: row.1,
-            title: row.2,
-            company: row.3,
-            url: row.4,
-            location: row.5,
-            date_submitted: row.6,
-            created_at: row.7,
-            updated_at: row.8,
-        })
-    }
-}
+//     fn build(row: Self::Row) -> Result<Self, Box<dyn std::error::Error + Send + Sync + 'static>> {
+//         Ok(NewJob {
+//             status: row.1,
+//             title: row.2,
+//             company: row.3,
+//             url: row.4,
+//             location: row.5,
+//             date_submitted: row.6,
+//             created_at: row.7,
+//             updated_at: row.8,
+//         })
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Queryable, Selectable, Insertable)]
 #[diesel(table_name = crate::schema::jobs)]
@@ -63,7 +63,7 @@ pub struct Jobs {
 }
 
 
-// impl NewUser {
+// impl NewJob {
 
 //     pub async fn create(user: NewUser) -> Result<Self, String> {
 //         let mut connection = establish_connection();
@@ -94,7 +94,7 @@ pub struct Jobs {
 //     }
 // }
 
-// impl User {
+// impl Jobs {
 
 //     pub async fn find(id: i32) -> Result<Self, String> {
 //         let mut connection = establish_connection();

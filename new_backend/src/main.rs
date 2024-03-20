@@ -1,6 +1,6 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use diesel::prelude::*;
-use crate::models::{Jobs, NewJob};
+use crate::models::Jobs;
 use crate::schema::jobs::dsl::*;
 use diesel::pg::PgConnection;
 use dotenvy::dotenv;
