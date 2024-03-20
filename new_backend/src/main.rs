@@ -42,11 +42,11 @@ async fn create_job(job: web::Json<Jobs>) -> impl Responder {
     HttpResponse::Ok().json(new_job)
 }
 
-// async fn all_users() -> impl Responder {
-//     let mut connection = establish_connection();
-//     let _all_users: Vec<User> = users.load::<User>(&mut connection).expect("Failed to load users");
-//     HttpResponse::Ok().json(_all_users)
-// }
+async fn all_jobs() -> impl Responder {
+    let mut connection = establish_connection();
+    let _all_jobs: Vec<Jobs> = jobs.load::<Jobs>(&mut connection).expect("Failed to load jobs");
+    HttpResponse::Ok().json(_all_jobs)
+}
 
 // async fn get_user() -> impl Responder {
 //     // get user from session, jwt, or whatever auth method
