@@ -25,6 +25,7 @@ async fn main() -> std::io::Result<()> {
                 .route("/", web::get().to(index))
                 .route("/create_job", web::post().to(create_job))
                 .route("/all_jobs", web::get().to(all_jobs))
+                .route("/get_job", web::get().to(get_job))
         )
     })
     .bind(("127.0.0.1", 8000))?
