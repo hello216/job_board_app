@@ -2,7 +2,7 @@
 
 diesel::table! {
     jobs (id) {
-        id -> Int4,
+        id -> Text,
         status -> Varchar,
         title -> Varchar,
         company -> Varchar,
