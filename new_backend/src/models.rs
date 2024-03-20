@@ -5,7 +5,6 @@ use diesel::pg::PgConnection;
 use diesel::dsl::exists;
 use dotenvy::dotenv;
 use std::env;
-use serde_json::json;
 use uuid::Uuid;
 
 
