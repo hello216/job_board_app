@@ -94,33 +94,44 @@ pub struct Jobs {
 //     }
 // }
 
-// impl Jobs {
-
-//     pub async fn find(id: i32) -> Result<Self, String> {
-//         let mut connection = establish_connection();
-//         let user = users::table.filter(users::id.eq(id)).first(&mut connection).expect("Error while retrieving user from users table");
-//         Ok(user)
-//     }
+impl Jobs {
     
-//     pub async fn find_by_username(username: &String) -> Result<Self, String> {
-//         let mut connection = establish_connection();
-//         let user = users::table.filter(users::username.eq(username)).first(&mut connection).expect("Error while retrieving user from users table");
-//         Ok(user)
-//     }
+    pub async fn create(job: Jobs) -> Result<Self, String> {
+        let mut connection = establish_connection();
 
-//     // // TODO: Implement password hashing for update to user.password
-//     // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
-//     //     let mut conn = db::connection()?;
-//     //     let user = diesel::update(users::table)
-//     //         .filter(users::id.eq(id))
-//     //         .set(user)
-//     //         .get_result(&mut conn)?;
-//     //     Ok(user)
-//     // }
+        let _title = &job.title;  // Allows the String to be copied
+        let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::title.eq(_title))))
+            .get_result(&mut connection).expect("Error occured while checking for existence of job in DB");
 
-//     pub async fn delete(id: i32) -> Result<usize, String> {
-//         let mut connection = establish_connection();
-//         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut connection).expect("Error while deleting user");
-//         Ok(res)
-//     }
-// }
+        if job_already_exists {
+            Err(String::from("Job already exists in the database"))
+        } else {
+            let inserted_job = diesel::insert_into(jobs::table)
+                .values(&job)
+                .get_result(&mut connection)
+                .expect("Error occured while inserting new job in DB");
+            Ok(inserted_job)
+        }
+    }
+
+    // pub async fn find(id: i32) -> Result<Self, String> {
+    //     let mut connection = establish_connection();
+    //     let user = users::table.filter(users::id.eq(id)).first(&mut connection).expect("Error while retrieving user from users table");
+    //     Ok(user)
+    // }
+
+    // pub fn update(id: i32, user: User) -> Result<Self, CustomError> {
+    //     let mut conn = db::connection()?;
+    //     let user = diesel::update(users::table)
+    //         .filter(users::id.eq(id))
+    //         .set(user)
+    //         .get_result(&mut conn)?;
+    //     Ok(user)
+    // }
+
+    // pub async fn delete(id: i32) -> Result<usize, String> {
+    //     let mut connection = establish_connection();
+    //     let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&mut connection).expect("Error while deleting user");
+    //     Ok(res)
+    // }
+}
