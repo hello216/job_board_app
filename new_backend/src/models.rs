@@ -33,10 +33,12 @@ pub struct Jobs {
 }
 
 impl Jobs {
-    pub async fn create(job: Jobs) -> Result<Self, String> {
+    pub async fn create(mut job: Jobs) -> Result<Self, String> {
         let mut connection = establish_connection();
-
-        let _id = &Uuid::new_v4();  // Allows the String to be copied
+        
+        job.id = Uuid::new_v4().to_string();    // Assign random id
+        
+        let _id = &job.id;  // Allows the String to be copied
         let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(_id))))
             .get_result(&mut connection).expect("Error occured while checking for existence of job in DB");
 
