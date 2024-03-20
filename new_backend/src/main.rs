@@ -49,8 +49,7 @@ async fn all_jobs() -> impl Responder {
     HttpResponse::Ok().json(_all_jobs)
 }
 
-// async fn get_user() -> impl Responder {
-//     // get user from session, jwt, or whatever auth method
-//     let user = User::find(1).await;
-//     HttpResponse::Ok().json(user)
-// }
+async fn get_job(data: web::Json<String>) -> impl Responder {
+    let job = Jobs::find(data.0).await;
+    HttpResponse::Ok().json(job)
+}
