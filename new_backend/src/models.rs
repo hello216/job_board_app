@@ -59,7 +59,7 @@ impl Jobs {
         Ok(job)
     }
 
-    pub fn update(job: Jobs) -> Result<Self, String> {
+    pub async fn update(job: Jobs) -> Result<Self, String> {
         let mut connection = establish_connection();
         let updated_job = diesel::update(jobs::table)
             .filter(jobs::id.eq(&job.id))

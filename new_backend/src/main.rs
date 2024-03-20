@@ -56,6 +56,11 @@ async fn get_job(data: web::Json<String>) -> impl Responder {
     HttpResponse::Ok().json(job)
 }
 
+async fn update_job(job: web::Json<Jobs>) -> impl Responder {
+    let updated_job = Jobs::update(job.into_inner()).await;
+     HttpResponse::Ok().json(updated_job)
+}
+
 async fn delete_job(data: web::Json<String>) -> impl Responder {
     let response = Jobs::delete(data.0).await;
     HttpResponse::Ok().json(response)
