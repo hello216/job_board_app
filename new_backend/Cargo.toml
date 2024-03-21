@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 actix-web = "4.5.1"
 argon2 = "0.5.3"
+chrono = "0.4.35"
 diesel = {version="2.1.4", features=["postgres"] }
 dotenvy = "0.15.7"
 jsonwebtoken = "9.2.0"
