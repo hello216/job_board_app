@@ -25,7 +25,6 @@ pub struct Jobs {
     pub company: String,
     pub url: String,
     pub location: String,
-    pub date_submitted: String,
     pub note: String,
     pub created_at: String,
     pub updated_at: String,

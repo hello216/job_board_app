@@ -8,7 +8,6 @@ diesel::table! {
         company -> Varchar,
         url -> Varchar,
         location -> Varchar,
-        date_submitted -> Timestamp,
         note -> Nullable<Varchar>,
         created_at -> Timestamp,
         updated_at -> Timestamp,
