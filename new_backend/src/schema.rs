@@ -10,6 +10,5 @@ diesel::table! {
         location -> Varchar,
         note -> Nullable<Varchar>,
         created_at -> Timestamp,
-        updated_at -> Timestamp,
     }
 }

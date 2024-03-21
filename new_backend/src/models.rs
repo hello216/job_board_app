@@ -6,6 +6,7 @@ use diesel::dsl::exists;
 use dotenvy::dotenv;
 use std::env;
 use uuid::Uuid;
+use chrono::{Utc, DateTime};
 
 
 fn establish_connection() -> PgConnection {
@@ -16,8 +17,7 @@ fn establish_connection() -> PgConnection {
 }
 
 #[derive(Serialize, Deserialize, Queryable, Selectable, Insertable, AsChangeset)]
-#[diesel(table_name = crate::schema::jobs)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[diesel(table_name = jobs)]
 pub struct Jobs {
     pub id: String,
     pub status: String,
@@ -25,28 +25,28 @@ pub struct Jobs {
     pub company: String,
     pub url: String,
     pub location: String,
-    pub note: String,
-    pub created_at: String,
-    pub updated_at: String,
+    pub note: Option<String>,
+    pub created_at: DateTime<Utc>
 }
 
 impl Jobs {
     pub async fn create(mut job: Jobs) -> Result<Self, String> {
         let mut connection = establish_connection();
         
-        job.id = Uuid::new_v4().to_string();    // Assign random id
-        
-        let _id = &job.id;  // Allows the String to be copied
+        job.id = Uuid::new_v4().to_string();
+        job.created_at = Utc::now();
+    
+        let _id = &job.id;
         let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(_id))))
-            .get_result(&mut connection).expect("Error occured while checking for existence of job in DB");
-
+            .get_result(&mut connection).expect("Error occurred while checking for existence of job in DB");
+    
         if job_already_exists {
             Err(String::from("Job already exists in the database"))
         } else {
             let inserted_job = diesel::insert_into(jobs::table)
                 .values(&job)
                 .get_result(&mut connection)
-                .expect("Error occured while inserting new job in DB");
+                .expect("Error occurred while inserting new job in DB");
             Ok(inserted_job)
         }
     }
