@@ -6,7 +6,7 @@ CREATE TABLE jobs (
   url VARCHAR NOT NULL,
   location VARCHAR NOT NULL,
   date_submitted TIMESTAMP NOT NULL,
-  note VARCHAR NOT NULL,
+  note VARCHAR,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL
 )
