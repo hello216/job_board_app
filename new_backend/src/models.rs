@@ -6,7 +6,7 @@ use diesel::dsl::exists;
 use dotenvy::dotenv;
 use std::env;
 use uuid::Uuid;
-use chrono::{Utc, DateTime};
+use chrono::Utc;
 
 
 fn establish_connection() -> PgConnection {
@@ -34,7 +34,8 @@ impl Jobs {
         let mut connection = establish_connection();
         
         job.id = Uuid::new_v4().to_string();
-        job.created_at = Utc::now();
+        let current_time = Utc::now();
+        job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
     
         let _id = &job.id;
         let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(_id))))
