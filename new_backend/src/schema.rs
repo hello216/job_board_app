@@ -9,6 +9,6 @@ diesel::table! {
         url -> Varchar,
         location -> Varchar,
         note -> Nullable<Varchar>,
-        created_at -> Timestamp,
+        created_at -> Varchar,
     }
 }

@@ -26,7 +26,7 @@ pub struct Jobs {
     pub url: String,
     pub location: String,
     pub note: Option<String>,
-    pub created_at: DateTime<Utc>
+    pub created_at: String
 }
 
 impl Jobs {

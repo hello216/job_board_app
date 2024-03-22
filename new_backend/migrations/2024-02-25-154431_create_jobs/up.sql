@@ -6,5 +6,5 @@ CREATE TABLE jobs (
   url VARCHAR NOT NULL,
   location VARCHAR NOT NULL,
   note VARCHAR,
-  created_at TIMESTAMP NOT NULL
+  created_at VARCHAR NOT NULL
 )
