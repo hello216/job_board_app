@@ -7,6 +7,9 @@ use dotenvy::dotenv;
 use std::env;
 use uuid::Uuid;
 use chrono::Utc;
+use sanitize_html::sanitize_str;
+use sanitize_html::rules::predefined::DEFAULT;
+
 
 
 fn establish_connection() -> PgConnection {
@@ -32,6 +35,21 @@ pub struct Jobs {
 impl Jobs {
     pub async fn create(mut job: Jobs) -> Result<Self, String> {
         let mut connection = establish_connection();
+        
+        // Sanitize
+        job.status = sanitize_str(&DEFAULT, &mut job.status).map_err(|e| e.to_string())?;
+        job.title = sanitize_str(&DEFAULT, &mut job.title).map_err(|e| e.to_string())?;
+        job.company = sanitize_str(&DEFAULT, &mut job.company).map_err(|e| e.to_string())?;
+        job.url = sanitize_str(&DEFAULT, &mut job.url).map_err(|e| e.to_string())?;
+        job.location = sanitize_str(&DEFAULT, &mut job.location).map_err(|e| e.to_string())?;
+        match job.note {
+            Some(ref mut note) => {
+                job.note = Some(sanitize_str(&DEFAULT, note).map_err(|e| e.to_string())?);
+            }
+            None => {
+                println!("No note");
+            }
+        }
         
         job.id = Uuid::new_v4().to_string();
         let current_time = Utc::now();
