@@ -32,23 +32,27 @@ pub struct Jobs {
 }
 
 impl Jobs {
-    pub async fn create(mut job: Jobs) -> Result<Self, String> {
-        let mut connection = establish_connection();
-        
-        // Sanitize
-        job.status = sanitize_str(&DEFAULT, &mut job.status).map_err(|e| e.to_string())?;
-        job.title = sanitize_str(&DEFAULT, &mut job.title).map_err(|e| e.to_string())?;
-        job.company = sanitize_str(&DEFAULT, &mut job.company).map_err(|e| e.to_string())?;
-        job.url = sanitize_str(&DEFAULT, &mut job.url).map_err(|e| e.to_string())?;
-        job.location = sanitize_str(&DEFAULT, &mut job.location).map_err(|e| e.to_string())?;
+    async fn sanitize_inputs(mut job: Jobs) -> Jobs {
+        job.status = sanitize_str(&DEFAULT, &mut job.status).expect("Error while sanitizing status");
+        job.title = sanitize_str(&DEFAULT, &mut job.title).expect("Error while sanitizing title");
+        job.company = sanitize_str(&DEFAULT, &mut job.company).expect("Error while sanitizing company");
+        job.url = sanitize_str(&DEFAULT, &mut job.url).expect("Error while sanitizing url");
+        job.location = sanitize_str(&DEFAULT, &mut job.location).expect("Error while sanitizing location");
         match job.note {
             Some(ref mut note) => {
-                job.note = Some(sanitize_str(&DEFAULT, note).map_err(|e| e.to_string())?);
+                job.note = Some(sanitize_str(&DEFAULT, note).expect("Error while sanitizing note"));
             }
             None => {
                 println!("No note");
             }
         }
+        return job
+    }
+
+    pub async fn create(mut job: Jobs) -> Result<Self, String> {
+        let mut connection = establish_connection();
+        
+        let _job = sanitize_inputs(job).await;
         
         job.id = Uuid::new_v4().to_string();
         let current_time = Utc::now();
@@ -87,22 +91,5 @@ impl Jobs {
         let mut connection = establish_connection();
         let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
         Ok(res)
-    }
-    
-    async fn sanitize_inputs(mut job: Jobs) -> Jobs {
-        job.status = sanitize_str(&DEFAULT, &mut job.status).expect("Error while sanitizing status");
-        job.title = sanitize_str(&DEFAULT, &mut job.title).expect("Error while sanitizing title");
-        job.company = sanitize_str(&DEFAULT, &mut job.company).expect("Error while sanitizing company");
-        job.url = sanitize_str(&DEFAULT, &mut job.url).expect("Error while sanitizing url");
-        job.location = sanitize_str(&DEFAULT, &mut job.location).expect("Error while sanitizing location");
-        match job.note {
-            Some(ref mut note) => {
-                job.note = Some(sanitize_str(&DEFAULT, note).expect("Error while sanitizing note"));
-            }
-            None => {
-                println!("No note");
-            }
-        }
-        return job
     }
 }
