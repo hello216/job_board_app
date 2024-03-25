@@ -11,7 +11,6 @@ use sanitize_html::sanitize_str;
 use sanitize_html::rules::predefined::DEFAULT;
 
 
-
 fn establish_connection() -> PgConnection {
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
