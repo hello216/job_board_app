@@ -90,6 +90,8 @@ impl Jobs {
 
     pub async fn delete(id: String) -> Result<usize, String> {
         let mut connection = establish_connection();
+        let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in delete function");
+        
         let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
         Ok(res)
     }
