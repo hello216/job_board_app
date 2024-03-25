@@ -54,18 +54,18 @@ impl Jobs {
         
         let _job = sanitize_inputs(job).await;
         
-        job.id = Uuid::new_v4().to_string();
+        _job.id = Uuid::new_v4().to_string();
         let current_time = Utc::now();
-        job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
+        _job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
-        let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&job.id))))
+        let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&_job.id))))
             .get_result(&mut connection).expect("Error occurred while checking for existence of job id in DB");
     
         if job_id_conflict {
             Err(String::from("Job id conflict found"))
         } else {
             let inserted_job = diesel::insert_into(jobs::table)
-                .values(&job)
+                .values(&_job)
                 .get_result(&mut connection)
                 .expect("Error occurred while inserting new job in DB");
             Ok(inserted_job)
