@@ -49,7 +49,7 @@ impl Jobs {
         return job
     }
 
-    pub async fn create(mut job: Jobs) -> Result<Self, String> {
+    pub async fn create(job: Jobs) -> Result<Self, String> {
         let mut connection = establish_connection();
         
         let mut _job = Self::sanitize_inputs(job).await;
