@@ -54,11 +54,11 @@ impl Jobs {
         let current_time = Utc::now();
         job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
 
-        let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(&job.id))))
-            .get_result(&mut connection).expect("Error occurred while checking for existence of job in DB");
+        let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&job.id))))
+            .get_result(&mut connection).expect("Error occurred while checking for existence of job id in DB");
     
-        if job_already_exists {
-            Err(String::from("Job already exists in the database"))
+        if job_id_conflict {
+            Err(String::from("Job id conflict found"))
         } else {
             let inserted_job = diesel::insert_into(jobs::table)
                 .values(&job)
