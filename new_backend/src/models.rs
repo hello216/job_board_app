@@ -50,8 +50,7 @@ impl Jobs {
     }
 
     pub async fn create(job: Jobs) -> Result<Self, String> {
-        let mut connection = establish_connection();
-        
+        let mut connection = establish_connection(); 
         let mut _job = Self::sanitize_inputs(job).await;
         
         _job.id = Uuid::new_v4().to_string();
@@ -79,10 +78,12 @@ impl Jobs {
     }
 
     pub async fn update(job: Jobs) -> Result<Self, String> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection(); 
+        let mut _job = Self::sanitize_inputs(job).await;
+        
         let updated_job = diesel::update(jobs::table)
-            .filter(jobs::id.eq(&job.id))
-            .set(&job)
+            .filter(jobs::id.eq(&_job.id))
+            .set(&_job)
             .get_result(&mut connection).expect("Error while updating job in DB");
         Ok(updated_job)
     }
