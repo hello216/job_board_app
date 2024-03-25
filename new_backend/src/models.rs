@@ -52,7 +52,7 @@ impl Jobs {
     pub async fn create(mut job: Jobs) -> Result<Self, String> {
         let mut connection = establish_connection();
         
-        let _job = sanitize_inputs(job).await;
+        let mut _job = Self::sanitize_inputs(job).await;
         
         _job.id = Uuid::new_v4().to_string();
         let current_time = Utc::now();
