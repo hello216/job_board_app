@@ -53,9 +53,8 @@ impl Jobs {
         job.id = Uuid::new_v4().to_string();
         let current_time = Utc::now();
         job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
-    
-        let _id = &job.id;
-        let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(_id))))
+
+        let job_already_exists = diesel::select(exists(jobs::table.filter(jobs::id.eq(&job.id))))
             .get_result(&mut connection).expect("Error occurred while checking for existence of job in DB");
     
         if job_already_exists {
