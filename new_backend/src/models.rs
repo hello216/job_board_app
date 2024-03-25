@@ -88,4 +88,21 @@ impl Jobs {
         let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
         Ok(res)
     }
+    
+    async fn sanitize_inputs(mut job: Jobs) -> Jobs {
+        job.status = sanitize_str(&DEFAULT, &mut job.status).expect("Error while sanitizing status");
+        job.title = sanitize_str(&DEFAULT, &mut job.title).expect("Error while sanitizing title");
+        job.company = sanitize_str(&DEFAULT, &mut job.company).expect("Error while sanitizing company");
+        job.url = sanitize_str(&DEFAULT, &mut job.url).expect("Error while sanitizing url");
+        job.location = sanitize_str(&DEFAULT, &mut job.location).expect("Error while sanitizing location");
+        match job.note {
+            Some(ref mut note) => {
+                job.note = Some(sanitize_str(&DEFAULT, note).expect("Error while sanitizing note"));
+            }
+            None => {
+                println!("No note");
+            }
+        }
+        return job
+    }
 }
