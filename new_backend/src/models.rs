@@ -50,8 +50,7 @@ impl Jobs {
     }
 
     pub async fn create(job: Jobs) -> Result<Self, String> {
-        let mut connection = establish_connection();
-        
+        let mut connection = establish_connection(); 
         let mut _job = Self::sanitize_inputs(job).await;
         
         _job.id = Uuid::new_v4().to_string();
@@ -74,21 +73,25 @@ impl Jobs {
 
     pub async fn find(id: String) -> Result<Self, String> {
         let mut connection = establish_connection();
+        let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in find function");
         let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).expect("Error while retrieving job from DB");
         Ok(job)
     }
 
     pub async fn update(job: Jobs) -> Result<Self, String> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection(); 
+        let mut _job = Self::sanitize_inputs(job).await;
+        
         let updated_job = diesel::update(jobs::table)
-            .filter(jobs::id.eq(&job.id))
-            .set(&job)
+            .filter(jobs::id.eq(&_job.id))
+            .set(&_job)
             .get_result(&mut connection).expect("Error while updating job in DB");
         Ok(updated_job)
     }
 
     pub async fn delete(id: String) -> Result<usize, String> {
         let mut connection = establish_connection();
+        let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in delete function");
         let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
         Ok(res)
     }
