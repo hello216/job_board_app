@@ -42,8 +42,10 @@ async fn index() -> impl Responder {
 }
 
 async fn create_job(job: web::Json<Jobs>) -> impl Responder {    
-   let new_job = Jobs::create(job.into_inner()).await;
-    HttpResponse::Ok().json(new_job)
+    let new_job = match Jobs::create(job.into_inner()).await {
+        Ok(job) => return HttpResponse::Ok().json(job),
+        Err(err) => return HttpResponse::InternalServerError().json("Error occured while creating job"),
+    };
 }
 
 async fn all_jobs() -> impl Responder {
