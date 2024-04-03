@@ -9,6 +9,7 @@ use uuid::Uuid;
 use chrono::Utc;
 use sanitize_html::sanitize_str;
 use sanitize_html::rules::predefined::DEFAULT;
+use std::error::Error;
 
 
 fn establish_connection() -> PgConnection {
@@ -49,25 +50,29 @@ impl Jobs {
         return job
     }
 
-    pub async fn create(job: Jobs) -> Result<Self, String> {
-        let mut connection = establish_connection(); 
+    pub async fn create(job: Jobs) -> Result<Self, Box<dyn Error>> {
+        let mut connection = establish_connection();
         let mut _job = Self::sanitize_inputs(job).await;
-        
+    
         _job.id = Uuid::new_v4().to_string();
         let current_time = Utc::now();
         _job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
-
+    
         let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&_job.id))))
-            .get_result(&mut connection).expect("Error occurred while checking for existence of job id in DB");
+                .get_result::<bool>(&mut connection)
+                .map_err(|err| Box::new(err) as Box<dyn Error>)?;
     
         if job_id_conflict {
-            Err(String::from("Job id conflict found"))
+            Err(String::from("Job id conflict found").into())
         } else {
             let inserted_job = diesel::insert_into(jobs::table)
                 .values(&_job)
                 .get_result(&mut connection)
-                .expect("Error occurred while inserting new job in DB");
-            Ok(inserted_job)
+                .map_err(|err| {
+                    Box::new(err) as Box<dyn Error>
+                });
+    
+            inserted_job
         }
     }
 
