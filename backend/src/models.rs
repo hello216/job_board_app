@@ -82,9 +82,8 @@ impl Jobs {
         let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in find function");
         let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).map_err(|err| {
             Box::new(err) as Box<dyn Error>
-        });
-        Ok(job);
-        Err(err) => return err;
+        })?;
+        Ok(job)
     }
 
     pub async fn update(job: Jobs) -> Result<Self, String> {

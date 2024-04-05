@@ -55,8 +55,10 @@ async fn all_jobs() -> impl Responder {
 }
 
 async fn get_job(data: web::Json<String>) -> impl Responder {
-    let job = Jobs::find(data.0).await;
-    HttpResponse::Ok().json(job)
+    let job = match Jobs::find(data.0).await {
+        Ok(job) => return HttpResponse::Ok().json(job),
+        Err(err) => return HttpResponse::InternalServerError().json("Error occured while retrieving job"),
+    };
 }
 
 async fn update_job(job: web::Json<Jobs>) -> impl Responder {
