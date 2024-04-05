@@ -1,3 +1,4 @@
+use actix_web::guard::Put;
 use diesel::prelude::*;
 use crate::schema::jobs;
 use serde::{Serialize, Deserialize};
@@ -76,11 +77,14 @@ impl Jobs {
         }
     }
 
-    pub async fn find(id: String) -> Result<Self, String> {
+    pub async fn find(id: String) -> Result<Self, Box<dyn Error>> {
         let mut connection = establish_connection();
         let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in find function");
-        let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).expect("Error while retrieving job from DB");
-        Ok(job)
+        let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).map_err(|err| {
+            Box::new(err) as Box<dyn Error>
+        });
+        Ok(job);
+        Err(err) => return err;
     }
 
     pub async fn update(job: Jobs) -> Result<Self, String> {
