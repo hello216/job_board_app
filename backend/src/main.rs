@@ -35,15 +35,15 @@ async fn main() -> std::io::Result<()> {
     .await
 }
 
-// Route Handlers
-
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
 
 async fn create_job(job: web::Json<Jobs>) -> impl Responder {    
-   let new_job = Jobs::create(job.into_inner()).await;
-    HttpResponse::Ok().json(new_job)
+    match Jobs::create(job.into_inner()).await {
+        Ok(job) => return HttpResponse::Ok().json(job),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occured while creating job"),
+    };
 }
 
 async fn all_jobs() -> impl Responder {
@@ -53,16 +53,22 @@ async fn all_jobs() -> impl Responder {
 }
 
 async fn get_job(data: web::Json<String>) -> impl Responder {
-    let job = Jobs::find(data.0).await;
-    HttpResponse::Ok().json(job)
+    match Jobs::find(data.0).await {
+        Ok(job) => return HttpResponse::Ok().json(job),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occured while retrieving job"),
+    };
 }
 
 async fn update_job(job: web::Json<Jobs>) -> impl Responder {
-    let updated_job = Jobs::update(job.into_inner()).await;
-     HttpResponse::Ok().json(updated_job)
+    match Jobs::update(job.into_inner()).await {
+        Ok(job) => return HttpResponse::Ok().json(job),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occured while updating job"),
+    }
 }
 
 async fn delete_job(data: web::Json<String>) -> impl Responder {
-    let response = Jobs::delete(data.0).await;
-    HttpResponse::Ok().json(response)
+    match Jobs::delete(data.0).await  {
+        Ok(response) => return HttpResponse::Ok().json(response),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occured while deleting job"),
+    }
 }
