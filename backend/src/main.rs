@@ -69,6 +69,8 @@ async fn update_job(job: web::Json<Jobs>) -> impl Responder {
 }
 
 async fn delete_job(data: web::Json<String>) -> impl Responder {
-    let response = Jobs::delete(data.0).await;
-    HttpResponse::Ok().json(response)
+    match Jobs::delete(data.0).await  {
+        Ok(response) => return HttpResponse::Ok().json(response),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occured while deleting job"),
+    }
 }
