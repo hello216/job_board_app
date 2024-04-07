@@ -85,14 +85,16 @@ impl Jobs {
         Ok(job)
     }
 
-    pub async fn update(job: Jobs) -> Result<Self, String> {
+    pub async fn update(job: Jobs) -> Result<Self, Box<dyn Error>> {
         let mut connection = establish_connection(); 
         let mut _job = Self::sanitize_inputs(job).await;
         
         let updated_job = diesel::update(jobs::table)
             .filter(jobs::id.eq(&_job.id))
             .set(&_job)
-            .get_result(&mut connection).expect("Error while updating job in DB");
+            .get_result(&mut connection).map_err(|err| {
+                Box::new(err) as Box<dyn Error>
+            })?;
         Ok(updated_job)
     }
 
