@@ -98,10 +98,12 @@ impl Jobs {
         Ok(updated_job)
     }
 
-    pub async fn delete(id: String) -> Result<usize, String> {
+    pub async fn delete(id: String) -> Result<usize, Box<dyn Error>> {
         let mut connection = establish_connection();
         let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in delete function");
-        let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).expect("Error while deleting job");
+        let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).map_err(|err| {
+            Box::new(err) as Box<dyn Error>
+        })?;
         Ok(res)
     }
 }
