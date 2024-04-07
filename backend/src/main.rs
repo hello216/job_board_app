@@ -35,8 +35,6 @@ async fn main() -> std::io::Result<()> {
     .await
 }
 
-// Route Handlers
-
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
 }
