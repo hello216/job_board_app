@@ -1,4 +1,3 @@
-use actix_web::guard::Put;
 use diesel::prelude::*;
 use crate::schema::jobs;
 use serde::{Serialize, Deserialize};
