@@ -62,8 +62,10 @@ async fn get_job(data: web::Json<String>) -> impl Responder {
 }
 
 async fn update_job(job: web::Json<Jobs>) -> impl Responder {
-    let updated_job = Jobs::update(job.into_inner()).await;
-     HttpResponse::Ok().json(updated_job)
+    match Jobs::update(job.into_inner()).await {
+        Ok(job) => return HttpResponse::Ok().json(job),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occured while updating job"),
+    }
 }
 
 async fn delete_job(data: web::Json<String>) -> impl Responder {
