@@ -33,7 +33,7 @@ pub struct Jobs {
 }
 
 impl Jobs {
-    async fn sanitize_inputs(mut job: Jobs) -> Jobs {
+    async fn sanitize_inputs(mut job: Jobs) -> Result<Self, String> {
         job.status = sanitize_str(&DEFAULT, &mut job.status).expect("Error while sanitizing status");
         job.title = sanitize_str(&DEFAULT, &mut job.title).expect("Error while sanitizing title");
         job.company = sanitize_str(&DEFAULT, &mut job.company).expect("Error while sanitizing company");
@@ -47,32 +47,38 @@ impl Jobs {
                 println!("No note");
             }
         }
-        return job
+        Ok(job)
     }
 
     pub async fn create(job: Jobs) -> Result<Self, Box<dyn Error>> {
         let mut connection = establish_connection();
-        let mut _job = Self::sanitize_inputs(job).await;
-    
-        _job.id = Uuid::new_v4().to_string();
-        let current_time = Utc::now();
-        _job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
-    
-        let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&_job.id))))
-                .get_result::<bool>(&mut connection)
-                .map_err(|err| Box::new(err) as Box<dyn Error>)?;
-    
-        if job_id_conflict {
-            Err(String::from("Job id conflict found").into())
-        } else {
-            let inserted_job = diesel::insert_into(jobs::table)
-                .values(&_job)
-                .get_result(&mut connection)
-                .map_err(|err| {
-                    Box::new(err) as Box<dyn Error>
-                });
-    
-            inserted_job
+        let mut _job: Jobs;
+        match Self::sanitize_inputs(job).await {
+            Ok(sanitized_job) => {
+                let mut _job = sanitized_job;
+
+                _job.id = Uuid::new_v4().to_string();
+                let current_time = Utc::now();
+                _job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
+            
+                let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&_job.id))))
+                        .get_result::<bool>(&mut connection)
+                        .map_err(|err| Box::new(err) as Box<dyn Error>)?;
+            
+                if job_id_conflict {
+                    Err(String::from("Job id conflict found").into())
+                } else {
+                    let inserted_job = diesel::insert_into(jobs::table)
+                        .values(&_job)
+                        .get_result(&mut connection)
+                        .map_err(|err| {
+                            Box::new(err) as Box<dyn Error>
+                        });
+            
+                    inserted_job
+                }
+            },
+            Err(err) => Err(Box::new(err) as Box<dyn Error>),
         }
     }
 
