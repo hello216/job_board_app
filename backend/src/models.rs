@@ -4,13 +4,32 @@ use serde::{Serialize, Deserialize};
 use diesel::pg::PgConnection;
 use diesel::dsl::exists;
 use dotenvy::dotenv;
-use std::env;
+use std::{env, fmt};
 use uuid::Uuid;
 use chrono::Utc;
 use sanitize_html::sanitize_str;
 use sanitize_html::rules::predefined::DEFAULT;
 use std::error::Error;
 
+
+#[derive(Debug)]
+struct StringError(String);
+impl Error for StringError {}
+impl fmt::Display for StringError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+impl From<String> for StringError {
+    fn from(s: String) -> Self {
+        StringError(s)
+    }
+}
+impl From<&str> for StringError {
+    fn from(s: &str) -> Self {
+        StringError(s.to_string())
+    }
+}
 
 fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -55,30 +74,28 @@ impl Jobs {
         let mut _job: Jobs;
         match Self::sanitize_inputs(job).await {
             Ok(sanitized_job) => {
-                let mut _job = sanitized_job;
-
+                _job = sanitized_job;
+    
                 _job.id = Uuid::new_v4().to_string();
                 let current_time = Utc::now();
                 _job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
-            
+    
                 let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&_job.id))))
-                        .get_result::<bool>(&mut connection)
-                        .map_err(|err| Box::new(err) as Box<dyn Error>)?;
-            
+                    .get_result::<bool>(&mut connection)
+                    .map_err(|err| Box::new(StringError::from(err.to_string())) as Box<dyn Error>)?;
+    
                 if job_id_conflict {
-                    Err(String::from("Job id conflict found").into())
+                    Err(Box::new(StringError::from("Job id conflict found")) as Box<dyn Error>)
                 } else {
                     let inserted_job = diesel::insert_into(jobs::table)
                         .values(&_job)
                         .get_result(&mut connection)
-                        .map_err(|err| {
-                            Box::new(err) as Box<dyn Error>
-                        });
-            
-                    inserted_job
+                        .map_err(|err| Box::new(StringError::from(err.to_string())) as Box<dyn Error>)?;
+    
+                    Ok(inserted_job)
                 }
             },
-            Err(err) => Err(Box::new(err) as Box<dyn Error>),
+            Err(err) => Err(Box::new(StringError::from(err.to_string())) as Box<dyn Error>),
         }
     }
 
