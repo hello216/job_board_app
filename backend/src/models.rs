@@ -12,6 +12,7 @@ use sanitize_html::rules::predefined::DEFAULT;
 use std::error::Error;
 
 
+// Added StdError Trait to Strings
 #[derive(Debug)]
 struct StringError(String);
 impl Error for StringError {}
