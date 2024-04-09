@@ -111,15 +111,18 @@ impl Jobs {
 
     pub async fn update(job: Jobs) -> Result<Self, Box<dyn Error>> {
         let mut connection = establish_connection(); 
-        let mut _job = Self::sanitize_inputs(job).await;
-        
-        let updated_job = diesel::update(jobs::table)
-            .filter(jobs::id.eq(&_job.id))
-            .set(&_job)
-            .get_result(&mut connection).map_err(|err| {
-                Box::new(err) as Box<dyn Error>
-            })?;
-        Ok(updated_job)
+        match Self::sanitize_inputs(job).await {
+            Ok(_job) => {
+                let updated_job = diesel::update(jobs::table)
+                    .filter(jobs::id.eq(&_job.id))
+                    .set(&_job)
+                    .get_result(&mut connection).map_err(|err| {
+                        Box::new(err) as Box<dyn Error>
+                    })?;
+                Ok(updated_job)
+            }
+            Err(err) => Err(Box::new(StringError::from(err.to_string())) as Box<dyn Error>),
+        }
     }
 
     pub async fn delete(id: String) -> Result<usize, Box<dyn Error>> {
