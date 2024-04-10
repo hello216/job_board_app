@@ -100,9 +100,18 @@ impl Jobs {
         }
     }
 
-    pub async fn find(id: String) -> Result<Self, Box<dyn Error>> {
+    pub async fn find(mut id: String) -> Result<Self, Box<dyn Error>> {
         let mut connection = establish_connection();
-        let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in find function");
+        match sanitize_str(&DEFAULT, &id) {
+            Ok(sanitized_id) => {
+                id = sanitized_id;
+            },
+            Err(_) => {
+                eprintln!("Error while sanitizing id in find function");
+                id = String::from("None");
+            }
+        };
+        
         let job = jobs::table.filter(jobs::id.eq(id)).first(&mut connection).map_err(|err| {
             Box::new(err) as Box<dyn Error>
         })?;
