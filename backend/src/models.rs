@@ -80,7 +80,7 @@ impl Jobs {
                 _job.id = Uuid::new_v4().to_string();
                 let current_time = Utc::now();
                 _job.created_at = current_time.format("%Y-%m-%d %H:%M:%S").to_string();
-    
+
                 let job_id_conflict = diesel::select(exists(jobs::table.filter(jobs::id.eq(&_job.id))))
                     .get_result::<bool>(&mut connection)
                     .map_err(|err| Box::new(StringError::from(err.to_string())) as Box<dyn Error>)?;
