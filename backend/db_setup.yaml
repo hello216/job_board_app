@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     container_name: db_job_board_app
-    image: postgres:14.1
+    image: postgres:16.2
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -19,4 +19,4 @@ volumes:
 
 # Start that thing up!
 # 
-# docker-compose -f postgres.yaml up
+# docker compose -f postgres.yaml up
