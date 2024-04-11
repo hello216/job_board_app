@@ -12,7 +12,7 @@ use sanitize_html::rules::predefined::DEFAULT;
 use std::error::Error;
 
 
-// Added StdError Trait to Strings
+// StdError Trait to Strings
 #[derive(Debug)]
 struct StringError(String);
 impl Error for StringError {}
@@ -136,7 +136,7 @@ impl Jobs {
 
     pub async fn delete(id: String) -> Result<usize, Box<dyn Error>> {
         let mut connection = establish_connection();
-        let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in delete function");
+        let id = sanitize_str(&DEFAULT, &id).expect("Error while sanitizing id in delete function");    // TODO: Sanitize id
         let res = diesel::delete(jobs::table.filter(jobs::id.eq(id))).execute(&mut connection).map_err(|err| {
             Box::new(err) as Box<dyn Error>
         })?;
