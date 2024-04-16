@@ -23,8 +23,6 @@ __pycache__/
 # npm
 node_modules/
 npm-debug.log
-/package-lock.json
-package-lock.json/
 
 # Webpack
 /frontend/bundles/*
