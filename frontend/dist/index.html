@@ -1,11 +1,19 @@
 <!DOCTYPE html><html><head>
         <meta charset="utf-8">
         <title>Yew App</title>
-    </head>
+    
+<link rel="preload" href="/frontend-7ca48978f4e99ae3_bg.wasm" crossorigin="anonymous" integrity="sha384-FiFWKYqtSnZ1O9DvIvyHkUxUJr++7ic/BKsH+p/5xXWaEH3eGMtABMuSdNQTrBGz" as="fetch" type="application/wasm">
+<link rel="modulepreload" href="/frontend-7ca48978f4e99ae3.js" crossorigin="anonymous" integrity="sha384-lLDUTOhBY2Ogwtd5HN18FffKkccuLqlb//7ephdFyZ+ux81fAiwmvEi3A1RVKomr"></head>
     <body>
     
 
-<script>"use strict";
+
+<script type="module">
+import init, * as bindings from '/frontend-7ca48978f4e99ae3.js';
+init('/frontend-7ca48978f4e99ae3_bg.wasm');
+window.wasmBindings = bindings;
+
+</script><script>"use strict";
 
 (function () {
 
