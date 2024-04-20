@@ -1,18 +1,11 @@
 use yew::prelude::*;
-use reqwasm::http::Request;
 
-
-async fn fetch_data() -> String {
+fn fetch_data() -> String {
     let url = String::from("http://localhost:8000/api/");
-    let response = Request::get(&url)
-        .send()
-        .await
-        .unwrap();
+    let response = fetch::fetch_body(url);
 
     let data = response
-        .json()
-        .await
-        .expect("Failed to parse JSON response");
+        .json().expect("Failed to parse JSON response");
 
     return data
 }
@@ -28,7 +21,10 @@ async fn fetch_data() -> String {
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <h1>{ "Hello World" }</h1>
+        <div>
+            <h1>{ "Hello World" }</h1>
+            <button onclick={fetch_data}>{"Fetch Data"}</button>
+        </div>
     }
 }
 
