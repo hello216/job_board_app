@@ -17,13 +17,13 @@ async fn fetch_data() -> String {
     return data
 }
 
-#[function_component(UseEffect)]
-fn effect() -> Html {
-    let data = fetch_data();
-    html! {
-        <p>{data}</p>
-    }
-}
+// #[function_component(UseEffect)]
+// fn effect() -> Html {
+//     let data = fetch_data();
+//     html! {
+//         <p>{data}</p>
+//     }
+// }
 
 #[function_component(App)]
 fn app() -> Html {
