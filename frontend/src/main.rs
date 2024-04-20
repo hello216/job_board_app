@@ -3,7 +3,7 @@ use reqwasm::http::Request;
 
 
 async fn fetch_data() -> String {
-    let url = String::from("http://localhost:1234/api/");
+    let url = String::from("http://localhost:8000/api/");
     let response = Request::get(&url)
         .send()
         .await
@@ -14,7 +14,15 @@ async fn fetch_data() -> String {
         .await
         .expect("Failed to parse JSON response");
 
-    data
+    return data
+}
+
+#[function_component(UseEffect)]
+fn effect() -> Html {
+    let data = fetch_data();
+    html! {
+        <p>{data}</p>
+    }
 }
 
 #[function_component(App)]
