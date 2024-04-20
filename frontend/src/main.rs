@@ -1,8 +1,10 @@
 use yew::prelude::*;
+use reqwest;
+
 
 fn fetch_data() -> String {
     let url = String::from("http://localhost:8000/api/");
-    let response = fetch::fetch_body(url);
+    let response = reqwest::get(url);
 
     let data = response
         .json().expect("Failed to parse JSON response");
