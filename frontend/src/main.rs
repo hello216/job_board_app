@@ -1,15 +1,19 @@
-use askama::Template; // bring trait in scope
+use askama_actix::Template;
+use actix_web::{web, App, HttpServer};
 
-#[derive(Template)] // this will generate the code...
-#[template(path = "hello.html")] // using the template in this path, relative
-                                 // to the `templates` dir in the crate root
-struct HelloTemplate<'a> { // the name of the struct can be anything
-    name: &'a str, // the field name should match the variable name
-                   // in your template
+
+#[derive(Template)]
+#[template(path = "hello.html")]
+struct HelloTemplate<'a> {
+    name: &'a str,
 }
 
-fn main() {
-    let hello = HelloTemplate { name: "world" }; // instantiate your struct
-    println!("{}", hello.render().unwrap()); // then render it.
-    hello.render().unwrap();
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new().service(web::resource("/").to(|| async { HelloTemplate { name: "world" } }))
+    })
+    .bind(("127.0.0.1", 9999))?
+    .run()
+    .await
 }
