@@ -1,25 +1,14 @@
-use actix_web::{get, web, App, HttpServer, Responder};
-use askama::Template;
+use askama::Template; // bring trait in scope
 
-
-#[derive(Template)]
-#[template(path = "index.html")]
-struct IndexTemplate {}
-
-#[get("/")]
-async fn index() -> impl Responder {
-    let template = IndexTemplate {};
-    template.render().unwrap_or_else(|_| "Error rendering template".to_string())
+#[derive(Template)] // this will generate the code...
+#[template(path = "hello.html")] // using the template in this path, relative
+                                 // to the `templates` dir in the crate root
+struct HelloTemplate<'a> { // the name of the struct can be anything
+    name: &'a str, // the field name should match the variable name
+                   // in your template
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-            .service(actix_files::Files::new("/static", "static"))
-    })
-    .bind("127.0.0.1:9999")?
-    .run()
-    .await
+fn main() {
+    let hello = HelloTemplate { name: "world" }; // instantiate your struct
+    println!("{}", hello.render().unwrap()); // then render it.
 }
