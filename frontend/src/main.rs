@@ -16,55 +16,17 @@ struct FormData {
     // Add any form fields you need to receive from the client
 }
 
-#[derive(Debug)]
-enum AppError {
-    AskamError(askama_actix::Error),
-    ActixError(actix_web::Error),
-}
-
-impl std::error::Error for AppError {}
-
-impl fmt::Display for AppError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            AppError::AskamError(e) => write!(f, "Askama error: {}", e),
-            AppError::ActixError(e) => write!(f, "Actix-web error: {}", e),
-        }
-    }
-}
-
-impl From<askama_actix::Error> for AppError {
-    fn from(err: askama_actix::Error) -> Self {
-        AppError::AskamError(err)
-    }
-}
-
-impl From<actix_web::Error> for AppError {
-    fn from(err: actix_web::Error) -> Self {
-        AppError::ActixError(err)
-    }
-}
-
-impl ResponseError for AppError {
-    fn status_code(&self) -> actix_web::http::StatusCode {
-        match self {
-            AppError::AskamError(_) => actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::ActixError(e) => e.as_response_error().status_code(),
-        }
-    }
-}
-
 #[get("/")]
-async fn index() -> Result<impl Responder, AppError> {
+async fn index() -> Result<impl Responder> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
         data: "",
     };
-    template.render().map_err(AppError::from)
+    template.render();
 }
 
 #[get("/get-data")]
-async fn get_data(form: web::Form<FormData>) -> Result<impl Responder, AppError> {
+async fn get_data(form: web::Form<FormData>) -> Result<impl Responder> {
     // Process the form data and fetch the data from the backend
     let data = "This is the data from the backend.";
 
@@ -72,7 +34,7 @@ async fn get_data(form: web::Form<FormData>) -> Result<impl Responder, AppError>
         title: "My Rust App Frontend",
         data,
     };
-    template.render().map_err(AppError::from)
+    template.render();
 }
 
 #[actix_web::main]
