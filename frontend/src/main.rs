@@ -1,20 +1,7 @@
-use askama::Error as AskamaError;
 use askama_actix::Template;
-use actix_web::{get, web, App, HttpServer, Responder, Result, error::ResponseError};
+use actix_web::{get, web, App, HttpServer, Responder, HttpResponse};
 use serde_derive::Deserialize;
-use std::fmt;
 
-
-#[derive(Debug)]
-struct CustomError(AskamaError);
-
-impl fmt::Display for CustomError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl ResponseError for CustomError {}
 
 #[derive(Template)]
 #[template(path = "index.html")]
@@ -29,26 +16,35 @@ struct FormData {
 }
 
 #[get("/")]
-async fn index() -> Result<impl Responder, CustomError> {
+async fn index() -> impl Responder {
+    match render_index_template() {
+        Ok(body) => HttpResponse::Ok().body(body),
+        Err(err) => {
+            eprintln!("Error rendering template: {}", err);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
+
+fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
         data: "",
     };
-    template.render().map_err(CustomError)
+    template.render()
 }
 
 #[get("/get-data")]
 async fn get_data(form: web::Form<FormData>) -> impl Responder {
     let data = "This is the data from the backend.";
 
-    let template = IndexTemplate {
-        title: "My Rust App Frontend",
-        data,
-    };
-    template.render().map_err(CustomError).unwrap_or_else(|err| {
-        eprintln!("Error rendering template: {}", err);
-        err.into()
-    })
+    match render_index_template() {
+        Ok(body) => HttpResponse::Ok().body(body),
+        Err(err) => {
+            eprintln!("Error rendering template: {}", err);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
 }
 
 #[actix_web::main]
