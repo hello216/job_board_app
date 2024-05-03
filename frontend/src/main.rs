@@ -20,25 +20,27 @@ struct FormData {
 async fn index() -> Result<impl Responder, Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: "", // You can initialize with an empty string here
+        data: "",
     };
-    Ok(template.render().map_err(Error::into_response)?)
+    template.render().map_err(Error::into)
 }
 
 #[get("/get-data")]
 async fn get_data(form: web::Form<FormData>) -> impl Responder {
-    // Process the form data and fetch the data from the backend
     let data = "This is the data from the backend.";
 
     let template = IndexTemplate {
         title: "My Rust App Frontend",
         data,
     };
-    template.render().map_err(Error::into_response).unwrap_or_else(|err| {
-        // Handle rendering error
-        println!("Error rendering template: {}", err);
-        err.into_response()
-    })
+    match template.render() {
+        Ok(body) => body,
+        Err(err) => {
+            // Handle rendering error
+            eprintln!("Error rendering template: {}", err);
+            "Error rendering template".to_string()
+        }
+    }
 }
 
 #[actix_web::main]
