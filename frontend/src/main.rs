@@ -1,7 +1,7 @@
+use askama::Error;
 use askama_actix::Template;
-use actix_web::{get, web, App, HttpServer, Responder, Result, ResponseError};
+use actix_web::{get, web, App, HttpServer, Responder, Result};
 use serde_derive::Deserialize;
-use std::fmt;
 
 
 #[derive(Template)]
@@ -17,16 +17,16 @@ struct FormData {
 }
 
 #[get("/")]
-async fn index() -> Result<impl Responder> {
+async fn index() -> Result<impl Responder, Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: "",
+        data: "", // You can initialize with an empty string here
     };
-    template.render();
+    Ok(template.render().map_err(Error::into_response)?)
 }
 
 #[get("/get-data")]
-async fn get_data(form: web::Form<FormData>) -> Result<impl Responder> {
+async fn get_data(form: web::Form<FormData>) -> impl Responder {
     // Process the form data and fetch the data from the backend
     let data = "This is the data from the backend.";
 
@@ -34,7 +34,11 @@ async fn get_data(form: web::Form<FormData>) -> Result<impl Responder> {
         title: "My Rust App Frontend",
         data,
     };
-    template.render();
+    template.render().map_err(Error::into_response).unwrap_or_else(|err| {
+        // Handle rendering error
+        println!("Error rendering template: {}", err);
+        err.into_response()
+    })
 }
 
 #[actix_web::main]
