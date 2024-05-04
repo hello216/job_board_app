@@ -1,6 +1,7 @@
 use askama_actix::Template;
 use actix_web::{get, web, App, HttpServer, Responder, HttpResponse};
 use serde_derive::Deserialize;
+use reqwest::Error;
 
 
 #[derive(Template)]
@@ -37,9 +38,17 @@ fn render_index_template() -> Result<String, askama::Error> {
 #[get("/get-data")]
 async fn get_data(form: web::Form<FormData>) -> impl Responder {
     let data = "This is the data from the backend.";
+    let response = reqwest::get("http://localhost:8000/api/all_jobs").await.expect("error");
+
+    if response.status().is_success() {
+        let body = response.text().await.expect("error");
+        println!("Response body: {}", body);
+    } else {
+        println!("Request failed with status code: {}", response.status());
+    }
 
     match render_index_template() {
-        Ok(body) => HttpResponse::Ok().body(body),
+        Ok(body) => HttpResponse::Ok().body(response),
         Err(err) => {
             eprintln!("Error rendering template: {}", err);
             HttpResponse::InternalServerError().finish()
