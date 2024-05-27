@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Rust App Frontend</title>
+  <title>{{ title }}</title>
   <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
@@ -28,7 +28,36 @@
 
     <section id="data-display">
       <h2>Backend Data</h2>
-      <div id="data-container"></div>
+      <div id="data-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Status</th>
+              <th>Title</th>
+              <th>Company</th>
+              <th>URL</th>
+              <th>Location</th>
+              <th>Notes</th>
+              <th>Submitted at</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in data %}
+            <tr>
+              <td>{{ item.id }}</td>
+              <td>{{ item.status }}</td>
+              <td>{{ item.title }}</td>
+              <td>{{ item.company }}</td>
+              <td>{{ item.url }}</td>
+              <td>{{ item.location }}</td>
+              <td>{{ item.note }}</td>
+              <td>{{ item.created_at }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </section>
   </main>
 

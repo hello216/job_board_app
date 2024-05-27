@@ -1,6 +1,7 @@
 use askama_actix::Template;
 use actix_web::{get, web, App, HttpServer, Responder, HttpResponse};
 use serde_derive::Deserialize;
+use reqwest::Error;
 
 
 #[derive(Template)]
@@ -12,7 +13,7 @@ struct IndexTemplate<'a> {
 
 #[derive(Deserialize)]
 struct FormData {
-    // Add any form fields you need to receive from the client
+    // form fields
 }
 
 #[get("/")]
@@ -35,16 +36,32 @@ fn render_index_template() -> Result<String, askama::Error> {
 }
 
 #[get("/get-data")]
-async fn get_data(form: web::Form<FormData>) -> impl Responder {
-    let data = "This is the data from the backend.";
+async fn get_data() -> impl Responder {
+    let response = reqwest::get("http://localhost:8000/api/all_jobs").await.expect("error");
 
-    match render_index_template() {
-        Ok(body) => HttpResponse::Ok().body(body),
-        Err(err) => {
-            eprintln!("Error rendering template: {}", err);
-            HttpResponse::InternalServerError().finish()
+    if response.status().is_success() {
+        let body = response.text().await.expect("error");
+        println!("Response body: {}", body);
+
+        match render_index_template_with_data(&body) {
+            Ok(rendered) => HttpResponse::Ok().body(rendered),
+            Err(err) => {
+                eprintln!("Error rendering template: {}", err);
+                HttpResponse::InternalServerError().finish()
+            }
         }
+    } else {
+        println!("Request failed with status code: {}", response.status());
+        HttpResponse::InternalServerError().finish()
     }
+}
+
+fn render_index_template_with_data(data: &str) -> Result<String, askama::Error> {
+    let template = IndexTemplate {
+        title: "My Rust App Frontend",
+        data: data,
+    };
+    template.render()
 }
 
 #[actix_web::main]
