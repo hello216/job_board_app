@@ -36,7 +36,7 @@ fn render_index_template() -> Result<String, askama::Error> {
 }
 
 #[get("/get-data")]
-async fn get_data(form: web::Form<FormData>) -> impl Responder {
+async fn get_data() -> impl Responder {
     let response = reqwest::get("http://localhost:8000/api/all_jobs").await.expect("error");
 
     if response.status().is_success() {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Rust App Frontend</title>
+  <title>{{ title }}</title>
   <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
@@ -28,7 +28,9 @@
 
     <section id="data-display">
       <h2>Backend Data</h2>
-      <div id="data-container"></div>
+      <div id="data-container">
+        {{ data }}
+      </div>
     </section>
   </main>
 
