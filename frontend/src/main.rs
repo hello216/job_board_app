@@ -13,7 +13,7 @@ struct IndexTemplate<'a> {
 
 #[derive(Deserialize)]
 struct FormData {
-    // Add any form fields you need to receive from the client
+    // form fields
 }
 
 #[get("/")]
@@ -42,17 +42,26 @@ async fn get_data() -> impl Responder {
     if response.status().is_success() {
         let body = response.text().await.expect("error");
         println!("Response body: {}", body);
+
+        match render_index_template_with_data(&body) {
+            Ok(rendered) => HttpResponse::Ok().body(rendered),
+            Err(err) => {
+                eprintln!("Error rendering template: {}", err);
+                HttpResponse::InternalServerError().finish()
+            }
+        }
     } else {
         println!("Request failed with status code: {}", response.status());
+        HttpResponse::InternalServerError().finish()
     }
+}
 
-    match render_index_template() {
-        Ok(body) => HttpResponse::Ok().body(response),
-        Err(err) => {
-            eprintln!("Error rendering template: {}", err);
-            HttpResponse::InternalServerError().finish()
-        }
-    }
+fn render_index_template_with_data(data: &str) -> Result<String, askama::Error> {
+    let template = IndexTemplate {
+        title: "My Rust App Frontend",
+        data: data,
+    };
+    template.render()
 }
 
 #[actix_web::main]
