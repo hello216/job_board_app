@@ -1,7 +1,6 @@
 use askama_actix::Template;
-use actix_web::{get, web, App, HttpServer, Responder, HttpResponse};
+use actix_web::{get, App, HttpServer, Responder, HttpResponse};
 use serde_derive::Deserialize;
-use reqwest::Error;
 use serde_json::Value;
 
 
