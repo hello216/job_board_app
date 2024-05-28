@@ -2,6 +2,7 @@ use askama_actix::Template;
 use actix_web::{get, web, App, HttpServer, Responder, HttpResponse};
 use serde_derive::Deserialize;
 use reqwest::Error;
+use serde_json::Value;
 
 
 #[derive(Template)]
@@ -57,9 +58,12 @@ async fn get_data() -> impl Responder {
 }
 
 fn render_index_template_with_data(data: &str) -> Result<String, askama::Error> {
+    let parsed_data: Value = serde_json::from_str(data).expect("error");
+    let serialized_data = serde_json::to_string(&parsed_data).expect("error");
+
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: data,
+        data: &serialized_data,
     };
     template.render()
 }
