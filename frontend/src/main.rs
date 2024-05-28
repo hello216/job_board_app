@@ -9,7 +9,7 @@ use serde_json::Value;
 #[template(path = "index.html")]
 struct IndexTemplate<'a> {
     title: &'a str,
-    data: &'a str,
+    data: &'a Value,
 }
 
 #[derive(Deserialize)]
@@ -31,7 +31,7 @@ async fn index() -> impl Responder {
 fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: "",
+        data: &Value::Null,
     };
     template.render()
 }
@@ -44,7 +44,9 @@ async fn get_data() -> impl Responder {
         let body = response.text().await.expect("error");
         println!("Response body: {}", body);
 
-        match render_index_template_with_data(&body) {
+        let parsed_data: Value = serde_json::from_str(&body).expect("error parsing JSON");
+
+        match render_index_template_with_data(&parsed_data) {
             Ok(rendered) => HttpResponse::Ok().body(rendered),
             Err(err) => {
                 eprintln!("Error rendering template: {}", err);
@@ -57,13 +59,10 @@ async fn get_data() -> impl Responder {
     }
 }
 
-fn render_index_template_with_data(data: &str) -> Result<String, askama::Error> {
-    let parsed_data: Value = serde_json::from_str(data).expect("error");
-    let serialized_data = serde_json::to_string(&parsed_data).expect("error");
-
+fn render_index_template_with_data(data: &Value) -> Result<String, askama::Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: &serialized_data,
+        data: data,
     };
     template.render()
 }
