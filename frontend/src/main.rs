@@ -58,9 +58,8 @@ async fn new_jobs_page() -> impl Responder {
 }
 
 fn render_new_jobs_template() -> Result<String, askama::Error> {
-    let template = IndexTemplate {
+    let template = NewJobsTemplate {
         title: "Job Application Tracker".to_string(),
-        data: None,
     };
     template.render()
 }
