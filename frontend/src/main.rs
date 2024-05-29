@@ -1,6 +1,6 @@
 use actix_web::{get, App, HttpServer, Responder, HttpResponse};
 use askama_actix::Template;
-use serde_derive::Deserialize;
+use serde::Deserialize;
 
 #[derive(Template)]
 #[template(path = "index.html")]
