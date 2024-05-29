@@ -65,7 +65,7 @@ async fn get_jobs() -> impl Responder {
 
 fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Error> {
     let template = IndexTemplate {
-        title: "My Rust App Frontend".to_string(),
+        title: "Job Application Tracker".to_string(),
         data: Some(data),
     };
     template.render()
