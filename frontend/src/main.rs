@@ -34,19 +34,19 @@ async fn index() -> impl Responder {
 
 fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
-        title: "My Rust App Frontend".to_string(),
+        title: "Job Application Tracker".to_string(),
         data: None,
     };
     template.render()
 }
 
-#[get("/get-data")]
-async fn get_data() -> impl Responder {
+#[get("/get-jobs")]
+async fn get_jobs() -> impl Responder {
     let response = reqwest::get("http://localhost:8000/api/all_jobs").await.expect("error");
 
     if response.status().is_success() {
         let body = response.text().await.expect("error");
-        println!("Response body: {}", body);
+        // println!("Response body: {}", body);
 
         let parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
 
@@ -65,7 +65,7 @@ async fn get_data() -> impl Responder {
 
 fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Error> {
     let template = IndexTemplate {
-        title: "My Rust App Frontend".to_string(),
+        title: "Job Application Tracker".to_string(),
         data: Some(data),
     };
     template.render()
@@ -76,7 +76,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(index)
-            .service(get_data)
+            .service(get_jobs)
     })
     .bind(("127.0.0.1", 9999))?
     .run()
