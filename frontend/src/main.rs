@@ -10,11 +10,6 @@ struct IndexTemplate {
 }
 
 #[derive(Deserialize)]
-struct FormData {
-    // Form fields
-}
-
-#[derive(Deserialize)]
 struct Job {
     id: String,
     status: String,
