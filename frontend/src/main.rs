@@ -46,7 +46,7 @@ async fn get_data() -> impl Responder {
 
     if response.status().is_success() {
         let body = response.text().await.expect("error");
-        println!("Response body: {}", body);
+        // println!("Response body: {}", body);
 
         let parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
 
