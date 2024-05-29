@@ -40,6 +40,25 @@ fn render_index_template() -> Result<String, askama::Error> {
     template.render()
 }
 
+#[get("/new-jobs")]
+async fn new_jobs_page() -> impl Responder {
+    match render_new_jobs_template() {
+        Ok(body) => HttpResponse::Ok().body(body),
+        Err(err) => {
+            eprintln!("Error rendering template: {}", err);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
+
+fn render_new_jobs_template() -> Result<String, askama::Error> {
+    let template = IndexTemplate {
+        title: "Job Application Tracker".to_string(),
+        data: None,
+    };
+    template.render()
+}
+
 #[get("/get-jobs")]
 async fn get_jobs() -> impl Responder {
     let response = reqwest::get("http://localhost:8000/api/all_jobs").await.expect("error");
@@ -77,6 +96,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(index)
             .service(get_jobs)
+            .service(new_jobs_page)
     })
     .bind(("127.0.0.1", 9999))?
     .run()
