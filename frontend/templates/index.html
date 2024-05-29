@@ -52,7 +52,9 @@
                 <td>{{ item.company }}</td>
                 <td>{{ item.url }}</td>
                 <td>{{ item.location }}</td>
-                <td>{{ item.note }}</td>
+                {% if item.note.is_some() %}
+                    <td>{{ item.note.as_ref().unwrap() }}</td>
+                {% endif %}
                 <td>{{ item.created_at }}</td>
               </tr>
               {% endfor %}
