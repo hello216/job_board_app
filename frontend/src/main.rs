@@ -40,8 +40,8 @@ fn render_index_template() -> Result<String, askama::Error> {
     template.render()
 }
 
-#[get("/get-data")]
-async fn get_data() -> impl Responder {
+#[get("/get-jobs")]
+async fn get_jobs() -> impl Responder {
     let response = reqwest::get("http://localhost:8000/api/all_jobs").await.expect("error");
 
     if response.status().is_success() {
@@ -76,7 +76,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(index)
-            .service(get_data)
+            .service(get_jobs)
     })
     .bind(("127.0.0.1", 9999))?
     .run()
