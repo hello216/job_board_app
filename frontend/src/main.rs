@@ -4,9 +4,9 @@ use serde::Deserialize;
 
 #[derive(Template)]
 #[template(path = "index.html")]
-struct IndexTemplate<'a> {
-    title: &'a str,
-    data: Option<&'a Vec<Job>>,
+struct IndexTemplate {
+    title: String,
+    data: Option<Vec<Job>>,
 }
 
 #[derive(Deserialize)]
@@ -23,7 +23,7 @@ struct Job {
     url: String,
     location: String,
     note: Option<String>,
-    created_at: String
+    created_at: String,
 }
 
 #[get("/")]
@@ -39,7 +39,7 @@ async fn index() -> impl Responder {
 
 fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
-        title: "My Rust App Frontend",
+        title: "My Rust App Frontend".to_string(),
         data: None,
     };
     template.render()
@@ -55,7 +55,7 @@ async fn get_data() -> impl Responder {
 
         let parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
 
-        match render_index_template_with_data(&parsed_data) {
+        match render_index_template_with_data(parsed_data) {
             Ok(rendered) => HttpResponse::Ok().body(rendered),
             Err(err) => {
                 eprintln!("Error rendering template: {}", err);
@@ -68,9 +68,9 @@ async fn get_data() -> impl Responder {
     }
 }
 
-fn render_index_template_with_data(data: &Vec<Job>) -> Result<String, askama::Error> {
+fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Error> {
     let template = IndexTemplate {
-        title: "My Rust App Frontend",
+        title: "My Rust App Frontend".to_string(),
         data: Some(data),
     };
     template.render()
