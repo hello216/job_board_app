@@ -9,6 +9,12 @@ struct IndexTemplate {
     data: Option<Vec<Job>>,
 }
 
+#[derive(Template)]
+#[template(path = "new_jobs.html")]
+struct NewJobsTemplate {
+    title: String,
+}
+
 #[derive(Deserialize)]
 struct Job {
     id: String,
