@@ -1,19 +1,29 @@
-use askama_actix::Template;
 use actix_web::{get, App, HttpServer, Responder, HttpResponse};
+use askama_actix::Template;
 use serde_derive::Deserialize;
-use serde_json::Value;
-
 
 #[derive(Template)]
 #[template(path = "index.html")]
 struct IndexTemplate<'a> {
     title: &'a str,
-    data: &'a Value,
+    data: Option<&'a Vec<Job>>,
 }
 
 #[derive(Deserialize)]
 struct FormData {
-    // form fields
+    // Form fields
+}
+
+#[derive(Deserialize)]
+struct Job {
+    id: String,
+    status: String,
+    title: String,
+    company: String,
+    url: String,
+    location: String,
+    note: Option<String>,
+    created_at: String
 }
 
 #[get("/")]
@@ -30,7 +40,7 @@ async fn index() -> impl Responder {
 fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: &Value::Null,
+        data: None,
     };
     template.render()
 }
@@ -43,7 +53,7 @@ async fn get_data() -> impl Responder {
         let body = response.text().await.expect("error");
         println!("Response body: {}", body);
 
-        let parsed_data: Value = serde_json::from_str(&body).expect("error parsing JSON");
+        let parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
 
         match render_index_template_with_data(&parsed_data) {
             Ok(rendered) => HttpResponse::Ok().body(rendered),
@@ -58,10 +68,10 @@ async fn get_data() -> impl Responder {
     }
 }
 
-fn render_index_template_with_data(data: &Value) -> Result<String, askama::Error> {
+fn render_index_template_with_data(data: &Vec<Job>) -> Result<String, askama::Error> {
     let template = IndexTemplate {
         title: "My Rust App Frontend",
-        data: data,
+        data: Some(data),
     };
     template.render()
 }
