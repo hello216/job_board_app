@@ -34,7 +34,7 @@ async fn index() -> impl Responder {
 
 fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
-        title: "My Rust App Frontend".to_string(),
+        title: "Job Application Tracker".to_string(),
         data: None,
     };
     template.render()
