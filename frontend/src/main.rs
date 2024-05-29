@@ -59,7 +59,7 @@ async fn new_jobs_page() -> impl Responder {
 
 fn render_new_jobs_template() -> Result<String, askama::Error> {
     let template = NewJobsTemplate {
-        title: "Add New Jobs Application".to_string(),
+        title: "Add New Job Application".to_string(),
     };
     template.render()
 }
