@@ -38,25 +38,29 @@
               <th>Company</th>
               <th>URL</th>
               <th>Location</th>
-              <th>Notes</th>
-              <th>Submitted at</th>
+              <th>Note</th>
+              <th>Created At</th>
             </tr>
           </thead>
           <tbody>
-          {% if data.is_some() %}
-            {% for item in data.unwrap() %}
-            <tr>
-              <td>{{ item.id }}</td>
-              <td>{{ item.status }}</td>
-              <td>{{ item.title }}</td>
-              <td>{{ item.company }}</td>
-              <td>{{ item.url }}</td>
-              <td>{{ item.location }}</td>
-              <td>{{ item.note }}</td>
-              <td>{{ item.created_at }}</td>
-            </tr>
-            {% endfor %}
-          {% else %}
+            {% if data.is_some() %}
+              {% for item in data.unwrap() %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.company }}</td>
+                <td>{{ item.url }}</td>
+                <td>{{ item.location }}</td>
+                <td>{{ item.note.unwrap_or("N/A") }}</td>
+                <td>{{ item.created_at }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="8">No data available</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>
