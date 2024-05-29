@@ -38,23 +38,31 @@
               <th>Company</th>
               <th>URL</th>
               <th>Location</th>
-              <th>Notes</th>
-              <th>Submitted at</th>
+              <th>Note</th>
+              <th>Created At</th>
             </tr>
           </thead>
           <tbody>
-            {% for item in data %}
-            <tr>
-              <td>{{ item.id }}</td>
-              <td>{{ item.status }}</td>
-              <td>{{ item.title }}</td>
-              <td>{{ item.company }}</td>
-              <td>{{ item.url }}</td>
-              <td>{{ item.location }}</td>
-              <td>{{ item.note }}</td>
-              <td>{{ item.created_at }}</td>
-            </tr>
-            {% endfor %}
+            {% if data.is_some() %}
+              {% for item in data.as_ref().unwrap() %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.status }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.company }}</td>
+                <td>{{ item.url }}</td>
+                <td>{{ item.location }}</td>
+                {% if item.note.is_some() %}
+                    <td>{{ item.note.as_ref().unwrap() }}</td>
+                {% endif %}
+                <td>{{ item.created_at }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="8">No data available</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>
