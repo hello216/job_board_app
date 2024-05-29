@@ -44,7 +44,7 @@
           </thead>
           <tbody>
             {% if data.is_some() %}
-              {% for item in data.unwrap() %}
+              {% for item in data.as_ref().unwrap() %}
               <tr>
                 <td>{{ item.id }}</td>
                 <td>{{ item.status }}</td>
