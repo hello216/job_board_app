@@ -1,6 +1,6 @@
-use actix_web::{get, App, HttpServer, Responder, HttpResponse};
+use actix_web::{get, post, web, App, HttpServer, Responder, HttpResponse};
 use askama_actix::Template;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 
 #[derive(Template)]
 #[template(path = "index.html")]
@@ -9,7 +9,13 @@ struct IndexTemplate {
     data: Option<Vec<Job>>,
 }
 
-#[derive(Deserialize)]
+#[derive(Template)]
+#[template(path = "new_jobs.html")]
+struct NewJobsTemplate {
+    title: String,
+}
+
+#[derive(Deserialize, Serialize)]
 struct Job {
     id: String,
     status: String,
@@ -36,6 +42,24 @@ fn render_index_template() -> Result<String, askama::Error> {
     let template = IndexTemplate {
         title: "Job Application Tracker".to_string(),
         data: None,
+    };
+    template.render()
+}
+
+#[get("/new-jobs")]
+async fn new_jobs_page() -> impl Responder {
+    match render_new_jobs_template() {
+        Ok(body) => HttpResponse::Ok().body(body),
+        Err(err) => {
+            eprintln!("Error rendering template: {}", err);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
+
+fn render_new_jobs_template() -> Result<String, askama::Error> {
+    let template = NewJobsTemplate {
+        title: "Add New Job Application".to_string(),
     };
     template.render()
 }
@@ -71,12 +95,45 @@ fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Err
     template.render()
 }
 
+#[post("/add-job")]
+async fn add_job(post_data: web::Form<Job>) -> impl Responder {
+    let data = Job {
+        id: post_data.id.clone(),
+        status: post_data.status.clone(),
+        title: post_data.title.clone(),
+        company: post_data.company.clone(),
+        url: post_data.url.clone(),
+        location: post_data.location.clone(),
+        note: post_data.note.clone(),
+        created_at: post_data.created_at.clone(),
+    };
+
+    let client = reqwest::Client::new();
+    let response = client
+        .post("http://localhost:8000/api/create_job")
+        .json(&data)
+        .send()
+        .await
+        .expect("error");
+
+    if response.status().is_success() {
+        HttpResponse::Found()
+            .append_header(("Location", "/"))
+            .finish()
+    } else {
+        println!("Request failed with status code: {}", response.status());
+        HttpResponse::InternalServerError().finish()
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(index)
             .service(get_jobs)
+            .service(new_jobs_page)
+            .service(add_job)
     })
     .bind(("127.0.0.1", 9999))?
     .run()
