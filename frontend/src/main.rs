@@ -100,7 +100,7 @@ async fn add_job(post_data: web::Json<Job>) -> impl Responder {
     let client = reqwest::Client::new();
     let response = client
         .post("http://localhost:8000/api/create_job")
-        .json(&post_data.0)
+        .json(&post_data)
         .send()
         .await
         .expect("error");
