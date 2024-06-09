@@ -15,7 +15,7 @@ struct NewJobsTemplate {
     title: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 struct Job {
     id: String,
     status: String,
@@ -96,11 +96,11 @@ fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Err
 }
 
 #[post("/add-job")]
-async fn add_job(postData: web::Json<Job>) -> impl Responder {
+async fn add_job(post_data: web::Json<Job>) -> impl Responder {
     let client = reqwest::Client::new();
     let response = client
         .post("http://localhost:8000/api/create_job")
-        .json(&postData.0)
+        .json(&post_data.0)
         .send()
         .await
         .expect("error");
