@@ -1,6 +1,6 @@
-use actix_web::{get, post, App, HttpServer, Responder, HttpResponse};
+use actix_web::{get, post, web, App, HttpServer, Responder, HttpResponse};
 use askama_actix::Template;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 
 #[derive(Template)]
 #[template(path = "index.html")]
@@ -96,14 +96,19 @@ fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Err
 }
 
 #[post("/add-job")]
-async fn add_job() -> impl Responder {
+async fn add_job(postData: web::Json<Job>) -> impl Responder {
     let client = reqwest::Client::new();
-    let response = client.post("http://localhost:8000/api/create_job").send().await.expect("error");
+    let response = client
+        .post("http://localhost:8000/api/create_job")
+        .json(&postData.0)
+        .send()
+        .await
+        .expect("error");
 
     if response.status().is_success() {
         let body = response.text().await.expect("error");
 
-        let parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
+        let _parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
 
         HttpResponse::Found()
             .append_header(("Location", "/"))
