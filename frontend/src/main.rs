@@ -96,11 +96,22 @@ fn render_index_template_with_data(data: Vec<Job>) -> Result<String, askama::Err
 }
 
 #[post("/add-job")]
-async fn add_job(post_data: web::Json<Job>) -> impl Responder {
+async fn add_job(post_data: web::Form<Job>) -> impl Responder {
+    let data = Job {
+        id: post_data.id.clone(),
+        status: post_data.status.clone(),
+        title: post_data.title.clone(),
+        company: post_data.company.clone(),
+        url: post_data.url.clone(),
+        location: post_data.location.clone(),
+        note: post_data.note.clone(),
+        created_at: post_data.created_at.clone(),
+    };
+
     let client = reqwest::Client::new();
     let response = client
         .post("http://localhost:8000/api/create_job")
-        .json(&post_data)
+        .json(&data)
         .send()
         .await
         .expect("error");
