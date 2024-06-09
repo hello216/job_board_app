@@ -117,10 +117,6 @@ async fn add_job(post_data: web::Form<Job>) -> impl Responder {
         .expect("error");
 
     if response.status().is_success() {
-        let body = response.text().await.expect("error");
-
-        let _parsed_data: Vec<Job> = serde_json::from_str(&body).expect("error parsing JSON");
-
         HttpResponse::Found()
             .append_header(("Location", "/"))
             .finish()
