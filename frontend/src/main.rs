@@ -15,6 +15,12 @@ struct NewJobsTemplate {
     title: String,
 }
 
+#[derive(Template)]
+#[template(path = "edit_job.html")]
+struct EditJobTemplate {
+    title: String,
+}
+
 #[derive(Deserialize, Serialize)]
 struct Job {
     id: String,
