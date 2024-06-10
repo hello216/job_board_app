@@ -133,6 +133,36 @@ async fn add_job(post_data: web::Form<Job>) -> impl Responder {
     }
 }
 
+#[get("/edit-job")]
+async fn edit_job() -> impl Responder {
+    let response = reqwest::get("http://localhost:8000/api/get_job").await.expect("error");
+
+    if response.status().is_success() {
+        let body = response.text().await.expect("error");
+
+        let parsed_data: Job = serde_json::from_str(&body).expect("error parsing JSON");
+
+        match render_edit_job_template(parsed_data) {
+            Ok(rendered) => HttpResponse::Ok().body(rendered),
+            Err(err) => {
+                eprintln!("Error rendering template: {}", err);
+                HttpResponse::InternalServerError().finish()
+            }
+        }
+    } else {
+        println!("Request failed with status code: {}", response.status());
+        HttpResponse::InternalServerError().finish()
+    }
+}
+
+fn render_edit_job_template(job: Job) -> Result<String, askama::Error> {
+    let template = EditJobTemplate {
+        title: "Edit Job".to_string(),
+        job,
+    };
+    template.render()
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
