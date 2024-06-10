@@ -19,7 +19,7 @@ struct NewJobsTemplate {
 #[template(path = "edit_job.html")]
 struct EditJobTemplate {
     title: String,
-    job: Job
+    job: Job,
 }
 
 #[derive(Deserialize, Serialize)]
