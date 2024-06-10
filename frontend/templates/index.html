@@ -55,7 +55,7 @@
                     <td>{{ item.note.as_ref().unwrap() }}</td>
                 {% endif %}
                 <td>{{ item.created_at }}</td>
-                <td><a href="/edit-job">Edit Job</a></td>
+                <td><a href="/edit-job/{{ item.id }}">Edit Job</a></td>
               </tr>
               {% endfor %}
             {% else %}
