@@ -178,6 +178,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_jobs)
             .service(new_jobs_page)
             .service(add_job)
+            .service(edit_job)
     })
     .bind(("127.0.0.1", 9999))?
     .run()
