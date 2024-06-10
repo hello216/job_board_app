@@ -133,9 +133,16 @@ async fn add_job(post_data: web::Form<Job>) -> impl Responder {
     }
 }
 
-#[get("/edit-job")]
-async fn edit_job() -> impl Responder {
-    let response = reqwest::get("http://localhost:8000/api/get_job").await.expect("error");
+#[get("/edit-job/{id}")]
+async fn edit_job(id: web::Path<String>) -> impl Responder {
+    let id = id.into_inner();
+    let client = reqwest::Client::new();
+    let response = client
+        .post("http://localhost:8000/api/get_job")
+        .json(&id)
+        .send()
+        .await
+        .expect("error");
 
     if response.status().is_success() {
         let body = response.text().await.expect("error");
