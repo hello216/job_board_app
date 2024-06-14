@@ -15,6 +15,13 @@ struct NewJobsTemplate {
     title: String,
 }
 
+#[derive(Template)]
+#[template(path = "edit_job.html")]
+struct EditJobTemplate {
+    title: String,
+    job: Job,
+}
+
 #[derive(Deserialize, Serialize)]
 struct Job {
     id: String,
@@ -126,6 +133,43 @@ async fn add_job(post_data: web::Form<Job>) -> impl Responder {
     }
 }
 
+#[get("/edit-job/{id}")]
+async fn edit_job(id: web::Path<String>) -> impl Responder {
+    let id = id.into_inner();
+    let client = reqwest::Client::new();
+    let response = client
+        .post("http://localhost:8000/api/get_job")
+        .json(&id)
+        .send()
+        .await
+        .expect("error");
+
+    if response.status().is_success() {
+        let body = response.text().await.expect("error");
+
+        let parsed_data: Job = serde_json::from_str(&body).expect("error parsing JSON");
+
+        match render_edit_job_template(parsed_data) {
+            Ok(rendered) => HttpResponse::Ok().body(rendered),
+            Err(err) => {
+                eprintln!("Error rendering template: {}", err);
+                HttpResponse::InternalServerError().finish()
+            }
+        }
+    } else {
+        println!("Request failed with status code: {}", response.status());
+        HttpResponse::InternalServerError().finish()
+    }
+}
+
+fn render_edit_job_template(job: Job) -> Result<String, askama::Error> {
+    let template = EditJobTemplate {
+        title: "Edit Job".to_string(),
+        job,
+    };
+    template.render()
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
@@ -134,6 +178,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_jobs)
             .service(new_jobs_page)
             .service(add_job)
+            .service(edit_job)
     })
     .bind(("127.0.0.1", 9999))?
     .run()
