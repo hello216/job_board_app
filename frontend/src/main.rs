@@ -1,15 +1,34 @@
 use yew::prelude::*;
+use serde::{Serialize, Deserialize};
 
-#[function_component]
-fn App() -> Html {
-    let counter = use_state(|| 0);
-    let onclick = {
-        let counter = counter.clone();
-        move |_| {
-            let value = *counter + 1;
-            counter.set(value);
-        }
-    };
+#[derive(Serialize, Deserialize, Debug)]
+struct Job {
+    id: String,
+    title: String,
+    company: String,
+    status: String,
+    url: String,
+    location: String,
+    note: String,
+    created_at: String,
+}
+
+#[function_component(App)]
+fn app() -> Html {
+    let jobs = use_state(|| Vec::new());
+
+    {
+        let jobs = jobs.clone();
+        use_effect(move || {
+            wasm_bindgen_futures::spawn_local(async move {
+                let response = reqwest::get("https://localhost:8000/api/all_jobs")
+                    .await.unwrap();
+                let fetched_jobs: Vec<Job> = response.json().await.unwrap();
+                jobs.set(fetched_jobs);
+            });
+            || ()
+        });
+    }
 
     html! {
         <div>
@@ -25,18 +44,18 @@ fn App() -> Html {
                     <th>{ "Note" }</th>
                     <th>{ "Created At" }</th>
                 </tr>
-                { for job in jobs.iter() => {
+                { jobs.iter().map(|job| html! {
                     <tr>
-                        <td>{ job.id }</td>
-                        <td>{ job.title }</td>
-                        <td>{ job.company }</td>
-                        <td>{ job.status }</td>
-                        <td>{ job.url }</td>
-                        <td>{ job.location }</td>
-                        <td>{ job.note }</td>
-                        <td>{ job.created_at }</td>
+                        <td>{ &job.id }</td>
+                        <td>{ &job.title }</td>
+                        <td>{ &job.company }</td>
+                        <td>{ &job.status }</td>
+                        <td>{ &job.url }</td>
+                        <td>{ &job.location }</td>
+                        <td>{ &job.note }</td>
+                        <td>{ &job.created_at }</td>
                     </tr>
-                }
+                }).collect::<Html>() }
             </table>
         </div>
     }
