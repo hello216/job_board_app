@@ -13,8 +13,31 @@ fn App() -> Html {
 
     html! {
         <div>
-            <button {onclick}>{ "+1" }</button>
-            <p>{ *counter }</p>
+            <h1>{ "Hello, Yew!" }</h1>
+            <table>
+                <tr>
+                    <th>{ "ID" }</th>
+                    <th>{ "Title" }</th>
+                    <th>{ "Company" }</th>
+                    <th>{ "Status" }</th>
+                    <th>{ "URL" }</th>
+                    <th>{ "Location" }</th>
+                    <th>{ "Note" }</th>
+                    <th>{ "Created At" }</th>
+                </tr>
+                { for job in jobs.iter() => {
+                    <tr>
+                        <td>{ job.id }</td>
+                        <td>{ job.title }</td>
+                        <td>{ job.company }</td>
+                        <td>{ job.status }</td>
+                        <td>{ job.url }</td>
+                        <td>{ job.location }</td>
+                        <td>{ job.note }</td>
+                        <td>{ job.created_at }</td>
+                    </tr>
+                }
+            </table>
         </div>
     }
 }
