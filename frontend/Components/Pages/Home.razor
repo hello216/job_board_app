@@ -1,0 +1,63 @@
+@page "/"
+@inject HttpClient Http
+@using System.Net.Http
+@using System.Threading.Tasks
+
+<PageTitle>Job App Tracker</PageTitle>
+
+<h1>Job Applications</h1>
+
+@if (jobs == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Company</th>
+                <th>URL</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var job in jobs)
+            {
+                <tr>
+                    <td>@job.title</td>
+                    <td>@job.company</td>
+                    <td>@job.url</td>
+                    <td>@job.location</td>
+                    <td>@job.status</td>
+                    <td>@job.created_at</td>
+                    <td><a href="/edit-job/@job.id">Edit</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Job> jobs;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jobs = await Http.GetFromJsonAsync<List<Job>>("http://localhost:8000/api/all_jobs");
+    }
+
+    private class Job
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string company { get; set; }
+        public string url { get; set; }
+        public string location { get; set; }
+        public string status { get; set; }
+        public string created_at { get; set; }
+    }
+}

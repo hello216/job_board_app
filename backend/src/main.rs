@@ -5,6 +5,7 @@ use crate::schema::jobs::dsl::*;
 use diesel::pg::PgConnection;
 use dotenvy::dotenv;
 use std::env;
+use actix_cors::Cors;
 
 pub mod models;
 pub mod schema;
@@ -20,15 +21,22 @@ fn establish_connection() -> PgConnection {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
-        App::new().service(
-            web::scope("/api")
-                .route("/", web::get().to(index))
-                .route("/create_job", web::post().to(create_job))
-                .route("/all_jobs", web::get().to(all_jobs))
-                .route("/get_job", web::get().to(get_job))
-                .route("/delete_job", web::delete().to(delete_job))
-                .route("/update_job", web::put().to(update_job))
-        )
+        let cors = Cors::default()
+            .allowed_origin("http://localhost:9999")
+            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+            .max_age(3600);
+
+        App::new()
+            .wrap(cors)
+            .service(
+                web::scope("/api")
+                    .route("/", web::get().to(index))
+                    .route("/create_job", web::post().to(create_job))
+                    .route("/all_jobs", web::get().to(all_jobs))
+                    .route("/get_job", web::get().to(get_job))
+                    .route("/delete_job", web::delete().to(delete_job))
+                    .route("/update_job", web::put().to(update_job))
+            )
     })
     .bind(("127.0.0.1", 8000))?
     .run()
