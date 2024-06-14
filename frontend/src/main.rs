@@ -47,7 +47,7 @@ fn app() -> Html {
 
     html! {
         <div>
-            <h1>{ "Hello, Yew!" }</h1>
+            <h3>{ "Your Applications" }</h3>
             <table>
                 <tr>
                     <th>{ "ID" }</th>
