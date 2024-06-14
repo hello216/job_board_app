@@ -9,22 +9,37 @@ struct Job {
     status: String,
     url: String,
     location: String,
-    note: String,
+    note: Option<String>,
     created_at: String,
 }
 
 #[function_component(App)]
 fn app() -> Html {
-    let jobs = use_state(|| Vec::new());
+    let jobs_state = use_state(|| Vec::new());
 
     {
-        let jobs = jobs.clone();
+        let jobs_state = jobs_state.clone();
         use_effect(move || {
             wasm_bindgen_futures::spawn_local(async move {
-                let response = reqwest::get("http://localhost:8000/api/all_jobs")
-                    .await.expect("Error fetching jobs");
-                let fetched_jobs: Vec<Job> = response.json().await.unwrap();
-                jobs.set(fetched_jobs);
+                let response = reqwest::get("http://localhost:8000/api/all_jobs").await;
+
+                match response {
+                    Ok(response) => {
+                        let fetched_jobs: Result<Vec<Job>, _> = response.json().await;
+
+                        match fetched_jobs {
+                            Ok(jobs) => jobs_state.set(jobs),
+                            Err(err) => {
+                                let error_message = format!("Error fetching jobs: {}", err);
+                                println!("{}", error_message);
+                            }
+                        }
+                    }
+                    Err(err) => {
+                        let error_message = format!("Error fetching jobs: {}", err);
+                        println!("{}", error_message);
+                    }
+                }
             });
             || ()
         });
@@ -41,10 +56,9 @@ fn app() -> Html {
                     <th>{ "Status" }</th>
                     <th>{ "URL" }</th>
                     <th>{ "Location" }</th>
-                    <th>{ "Note" }</th>
                     <th>{ "Created At" }</th>
                 </tr>
-                { jobs.iter().map(|job| html! {
+                { jobs_state.iter().map(|job| html! {
                     <tr>
                         <td>{ &job.id }</td>
                         <td>{ &job.title }</td>
@@ -52,7 +66,6 @@ fn app() -> Html {
                         <td>{ &job.status }</td>
                         <td>{ &job.url }</td>
                         <td>{ &job.location }</td>
-                        <td>{ &job.note }</td>
                         <td>{ &job.created_at }</td>
                     </tr>
                 }).collect::<Html>() }
