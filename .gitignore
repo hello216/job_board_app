@@ -45,6 +45,7 @@ tmp_email/
 debug/
 target/
 dist/
+/dist
 
 # Remove Cargo.lock from gitignore if creating an executable, leave it for libraries
 Cargo.lock
