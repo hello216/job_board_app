@@ -1,10 +1,13 @@
-﻿@page "/"
+@page "/"
+@inject HttpClient Http
+@using System.Net.Http
+@using System.Threading.Tasks
 
 <PageTitle>Job App Tracker</PageTitle>
 
 <h1>Job Applications</h1>
 
-@if (forecasts == null)
+@if (jobs == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -40,28 +43,21 @@ else
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private List<Job> jobs;
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        jobs = await Http.GetFromJsonAsync<List<Job>>("http://localhost:8000/api/all_jobs");
     }
 
-    private class WeatherForecast
+    private class Job
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        public string id { get; set; }
+        public string title { get; set; }
+        public string company { get; set; }
+        public string url { get; set; }
+        public string location { get; set; }
+        public string status { get; set; }
+        public string created_at { get; set; }
     }
 }
