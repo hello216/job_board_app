@@ -21,8 +21,8 @@ fn app() -> Html {
         let jobs = jobs.clone();
         use_effect(move || {
             wasm_bindgen_futures::spawn_local(async move {
-                let response = reqwest::get("https://localhost:8000/api/all_jobs")
-                    .await.unwrap();
+                let response = reqwest::get("http://localhost:8000/api/all_jobs")
+                    .await.expect("Error fetching jobs");
                 let fetched_jobs: Vec<Job> = response.json().await.unwrap();
                 jobs.set(fetched_jobs);
             });
