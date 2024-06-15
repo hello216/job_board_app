@@ -1,19 +1,15 @@
 ﻿@page "/add-job"
 @rendermode InteractiveServer
 
-<PageTitle>Add a Job</PageTitle>
+<PageTitle>Add a Job App</PageTitle>
 
-<h1>Add a Job</h1>
+<h1>Add a Job Application</h1>
 
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="SubmitForm">Submit</button>
 
 @code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    private void SubmitForm()
     {
-        currentCount++;
+        Console.WriteLine("Submitted");
     }
 }
