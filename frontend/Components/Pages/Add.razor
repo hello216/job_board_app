@@ -8,19 +8,19 @@
 <form method="post" OnSubmit="@HandleSubmit" @formname="add-job-form">
     <AntiforgeryToken />
     <label for="title">Title</label>
-    <input name="title" @bind-value="@newJob.title" />
+    <input id="title" name="title" @bind-value="@newJob.title" />
 
     <label for="company">Company</label>
-    <input name="company" @bind-value="@newJob.company" />
+    <input id="company" name="company" @bind-value="@newJob.company" />
 
     <label for="url">URL</label>
-    <input name="url" @bind-value="@newJob.url" />
+    <input id="url" name="url" @bind-value="@newJob.url" />
 
     <label for="location">Location</label>
-    <input name="location" @bind-value="@newJob.location" />
+    <input id="location" name="location" @bind-value="@newJob.location" />
 
     <label for="status">Status</label>
-    <input name="status" @bind-value="@newJob.status" />
+    <input id="status" name="status" @bind-value="@newJob.status" />
     <button class="btn btn-primary" type="submit">Submit</button>
 </form>
 
@@ -32,9 +32,11 @@
         Console.WriteLine("Submitted");
         Console.WriteLine(newJob);
         var response = await Http.PostAsJsonAsync("http://localhost:8000/api/create_job", newJob);
-
+    
         if (response.IsSuccessStatusCode)
         {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response content: {responseContent}");
             Console.WriteLine("Job application submitted successfully");
         }
         else
