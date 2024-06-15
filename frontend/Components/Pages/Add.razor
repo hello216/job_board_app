@@ -1,15 +1,56 @@
-﻿@page "/add-job"
-@rendermode InteractiveServer
+@page "/add-job"
+@inject HttpClient Http
 
 <PageTitle>Add a Job App</PageTitle>
 
 <h1>Add a Job Application</h1>
 
-<button class="btn btn-primary" @onclick="SubmitForm">Submit</button>
+<form method="post" OnSubmit="@HandleSubmit" @formname="add-job-form">
+    <AntiforgeryToken />
+    <label for="title">Title</label>
+    <input name="title" @bind-value="@newJob.title" />
+
+    <label for="company">Company</label>
+    <input name="company" @bind-value="@newJob.company" />
+
+    <label for="url">URL</label>
+    <input name="url" @bind-value="@newJob.url" />
+
+    <label for="location">Location</label>
+    <input name="location" @bind-value="@newJob.location" />
+
+    <label for="status">Status</label>
+    <input name="status" @bind-value="@newJob.status" />
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
 
 @code {
-    private void SubmitForm()
+    private Job newJob = new Job();
+
+    private async Task HandleSubmit()
     {
         Console.WriteLine("Submitted");
+        Console.WriteLine(newJob);
+        var response = await Http.PostAsJsonAsync("http://localhost:8000/api/create_job", newJob);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Job application submitted successfully");
+        }
+        else
+        {
+            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+        }
+    }
+
+    private class Job
+    {
+        public string id { get; set; }
+        public string title { get; set; }
+        public string company { get; set; }
+        public string url { get; set; }
+        public string location { get; set; }
+        public string status { get; set; }
+        public string created_at { get; set; }
     }
 }
