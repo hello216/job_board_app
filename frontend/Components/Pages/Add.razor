@@ -5,8 +5,10 @@
 
 <h1>Add a Job Application</h1>
 
-<form method="post" OnSubmit="@HandleSubmit" @formname="add-job-form">
-    <AntiforgeryToken />
+<form method="post" action="http://localhost:8000/api/create_job" OnSubmit="@HandleSubmit">
+    <input id="created_at" name="created_at" value="created_at" hidden/>
+    <input id="id" name="id" value="id" hidden/>
+
     <label for="title">Title</label>
     <input id="title" name="title" @bind-value="@newJob.title" />
 
@@ -47,12 +49,12 @@
 
     private class Job
     {
-        public string id { get; set; }
-        public string title { get; set; }
-        public string company { get; set; }
-        public string url { get; set; }
-        public string location { get; set; }
-        public string status { get; set; }
-        public string created_at { get; set; }
+        public string id { get; set; } = "None";
+        public string title { get; set; } = "None";
+        public string company { get; set; } = "None";
+        public string url { get; set; } = "None";
+        public string location { get; set; } = "None";
+        public string status { get; set; } = "None";
+        public string created_at { get; set; } = "None";
     }
 }
