@@ -6,6 +6,11 @@
 
 <h1>Add a Job Application</h1>
 
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <p>@message</p>
+}
+
 <EditForm Enhance EditContext="editContext" OnValidSubmit="@HandleSubmit" FormName="Form1">
     <DataAnnotationsValidator />
     <ValidationSummary/>
@@ -69,6 +74,7 @@
 
 @code {
     private EditContext? editContext;
+    private string message = "";
 
     [SupplyParameterFromForm]
     public Job? formModel { get; set; }
@@ -92,13 +98,14 @@
             {
                 string responseContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Response content: {responseContent}");
-                Console.WriteLine("Job application submitted successfully");
+                message = "Submitted successfully";
             }
             else
             {
                 Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
                 var errorContent = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Error content: {errorContent}");
+                message = $"There was an error in the request.  {errorContent}";
             }
         }
         catch (Exception ex)
