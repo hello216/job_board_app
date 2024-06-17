@@ -1,53 +1,120 @@
 @page "/add-job"
-@inject HttpClient Http
+@inject HttpClient Http;
+@using System.ComponentModel.DataAnnotations;
 
 <PageTitle>Add a Job App</PageTitle>
 
 <h1>Add a Job Application</h1>
 
-<form method="post" action="http://localhost:8000/api/create_job" OnSubmit="@HandleSubmit">
-    <input id="created_at" name="created_at" value="created_at" hidden/>
-    <input id="id" name="id" value="id" hidden/>
+@if (!string.IsNullOrWhiteSpace(message))
+{
+    <p>@message</p>
+}
 
-    <label for="title">Title</label>
-    <input id="title" name="title" @bind-value="@newJob.title" />
+<EditForm Enhance EditContext="editContext" OnValidSubmit="@HandleSubmit" FormName="Form1">
+    <DataAnnotationsValidator />
+    <ValidationSummary/>
+    <input type="hidden" @bind="formModel.id" />
+    <input type="hidden" @bind="formModel.created_at" />
 
-    <label for="company">Company</label>
-    <input id="company" name="company" @bind-value="@newJob.company" />
-
-    <label for="url">URL</label>
-    <input id="url" name="url" @bind-value="@newJob.url" />
-
-    <label for="location">Location</label>
-    <input id="location" name="location" @bind-value="@newJob.location" />
-
-    <label for="status">Status</label>
-    <input id="status" name="status" @bind-value="@newJob.status" />
-    <button class="btn btn-primary" type="submit">Submit</button>
-</form>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 p-1">
+                <label>Title</label>
+            </div>
+             <div class="col-md-4 p-1">
+                  <InputText @bind-Value="formModel!.title" />
+             </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 p-1">
+                <label>Company</label>
+            </div>
+             <div class="col-md-4 p-1">
+                  <InputText @bind-Value="formModel!.company" />
+             </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 p-1">
+                <label>URL</label>
+            </div>
+             <div class="col-md-4 p-1">
+                  <InputText @bind-Value="formModel!.url" />
+             </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 p-1">
+                <label>Location</label>
+            </div>
+             <div class="col-md-4 p-1">
+                <InputText @bind-Value="formModel!.location" />
+             </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2 p-1">
+                <label>Status</label>
+            </div>
+             <div class="col-md-4 p-1">
+                <InputText @bind-Value="formModel!.status" />
+             </div>
+        </div>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+    </div>
+</EditForm>
 
 @code {
-    private Job newJob = new Job();
+    private EditContext? editContext;
+    private string message = "";
+
+    [SupplyParameterFromForm]
+    public Job? formModel { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        formModel ??= new();
+        editContext = new(formModel);
+    }
 
     private async Task HandleSubmit()
     {
-        Console.WriteLine("Submitted");
-        Console.WriteLine(newJob);
-        var response = await Http.PostAsJsonAsync("http://localhost:8000/api/create_job", newJob);
-    
-        if (response.IsSuccessStatusCode)
+        formModel.id = "Default";
+        formModel.created_at = "Default";
+        
+        try
         {
-            string responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response content: {responseContent}");
-            Console.WriteLine("Job application submitted successfully");
+            var response = await Http.PostAsJsonAsync("http://localhost:8000/api/create_job", formModel);
+        
+            if (response.IsSuccessStatusCode)
+            {
+                string responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {responseContent}");
+                message = "Submitted successfully";
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error content: {errorContent}");
+                message = $"There was an error in the request.  {errorContent}";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+            Console.WriteLine($"Exception: {ex.Message}");
         }
     }
 
-    private class Job
+    public class Job
     {
         public string id { get; set; } = "None";
         public string title { get; set; } = "None";
