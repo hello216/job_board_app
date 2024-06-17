@@ -22,7 +22,7 @@ fn establish_connection() -> PgConnection {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         let cors = Cors::default()
-            .allowed_origin("http://localhost:9999")
+            .allowed_origin("http://localhost:5218")
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
             .max_age(3600);
 

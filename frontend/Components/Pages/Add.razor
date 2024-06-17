@@ -1,19 +1,60 @@
-﻿@page "/add-job"
-@rendermode InteractiveServer
+@page "/add-job"
+@inject HttpClient Http
 
-<PageTitle>Add a Job</PageTitle>
+<PageTitle>Add a Job App</PageTitle>
 
-<h1>Add Job</h1>
+<h1>Add a Job Application</h1>
 
-<p role="status">Current count: @currentCount</p>
+<form method="post" action="http://localhost:8000/api/create_job" OnSubmit="@HandleSubmit">
+    <input id="created_at" name="created_at" value="created_at" hidden/>
+    <input id="id" name="id" value="id" hidden/>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <label for="title">Title</label>
+    <input id="title" name="title" @bind-value="@newJob.title" />
+
+    <label for="company">Company</label>
+    <input id="company" name="company" @bind-value="@newJob.company" />
+
+    <label for="url">URL</label>
+    <input id="url" name="url" @bind-value="@newJob.url" />
+
+    <label for="location">Location</label>
+    <input id="location" name="location" @bind-value="@newJob.location" />
+
+    <label for="status">Status</label>
+    <input id="status" name="status" @bind-value="@newJob.status" />
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
 
 @code {
-    private int currentCount = 0;
+    private Job newJob = new Job();
 
-    private void IncrementCount()
+    private async Task HandleSubmit()
     {
-        currentCount++;
+        Console.WriteLine("Submitted");
+        Console.WriteLine(newJob);
+        var response = await Http.PostAsJsonAsync("http://localhost:8000/api/create_job", newJob);
+    
+        if (response.IsSuccessStatusCode)
+        {
+            string responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response content: {responseContent}");
+            Console.WriteLine("Job application submitted successfully");
+        }
+        else
+        {
+            Console.WriteLine($"Error: {response.StatusCode} - {response.ReasonPhrase}");
+        }
+    }
+
+    private class Job
+    {
+        public string id { get; set; } = "None";
+        public string title { get; set; } = "None";
+        public string company { get; set; } = "None";
+        public string url { get; set; } = "None";
+        public string location { get; set; } = "None";
+        public string status { get; set; } = "None";
+        public string created_at { get; set; } = "None";
     }
 }
