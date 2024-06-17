@@ -81,13 +81,6 @@
 
     private async Task HandleSubmit()
     {
-        Console.WriteLine("Submitted");
-
-        Console.WriteLine($"Title: {formModel.title}");
-        Console.WriteLine($"Company: {formModel.company}");
-        Console.WriteLine($"URL: {formModel.url}");
-        Console.WriteLine($"Location: {formModel.location}");
-        Console.WriteLine($"Status: {formModel.status}");
         formModel.id = "Default";
         formModel.created_at = "Default";
         
@@ -117,7 +110,6 @@
     public class Job
     {
         public string id { get; set; } = "None";
-        [Required]
         public string title { get; set; } = "None";
         public string company { get; set; } = "None";
         public string url { get; set; } = "None";
