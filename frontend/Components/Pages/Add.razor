@@ -2,9 +2,9 @@
 @inject HttpClient Http;
 @using System.ComponentModel.DataAnnotations;
 
-<PageTitle>Add a Job App</PageTitle>
+<PageTitle>Add Job App</PageTitle>
 
-<h1>Add a Job Application</h1>
+<h1>Add an Application</h1>
 
 @if (!string.IsNullOrWhiteSpace(message))
 {
@@ -68,7 +68,7 @@
         </div>
     </div>
     <div>
-        <button type="submit">Submit</button>
+        <button class="btn btn-primary" type="submit">Submit</button>
     </div>
 </EditForm>
 
