@@ -6,6 +6,7 @@ use diesel::pg::PgConnection;
 use dotenvy::dotenv;
 use std::env;
 use actix_cors::Cors;
+use std::collections::HashMap;
 
 pub mod models;
 pub mod schema;
@@ -60,10 +61,11 @@ async fn all_jobs() -> impl Responder {
     HttpResponse::Ok().json(_all_jobs)
 }
 
-async fn get_job(data: web::Json<String>) -> impl Responder {
-    match Jobs::find(data.0).await {
+async fn get_job(data: web::Query<HashMap<String, String>>) -> impl Responder {
+    let job_id = data.get("id").cloned().unwrap_or_default();
+    match Jobs::find(job_id).await {
         Ok(job) => return HttpResponse::Ok().json(job),
-        Err(_) => return HttpResponse::InternalServerError().json("Error occured while retrieving job"),
+        Err(_) => return HttpResponse::InternalServerError().json("Error occurred while retrieving job"),
     };
 }
 
