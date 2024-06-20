@@ -11,7 +11,7 @@
     <p>@message</p>
 }
 
-<EditForm Enhance EditContext="editContext" OnValidSubmit="@HandleSubmit" FormName="Form1">
+<EditForm EditContext="editContext" OnValidSubmit="@HandleSubmit" FormName="Form1">
     <DataAnnotationsValidator />
     <ValidationSummary/>
     <input type="hidden" @bind="formModel.id" />
