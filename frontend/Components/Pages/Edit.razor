@@ -1,6 +1,8 @@
 @page "/edit-job/{id}"
 @inject HttpClient Http
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedLocalStorage ProtectedLocalStoreService
 
 <PageTitle>Edit Job App</PageTitle>
 
@@ -13,7 +15,7 @@
 
 @if (formModel != null)
 {
-    <EditForm Enhance EditContext="editContext" OnValidSubmit="@HandleSubmit" FormName="Form1">
+    <EditForm EditContext="editContext" OnValidSubmit="@HandleSubmit" FormName="Form1">
         <DataAnnotationsValidator />
         <ValidationSummary/>
         <input type="hidden" @bind="formModel.id" />
@@ -88,40 +90,11 @@ else
 
     public Job? formModel { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadJobAsync();
-        if (formModel != null)
-        {
-            editContext = new(formModel);
-        }
-    }
-
-    private async Task LoadJobAsync()
-    {
-        try
-        {
-            var response = await Http.GetAsync($"http://localhost:8000/api/get_job?id={id}");
-            if (response.IsSuccessStatusCode)
-            {
-                formModel = await response.Content.ReadFromJsonAsync<Job>();
-            }
-            else
-            {
-                Console.WriteLine(response);
-                message = "Error loading job data.";
-            }
-        }
-        catch (Exception ex)
-        {
-            message = $"Exception: {ex.Message}";
-        }
-    }
-
     private async Task HandleSubmit()
     {
         try
         {
+            Console.WriteLine("HandleSubmit");
             var response = await Http.PutAsJsonAsync("http://localhost:8000/api/update_job", formModel);
 
             if (response.IsSuccessStatusCode)
@@ -143,6 +116,43 @@ else
             Console.WriteLine($"Exception: {ex.Message}");
         }
     }
+    
+    // TODO: Fix bug - When the form is submitted, the page is re-rendered
+    // and OnInitializedAsync is called again, causing the form values to be reseted.
+    // This causes the edited form values not to be sent to the API.
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (formModel == null)
+        {
+            await LoadJobAsync();
+            Console.WriteLine("OnInitializedAsync");
+            editContext = new(formModel);
+        }
+    }
+
+    private async Task LoadJobAsync()
+    {
+        try
+        {
+            Console.WriteLine("LoadJobAsync");
+            var response = await Http.GetAsync($"http://localhost:8000/api/get_job?id={id}");
+            if (response.IsSuccessStatusCode)
+            {
+                formModel = await response.Content.ReadFromJsonAsync<Job>();
+            }
+            else
+            {
+                Console.WriteLine(response);
+                message = "Error loading job data.";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Exception: {ex.Message}";
+        }
+    }
+    
 
     public class Job
     {
