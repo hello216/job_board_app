@@ -5,6 +5,7 @@
 
 # No migrations DB files
 **/Migrations/*.cs
+Migrations/
 
 # No DB files
 *.db
