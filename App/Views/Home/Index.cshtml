@@ -1,17 +1,55 @@
-﻿@{
+@model IEnumerable<App.Models.Job>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-@{
-    if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["SuccessMessage"]
-        </div>
-    }
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Job Application Tracker</h1>
+    <div>
+        <h4>Job Applications</h4>
+        @if (Model != null && Model.Any())
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>URL</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var job in Model)
+                    {
+                        <tr>
+                            <td>@job.Status</td>
+                            <td>@job.Title</td>
+                            <td>@job.Company</td>
+                            <td>@job.Url</td>
+                            <td>@job.Location</td>
+                            <td>
+                                <a asp-action="Edit" asp-controller="Job" asp-route-id="@job.Id">Edit</a> |
+                                <a asp-action="Delete" asp-controller="Job" asp-route-id="@job.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No job applications found.</p>
+        }
+        <a asp-action="Create" asp-controller="Job" class="btn btn-primary">Add New Job Application</a>
+    </div>
 </div>
