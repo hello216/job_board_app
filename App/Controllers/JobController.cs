@@ -53,7 +53,16 @@ public class JobController : Controller
                 }
             }
         }
-        
+        return View(job);
+    }
+    
+    public async Task<IActionResult> Edit(string id)
+    {
+        var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+        if (job == null)
+        {
+            return NotFound();
+        }
         return View(job);
     }
 }
