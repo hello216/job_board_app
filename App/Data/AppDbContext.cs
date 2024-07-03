@@ -10,7 +10,7 @@ namespace App.Data
         {
         }
 
-        public DbSet<Job> Jobs { get; set; }
+        public DbSet<Job> Job { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
