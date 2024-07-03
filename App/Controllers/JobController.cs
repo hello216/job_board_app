@@ -66,6 +66,39 @@ public class JobController : Controller
         return View(job);
     }
     
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(string id, [Bind("Id,Status,Title,Company,Url,Location")] Job job)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var existingJob = await _context.Jobs.FindAsync(id);
+                if (existingJob == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Entry(existingJob).CurrentValues.SetValues(job);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!JobExists(job.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+        return View(job);
+    }
+    
     private bool JobExists(string id)
     {
         return _context.Jobs.Any(e => e.Id == id);
