@@ -19,7 +19,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var jobs = await _context.Job.ToListAsync();
+        var jobs = await _context.Jobs.ToListAsync();
         return View(jobs);
     }
 
