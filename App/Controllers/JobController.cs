@@ -65,4 +65,9 @@ public class JobController : Controller
         }
         return View(job);
     }
+    
+    private bool JobExists(string id)
+    {
+        return _context.Jobs.Any(e => e.Id == id);
+    }
 }
