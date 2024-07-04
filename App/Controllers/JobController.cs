@@ -109,6 +109,35 @@ public class JobController : Controller
         return View(job);
     }
     
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(string id)
+    {   
+        try
+        {
+            var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+            if (job == null)
+            {
+                return NotFound();
+            }
+            _context.Jobs.Remove(job);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Job application deleted";
+            return RedirectToAction("Index", "Home");
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!JobExists(id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+    }
+    
     private bool JobExists(string id)
     {
         return _context.Jobs.Any(e => e.Id == id);
