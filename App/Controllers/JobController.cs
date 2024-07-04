@@ -99,6 +99,16 @@ public class JobController : Controller
         return View(job);
     }
     
+    public async Task<IActionResult> Delete(string id)
+    {
+        var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+        if (job == null)
+        {
+            return NotFound();
+        }
+        return View(job);
+    }
+    
     private bool JobExists(string id)
     {
         return _context.Jobs.Any(e => e.Id == id);
