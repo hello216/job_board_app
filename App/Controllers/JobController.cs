@@ -1,20 +1,21 @@
 using System;
-using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using App.Models;
-using App.Data;
+using App.Services;
 
 namespace App.Controllers;
 
 public class JobController : Controller
 {
     private readonly ILogger<JobController> _logger;
-    private readonly AppDbContext _context;
-    public JobController(ILogger<JobController> logger, AppDbContext context)
+    private readonly IJobService _jobService;
+
+    public JobController(ILogger<JobController> logger, IJobService jobService)
     {
         _logger = logger;
-        _context = context;
+        _jobService = jobService;
     }
     
     public IActionResult Create()
@@ -30,27 +31,14 @@ public class JobController : Controller
         {
             try
             {
-                _context.Add(job);
-                await _context.SaveChangesAsync();
+                await _jobService.CreateJobAsync(job);
                 TempData["SuccessMessage"] = "Job application added!";
                 return RedirectToAction("Index", "Home");
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to create job due to Id collision");
-
-                job.Id = Guid.NewGuid().ToString().Substring(0, 12);
-                try
-                {
-                    _context.Add(job);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Job application added!";
-                    return RedirectToAction("Index", "Home");
-                }
-                catch (DbUpdateException)
-                {
-                    ModelState.AddModelError("", "Unable to save the job. Please try again.");
-                }
+                _logger.LogError(ex, "Failed to create job");
+                ModelState.AddModelError("", "Unable to save the job. Please try again.");
             }
         }
         return View(job);
@@ -58,7 +46,7 @@ public class JobController : Controller
     
     public async Task<IActionResult> Edit(string id)
     {
-        var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+        var job = await _jobService.GetJobByIdAsync(id);
         if (job == null)
         {
             return NotFound();
@@ -70,29 +58,28 @@ public class JobController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(string id, [Bind("Id,Status,Title,Company,Url,Location")] Job job)
     {
+        if (id != job.Id)
+        {
+            return NotFound();
+        }
+
         if (ModelState.IsValid)
         {
             try
             {
-                var existingJob = await _context.Jobs.FindAsync(id);
-                if (existingJob == null)
-                {
-                    return NotFound();
-                }
-
-                _context.Entry(existingJob).CurrentValues.SetValues(job);
-                await _context.SaveChangesAsync();
+                await _jobService.UpdateJobAsync(job);
                 return RedirectToAction("Index", "Home");
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!JobExists(job.Id))
+                _logger.LogError(ex, "Failed to update job");
+                if (!await _jobService.JobExistsAsync(job.Id))
                 {
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    ModelState.AddModelError("", "Unable to save changes. Please try again.");
                 }
             }
         }
@@ -101,7 +88,7 @@ public class JobController : Controller
     
     public async Task<IActionResult> Delete(string id)
     {
-        var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+        var job = await _jobService.GetJobByIdAsync(id);
         if (job == null)
         {
             return NotFound();
@@ -115,31 +102,14 @@ public class JobController : Controller
     {   
         try
         {
-            var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
-            if (job == null)
-            {
-                return NotFound();
-            }
-            _context.Jobs.Remove(job);
-            await _context.SaveChangesAsync();
+            await _jobService.DeleteJobAsync(id);
             TempData["SuccessMessage"] = "Job application deleted";
             return RedirectToAction("Index", "Home");
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception ex)
         {
-            if (!JobExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            _logger.LogError(ex, "Failed to delete job");
+            return NotFound();
         }
-    }
-    
-    private bool JobExists(string id)
-    {
-        return _context.Jobs.Any(e => e.Id == id);
     }
 }
