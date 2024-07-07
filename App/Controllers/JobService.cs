@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using App.Models;
@@ -7,6 +8,7 @@ namespace App.Services;
 
 public interface IJobService
 {
+    Task<IEnumerable<Job>> GetAllJobsAsync();
     Task<Job> CreateJobAsync(Job job);
     Task<Job> GetJobByIdAsync(string id);
     Task UpdateJobAsync(Job job);
@@ -21,6 +23,11 @@ public class JobService : IJobService
     public JobService(AppDbContext context)
     {
         _context = context;
+    }
+
+    public async Task<IEnumerable<Job>> GetAllJobsAsync()
+    {
+        return await _context.Jobs.ToListAsync();
     }
 
     public async Task<Job> CreateJobAsync(Job job)
