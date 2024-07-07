@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using App.Data;
+using App.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddControllersWithViews();
 // Add DbContext configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// JobService Registration
+builder.Services.AddScoped<IJobService, JobService>();
 
 var app = builder.Build();
 
