@@ -5,29 +5,28 @@ using System.Diagnostics;
 using App.Services;
 using App.Models;
 
-namespace App.Controllers
+namespace App.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+    private readonly IJobService _jobService;
+
+    public HomeController(ILogger<HomeController> logger, IJobService jobService)
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IJobService _jobService;
+        _logger = logger;
+        _jobService = jobService;
+    }
 
-        public HomeController(ILogger<HomeController> logger, IJobService jobService)
-        {
-            _logger = logger;
-            _jobService = jobService;
-        }
+    public async Task<IActionResult> Index()
+    {
+        var jobs = await _jobService.GetAllJobsAsync();
+        return View(jobs);
+    }
 
-        public async Task<IActionResult> Index()
-        {
-            var jobs = await _jobService.GetAllJobsAsync();
-            return View(jobs);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
