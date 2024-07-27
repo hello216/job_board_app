@@ -1,5 +1,5 @@
 # JobAppTracker
-
+Simple CRUD app in ASP.NET Core MVC, used to track job applications(kinda like a spreadsheet, basically just a table).
 
 ### Setup
 Clone repo
