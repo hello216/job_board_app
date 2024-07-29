@@ -6,7 +6,7 @@ Clone repo
 `git clone https://github.com/borelli28/JobAppTracker.git`
 
 Cd into project
-`cd JobAppTracker && cd App`
+`cd JobAppTracker/App`
 
 Create migrations
 `dotnet ef migrations add InitialCreate`
