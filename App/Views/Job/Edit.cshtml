@@ -4,50 +4,52 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<hr class="my-4" />
+<div class="max-w-lg mx-auto">
+    <form asp-action="Edit" class="space-y-6">
+        <div asp-validation-summary="ModelOnly" class="text-red-500"></div>
+        <input type="hidden" asp-for="Id" />
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" asp-items="Html.GetEnumSelectList<App.Models.JobStatus>()" class="form-control">
-                    <option selected="selected" value="">Select</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Company" class="control-label"></label>
-                <input asp-for="Company" class="form-control" />
-                <span asp-validation-for="Company" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
-                <span asp-validation-for="Url" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+        <div>
+            <label asp-for="Status" class="block text-gray-700 font-medium"></label>
+            <select asp-for="Status" asp-items="Html.GetEnumSelectList<App.Models.JobStatus>()" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <option selected="selected" value="">Select</option>
+            </select>
+            <span asp-validation-for="Status" class="text-red-500"></span>
+        </div>
+
+        <div>
+            <label asp-for="Title" class="block text-gray-700 font-medium"></label>
+            <input asp-for="Title" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <span asp-validation-for="Title" class="text-red-500"></span>
+        </div>
+
+        <div>
+            <label asp-for="Company" class="block text-gray-700 font-medium"></label>
+            <input asp-for="Company" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <span asp-validation-for="Company" class="text-red-500"></span>
+        </div>
+
+        <div>
+            <label asp-for="Url" class="block text-gray-700 font-medium"></label>
+            <input asp-for="Url" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <span asp-validation-for="Url" class="text-red-500"></span>
+        </div>
+
+        <div>
+            <label asp-for="Location" class="block text-gray-700 font-medium"></label>
+            <input asp-for="Location" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+            <span asp-validation-for="Location" class="text-red-500"></span>
+        </div>
+
+        <div>
+            <input type="submit" value="Save" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700" />
+        </div>
+    </form>
 </div>
 
-<div>
-    <a asp-action="Index" asp-controller="Home" >Go Back</a>
+<div class="mt-4 text-center">
+    <a asp-action="Index" asp-controller="Home" class="text-indigo-600 hover:underline">Go Back</a>
 </div>
 
 @section Scripts {
