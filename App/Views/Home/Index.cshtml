@@ -69,4 +69,20 @@
         
         <a asp-action="Create" asp-controller="Job" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">Add New Job Application</a>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var jobStatuses = @Html.Raw(Json.Serialize(Model.Select(job => job.Status.ToString())));
+            var jobTitles = @Html.Raw(Json.Serialize(Model.Select(job => job.Title)));
+    
+            jobStatuses.forEach(function(status, index) {
+                if (status === "Accepted") {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
+            });
+        });
+    </script>
 </div>
