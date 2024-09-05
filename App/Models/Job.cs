@@ -41,5 +41,8 @@ public enum JobStatus
     Interviewing,
     Offered,
     Accepted,
-    Rejected
+    Rejected,
+    [Display(Name = "Not Interested")]
+    NotInterested,
+    Ghosted
 }
