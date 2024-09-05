@@ -17,12 +17,12 @@ public class JobController : Controller
         _logger = logger;
         _jobService = jobService;
     }
-    
+
     public IActionResult Create()
     {
         return View();
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Status,Title,Company,Url,Location")] Job job)
@@ -43,7 +43,7 @@ public class JobController : Controller
         }
         return View(job);
     }
-    
+
     public async Task<IActionResult> Edit(string id)
     {
         var job = await _jobService.GetJobByIdAsync(id);
@@ -53,7 +53,49 @@ public class JobController : Controller
         }
         return View(job);
     }
-    
+
+    public async Task<IActionResult> EditNotes(string id)
+    {
+        var job = await _jobService.GetJobByIdAsync(id);
+        if (job == null)
+        {
+            return NotFound();
+        }
+        return View(job);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditNotes(string id, [Bind("Id, Note")] Job job)
+    {
+        if (id != job.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                await _jobService.UpdateJobAsync(job);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update job");
+                if (!await _jobService.JobExistsAsync(job.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Please try again.");
+                }
+            }
+        }
+        return View(job); 
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(string id, [Bind("Id,Status,Title,Company,Url,Location")] Job job)
@@ -85,7 +127,7 @@ public class JobController : Controller
         }
         return View(job);
     }
-    
+
     public async Task<IActionResult> Delete(string id)
     {
         var job = await _jobService.GetJobByIdAsync(id);
@@ -95,7 +137,7 @@ public class JobController : Controller
         }
         return View(job);
     }
-    
+
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(string id)
