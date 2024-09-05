@@ -54,6 +54,16 @@ public class JobController : Controller
         return View(job);
     }
 
+    public async Task<IActionResult> Notes(string id)
+    {
+        var job = await _jobService.GetJobByIdAsync(id);
+        if (job == null)
+        {
+            return NotFound();
+        }
+        return View(job);
+    }
+
     public async Task<IActionResult> EditNotes(string id)
     {
         var job = await _jobService.GetJobByIdAsync(id);
