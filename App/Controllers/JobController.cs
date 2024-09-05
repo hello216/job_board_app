@@ -88,7 +88,7 @@ public class JobController : Controller
             try
             {
                 await _jobService.UpdateJobAsync(job);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Notes", "Job", new { id = job.Id });
             }
             catch (Exception ex)
             {
