@@ -8,7 +8,7 @@
 
 <hr class="my-4" />
 <div class="max-w-lg mx-auto">
-    <form asp-action="Edit" class="space-y-6">
+    <form asp-action="EditNotes" class="space-y-6">
         <div asp-validation-summary="ModelOnly" class="text-red-500"></div>
         <input type="hidden" asp-for="Id" />
 
@@ -33,7 +33,7 @@
 </div>
 
 <div class="mt-4 text-center">
-    <a asp-action="Index" asp-controller="Home" class="text-indigo-600 hover:underline">Go Back</a>
+    <a asp-action="Notes" asp-controller="Job" asp-route-id="@Model.Id" class="text-indigo-600 hover:underline">Go Back</a>
 </div>
 
 @section Scripts {
