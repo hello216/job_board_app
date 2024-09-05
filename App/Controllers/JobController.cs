@@ -76,34 +76,43 @@ public class JobController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditNotes(string id, [Bind("Id, Note")] Job job)
+    public async Task<IActionResult> EditNotes(string id, [Bind("Id, Note")] Job jobUpdate)
     {
-        if (id != job.Id)
+        if (id != jobUpdate.Id)
         {
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        if (string.IsNullOrWhiteSpace(jobUpdate.Note))
         {
-            try
+            ModelState.AddModelError("Note", "Note cannot be empty.");
+            return View(jobUpdate);
+        }
+
+        try
+        {
+            var job = await _jobService.GetJobByIdAsync(id);
+            if (job == null)
             {
-                await _jobService.UpdateJobAsync(job);
-                return RedirectToAction("Notes", "Job", new { id = job.Id });
+                return NotFound();
             }
-            catch (Exception ex)
+            job.Note = jobUpdate.Note;
+            await _jobService.UpdateJobAsync(job);
+            return RedirectToAction("Notes", "Job", new { id = job.Id });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update job");
+            if (!await _jobService.JobExistsAsync(jobUpdate.Id))
             {
-                _logger.LogError(ex, "Failed to update job");
-                if (!await _jobService.JobExistsAsync(job.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Unable to save changes. Please try again.");
-                }
+                return NotFound();
+            }
+            else
+            {
+                ModelState.AddModelError("", "Unable to save changes. Please try again.");
             }
         }
-        return View(job); 
+        return View(jobUpdate); 
     }
 
     [HttpPost]
