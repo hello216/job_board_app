@@ -48,7 +48,9 @@
                                 <td class="px-2 py-1 border border-gray-300">@job.Company</td>
                                 <td class="px-2 py-1 border border-gray-300">
                                     <div class="max-w-xs overflow-x-auto">
-                                        <a href="@job.Url" class="text-blue-500 underline" target="_blank">@job.Url</a>
+                                        <a href="@job.Url" class="text-blue-500 underline" target="_blank">
+                                            @(new Uri(job.Url).Host)
+                                        </a>
                                     </div>
                                 </td>
                                 <td class="px-2 py-1 border border-gray-300">@job.Location</td>
