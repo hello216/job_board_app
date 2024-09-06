@@ -21,7 +21,8 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var jobs = await _jobService.GetAllJobsAsync();
-        return View(jobs);
+        var orderedJobs = jobs.OrderByDescending(j => j.CreatedAt).ToList();
+        return View(orderedJobs);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
