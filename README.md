@@ -1,12 +1,12 @@
 # Job Application Tracker
-Simple CRUD app in ASP.NET Core MVC, used to track job applications(kinda like a spreadsheet, basically just a table).
+Simple CRUD app in ASP.NET Core MVC, used to track job applications.
 
 ### Setup
 Clone repo
-`git clone https://github.com/borelli28/JobApps.git`
+`git clone https://github.com/borelli28/Jobs.git`
 
 Cd into project
-`cd JobApps/App`
+`cd Jobs/App`
 
 Create migrations
 `dotnet ef migrations add InitialCreate`
