@@ -33,6 +33,7 @@
                 <table class="min-w-full table-auto border-collapse border border-gray-200">
                     <thead>
                         <tr class="bg-gray-200 text-gray-700">
+                            <th class="px-2 py-1 border border-gray-300">Submitted At</th>
                             <th class="px-2 py-1 border border-gray-300">Status</th>
                             <th class="px-2 py-1 border border-gray-300">Title</th>
                             <th class="px-2 py-1 border border-gray-300">Company</th>
@@ -45,6 +46,7 @@
                         @foreach (var job in Model)
                         {
                             <tr class="hover:bg-gray-100">
+                                <td class="px-2 py-1 border border-gray-300">@job.CreatedAt</td>
                                 <td class="px-2 py-1 border border-gray-300">
                                     <span class="px-2 py-1 rounded-full
                                         @(job.Status == JobStatus.Applied ? "bg-blue-200 text-blue-800" : 
