@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    var currentPage = (int)ViewData["CurrentPage"];
+    var totalPages = (int)ViewData["TotalPages"];
+    var pageSize = (int)ViewData["PageSize"];
+    var searchWord = (string)ViewData["SearchWord"];
 }
 
 @if (TempData["SuccessMessage"] != null)
@@ -17,7 +21,7 @@
 
         <div class="mb-4">
             <form asp-action="Index" method="get" class="flex items-center space-x-2">
-                <input type="text" name="SearchWord" value="@ViewData["CurrentFilter"]" 
+                <input type="text" name="SearchWord" value="@searchWord" 
                        class="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                        placeholder="Search jobs..."/>
                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
@@ -78,13 +82,40 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination -->
+            <div class="mt-4 flex justify-center items-center space-x-2">
+                @if (currentPage > 1)
+                {
+                    <a asp-action="Index" asp-route-page="@(currentPage - 1)" asp-route-searchWord="@searchWord" asp-route-pageSize="@pageSize" 
+                       class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">
+                        Previous
+                    </a>
+                }
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <a asp-action="Index" asp-route-page="@i" asp-route-searchWord="@searchWord" asp-route-pageSize="@pageSize" 
+                       class="px-3 py-2 @(i == currentPage ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700") rounded hover:bg-blue-500 hover:text-white transition duration-300">
+                        @i
+                    </a>
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <a asp-action="Index" asp-route-page="@(currentPage + 1)" asp-route-searchWord="@searchWord" asp-route-pageSize="@pageSize" 
+                       class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">
+                        Next
+                    </a>
+                }
+            </div>
         }
         else
         {
             <p class="text-gray-600">No job applications found.</p>
         }
         
-        <a asp-action="Create" asp-controller="Job" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4">Add New Job Application</a>
+        <a asp-action="Create" asp-controller="Job" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300">Add New Job Application</a>
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
