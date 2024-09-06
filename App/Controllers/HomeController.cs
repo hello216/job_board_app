@@ -18,9 +18,19 @@ public class HomeController : Controller
         _jobService = jobService;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? searchWord)
     {
-        var jobs = await _jobService.GetAllJobsAsync();
+        IEnumerable<Job> jobs = await _jobService.GetAllJobsAsync();
+
+        if (!string.IsNullOrEmpty(searchWord))
+        {
+            searchWord = searchWord.ToLower();
+            jobs = jobs.Where(s => s.Title.ToLower().Contains(searchWord) 
+                || s.Company.ToLower().Contains(searchWord) 
+                || s.Location.ToLower().Contains(searchWord) 
+                || s.Status.ToString().ToLower().Contains(searchWord));
+        }
+
         var orderedJobs = jobs.OrderByDescending(j => j.CreatedAt).ToList();
         return View(orderedJobs);
     }
