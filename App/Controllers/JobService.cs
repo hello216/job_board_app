@@ -42,10 +42,22 @@ public class JobService : IJobService
         return await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task UpdateJobAsync(Job job)
+    public async Task UpdateJobAsync(Job updatedJob)
     {
-        _context.Update(job);
-        await _context.SaveChangesAsync();
+        var existingJob = await _context.Jobs.FindAsync(updatedJob.Id);
+        if (existingJob != null)
+        {
+            existingJob.Status = updatedJob.Status;
+            existingJob.Title = updatedJob.Title;
+            existingJob.Company = updatedJob.Company;
+            existingJob.Url = updatedJob.Url;
+            existingJob.Location = updatedJob.Location;
+            if (updatedJob.Note != null)
+            {
+                existingJob.Note = updatedJob.Note;
+            }
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task DeleteJobAsync(string id)

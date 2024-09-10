@@ -54,6 +54,39 @@ public class JobController : Controller
         return View(job);
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(string id, [Bind("Id,Status,Title,Company,Url,Location")] Job job)
+    {
+        if (id != job.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                job.Note = null;
+                await _jobService.UpdateJobAsync(job);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update job");
+                if (!await _jobService.JobExistsAsync(job.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Please try again.");
+                }
+            }
+        }
+        return View(job);
+    }
+
     public async Task<IActionResult> Notes(string id)
     {
         var job = await _jobService.GetJobByIdAsync(id);
@@ -113,38 +146,6 @@ public class JobController : Controller
             }
         }
         return View(jobUpdate); 
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string id, [Bind("Id,Status,Title,Company,Url,Location")] Job job)
-    {
-        if (id != job.Id)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                await _jobService.UpdateJobAsync(job);
-                return RedirectToAction("Index", "Home");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to update job");
-                if (!await _jobService.JobExistsAsync(job.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Unable to save changes. Please try again.");
-                }
-            }
-        }
-        return View(job);
     }
 
     public async Task<IActionResult> Delete(string id)
