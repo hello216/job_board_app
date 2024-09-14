@@ -117,10 +117,11 @@
         }
     </div>
     <script>
+        // Triggers confetti on job accepted
         document.addEventListener("DOMContentLoaded", function() {
-            var jobStatuses = @Html.Raw(Json.Serialize(Model.Select(job => job.Status.ToString())));
-            var jobTitles = @Html.Raw(Json.Serialize(Model.Select(job => job.Title)));
-    
+            var jobStatuses = @Html.Raw(Json.Serialize(Model?.Select(job => job.Status.ToString()) ?? new List<string>()));
+            var jobTitles = @Html.Raw(Json.Serialize(Model?.Select(job => job.Title) ?? new List<string>()));
+            
             jobStatuses.forEach(function(status, index) {
                 if (status === "Accepted") {
                     confetti({
