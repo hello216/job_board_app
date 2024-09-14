@@ -39,7 +39,12 @@ public class JobService : IJobService
 
     public async Task<Job> GetJobByIdAsync(string id)
     {
-        return await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+        var job = await _context.Jobs.FirstOrDefaultAsync(m => m.Id == id);
+        if (job == null)
+        {
+            throw new InvalidOperationException($"Job with id {id} not found.");
+        }
+        return job;
     }
 
     public async Task UpdateJobAsync(Job updatedJob)
