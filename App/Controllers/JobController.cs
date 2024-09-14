@@ -67,7 +67,7 @@ public class JobController : Controller
         {
             try
             {
-                job.Note = null;
+                job.Note = "";
                 await _jobService.UpdateJobAsync(job);
                 return RedirectToAction("Index", "Home");
             }
