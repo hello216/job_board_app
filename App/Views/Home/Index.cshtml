@@ -2,11 +2,12 @@
 
 @{
     ViewData["Title"] = "Home";
-    var currentPage = (int)ViewData["CurrentPage"];
-    var totalPages = (int)ViewData["TotalPages"];
-    var pageSize = (int)ViewData["PageSize"];
-    var searchWord = (string)ViewData["SearchWord"];
+    var currentPage = ViewData["CurrentPage"] as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 1;
+    var pageSize = ViewData["PageSize"] as int? ?? 10;
+    var searchWord = ViewData["SearchWord"] as string ?? string.Empty;
 }
+
 
 @if (TempData["SuccessMessage"] != null)
 {
