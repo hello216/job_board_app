@@ -32,6 +32,11 @@ public class UserController : ControllerBase
             return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
         }
 
+        if (request.Email == null || request.Password == null)
+        {
+            return BadRequest("Request is invalid.");
+        }
+
         var user = new Users
         {
             Email = request.Email,
@@ -40,7 +45,6 @@ public class UserController : ControllerBase
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-
         return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
     }
 
@@ -104,8 +108,8 @@ public class AddUserRequest
 {
     [Required]
     [EmailAddress]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [Required]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 }
