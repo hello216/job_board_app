@@ -10,11 +10,16 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Users> Users { get; set; }
+    public DbSet<Jobs> Jobs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Users>()
             .Property(u => u.Id)
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<Jobs>()
+            .Property(j => j.Id)
             .ValueGeneratedOnAdd();
     }
 }
