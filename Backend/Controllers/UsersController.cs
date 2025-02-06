@@ -48,6 +48,26 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Users>> GetUser(string id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        var userResponse = new UserResponse
+        {
+            Id = user.Id,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt
+        };
+
+        return Ok(userResponse);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<Users>> Update(string id, UpdateUserRequest request)
     {
@@ -141,6 +161,14 @@ public class AddUserRequest
 
     [Required]
     public string? Password { get; set; }
+}
+
+public class UserResponse
+{
+    public string? Id { get; set; }
+    public string? Email { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }
 
 public class UpdateUserRequest
