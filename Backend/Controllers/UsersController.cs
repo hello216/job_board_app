@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using System.Text;
-using Argon2;
+using Konscious.Security.Cryptography;
 
 namespace Backend.Controllers;
 
@@ -36,12 +36,15 @@ public class UserController : ControllerBase
 
     private string HashPassword(string password)
     {
-        return Argon2.Hash(password, type: Argon2Type.Id);
+        var argon2 = new Argon2id();
+        var hash = argon2.Hash(password);
+        return hash;
     }
 
     private bool VerifyPassword(string password, string hash)
     {
-        return Argon2.VerifyHash(hash, password);
+        var argon2 = new Argon2id();
+        return argon2.Verify(hash, password);
     }
 }
 
