@@ -48,6 +48,35 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Users>> Update(string id, UpdateUserRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+        }
+
+        var userToUpdate = await _context.Users.FindAsync(id);
+        if (userToUpdate == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        if (request.Email != null)
+        {
+            userToUpdate.Email = request.Email;
+        }
+
+        if (request.Password != null && request.Password != string.Empty)
+        {
+            userToUpdate.PasswordHash = HashPassword(request.Password);
+        }
+
+        userToUpdate.UpdateTimestamps();
+        await _context.SaveChangesAsync();
+        return Ok(userToUpdate);
+    }
+
     private string HashPassword(string password)
     {
         // Convert password to byte array
@@ -111,5 +140,11 @@ public class AddUserRequest
     public string? Email { get; set; }
 
     [Required]
+    public string? Password { get; set; }
+}
+
+public class UpdateUserRequest
+{
+    public string? Email { get; set; }
     public string? Password { get; set; }
 }
