@@ -47,6 +47,9 @@ public class Jobs
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
+    public string UserId { get; set; }
+    public Users User { get; set; }
+
     public void UpdateTimestamps()
     {
         UpdatedAt = DateTime.UtcNow;
