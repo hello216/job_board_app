@@ -15,7 +15,7 @@ public class Users
     public string Email { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(75)]
+    [StringLength(256)]
     public string PasswordHash { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
