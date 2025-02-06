@@ -20,7 +20,6 @@ public class UserController : ControllerBase
         _context = context;
     }
 
-    // POST: api/User
     [HttpPost]
     public async Task<ActionResult<Users>> Create(AddUserRequest request)
     {
