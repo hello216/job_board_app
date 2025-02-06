@@ -49,7 +49,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Users>> GetUser(string id)
+    public async Task<ActionResult<Users>> Get(string id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
@@ -98,7 +98,7 @@ public class UserController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteUser(string id)
+    public async Task<ActionResult> Delete(string id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
