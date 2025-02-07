@@ -1,6 +1,6 @@
 import { validatePassword } from '../services/inputValidation';
 import { useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -8,21 +8,6 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
-          method: 'GET',
-          credentials: 'include'
-        });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,7 +26,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
