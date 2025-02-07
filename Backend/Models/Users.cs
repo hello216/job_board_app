@@ -21,6 +21,8 @@ public class Users
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
+    public IEnumerable<Jobs?> Jobs { get; set; }
+
     public void UpdateTimestamps()
     {
         UpdatedAt = DateTime.UtcNow;
