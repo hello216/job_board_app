@@ -19,6 +19,11 @@ public class AppDbContext : DbContext
             .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<Jobs>()
+            .HasOne(j => j.User)
+            .WithMany(u => u.Jobs)
+            .HasForeignKey(j => j.UserId);
+
+        modelBuilder.Entity<Jobs>()
             .Property(j => j.Id)
             .ValueGeneratedOnAdd();
     }
