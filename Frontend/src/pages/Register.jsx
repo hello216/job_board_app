@@ -10,18 +10,18 @@ const Register = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCSRFToken = async () => {
+    const fetchData = async () => {
       try {
         await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/users`, {
           method: 'GET',
           credentials: 'include'
         });
       } catch (error) {
-        console.error('Error fetching CSRF token:', error);
+        console.error('Error:', error);
       }
     };
 
-    fetchCSRFToken();
+    fetchData();
   }, []);
 
   const handleSubmit = async (e) => {
