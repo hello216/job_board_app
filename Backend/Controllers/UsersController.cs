@@ -42,6 +42,14 @@ public class UserController : ControllerBase
             PasswordHash = HashPassword(request.Password)
         };
 
+        var userResponse = new UserResponse
+        {
+            Id = user.Id,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt
+        };
+
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
