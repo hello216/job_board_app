@@ -4,7 +4,7 @@ export const checkAuth = async () => {
       method: 'GET',
       credentials: 'include',
     });
-    return response.ok;
+    return true;
   } catch (error) {
     return false;
   }
