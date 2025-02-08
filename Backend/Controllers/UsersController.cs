@@ -5,6 +5,7 @@ using Konscious.Security.Cryptography;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Backend.Controllers;
