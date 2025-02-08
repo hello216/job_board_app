@@ -7,6 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers;
 
