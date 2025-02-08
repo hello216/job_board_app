@@ -156,7 +156,6 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("check")]
-    [Authorize]
     public IActionResult CheckAuthentication()
     {
         return Ok(true);
