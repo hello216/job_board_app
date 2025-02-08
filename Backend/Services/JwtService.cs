@@ -39,23 +39,56 @@ public class JwtService
         }
     }
 
-    public bool ValidateToken(string token)
+    public bool ValidateToken(string token, out string? newToken)
     {
         try
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var handler = new JwtSecurityTokenHandler();
-            handler.ValidateToken(token, new TokenValidationParameters
+
+            var principal = handler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
                 ValidateLifetime = true,
-            }, out _);
-            return true;
+            }, out var validatedToken);
+
+            if (validatedToken is JwtSecurityToken jwtToken)
+            {
+                // Generate new token if token is about to expire
+                if (DateTime.UtcNow > jwtToken.ValidTo - TimeSpan.FromMinutes(30))
+                {
+                    // Generate a new token with updated expiration
+                    newToken = GenerateJwtFromClaims(jwtToken.Claims);
+                    return true;
+                }
+                else
+                {
+                    newToken = null;
+                    return true;
+                }
+            }
+
+            newToken = null;
+            return false;
         }
         catch
         {
+            newToken = null;
             return false;
         }
+    }
+
+    private string GenerateJwtFromClaims(Claim[] claims)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
