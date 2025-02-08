@@ -4,7 +4,12 @@ export const checkAuth = async () => {
       method: 'GET',
       credentials: 'include',
     });
-    return true;
+
+    if (response.status == 200) {
+      return true;
+    } else {
+      return false;
+    }
   } catch (error) {
     return false;
   }
