@@ -168,9 +168,15 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpGet("check")]
-    public IActionResult CheckAuthentication()
+    [HttpPost("check")]
+    public IActionResult CheckAuthentication(string token)
     {
+        var jwtService = new JwtService();
+        if (!jwtService.IsAuthenticated(token))
+        {
+            return Unauthorized("Invalid or missing token.");
+        }
+
         return Ok(true);
     }
 

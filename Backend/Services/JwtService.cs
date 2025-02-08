@@ -77,6 +77,64 @@ public class JwtService
         }
     }
 
+    public bool IsAuthenticated(string token)
+    {
+        try
+        {
+            ValidateToken(token, out _);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public ClaimsPrincipal GetPrincipalFromToken(string token)
+    {
+        try
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var handler = new JwtSecurityTokenHandler();
+
+            var principal = handler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = key,
+                ValidateLifetime = true,
+            }, out _);
+
+            return principal;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public string? GetUserIdFromToken(string? token)
+    {
+        if (string.IsNullOrEmpty(token))
+            return null;
+
+        try
+        {
+            var principal = GetPrincipalFromToken(token);
+            if (principal != null)
+            {
+                return principal.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     private string GenerateJwtFromClaims(IEnumerable<Claim> claims)
     {
         try
