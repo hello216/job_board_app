@@ -165,6 +165,18 @@ public class JobsController : ControllerBase
             return false;
         }
     }
+
+    private string? GetCurrentUserId()
+    {
+        if (Request.Cookies.TryGetValue("authToken", out var token))
+        {
+            return _jwtService.GetUserIdFromToken(token);
+        }
+        else
+        {
+            return null;
+        }
+    }
 }
 
 public class CreateJobRequest
