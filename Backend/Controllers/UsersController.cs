@@ -67,7 +67,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Users>> Get(string id)
     {
-        if (!IsAuthenticated(Request, _jwtService))
+        if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
 
         var user = await _context.Users.FindAsync(id);
@@ -90,7 +90,7 @@ public class UserController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<Users>> Update(string id, UpdateUserRequest request)
     {
-        if (!IsAuthenticated(Request, _jwtService))
+        if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
 
         if (!ModelState.IsValid)
@@ -122,7 +122,7 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
-        if (!IsAuthenticated(Request, _jwtService))
+        if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
 
         var user = await _context.Users.FindAsync(id);
@@ -178,11 +178,9 @@ public class UserController : ControllerBase
     [HttpGet("check")]
     public IActionResult CheckAuthentication()
     {
-        var cookieOptions = new CookieOptions();
         if (Request.Cookies.TryGetValue("authToken", out var token))
         {
-            var jwtService = new JwtService();
-            if (!jwtService.IsAuthenticated(token))
+            if (!_jwtService.IsAuthenticated(token))
             {
                 return Unauthorized("Invalid or missing token.");
             }
@@ -250,12 +248,11 @@ public class UserController : ControllerBase
         return checkHashBytes.SequenceEqual(storedHashBytes);
     }
 
-    private bool IsAuthenticated(HttpRequest request, JwtService jwtService)
+    private bool IsAuthenticated()
     {
-        var cookieOptions = new CookieOptions();
-        if (request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var token))
         {
-            return jwtService.IsAuthenticated(token);
+            return _jwtService.IsAuthenticated(token);
         }
         else
         {
