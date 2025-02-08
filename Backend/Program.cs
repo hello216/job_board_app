@@ -1,8 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Data;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load environment variables from .env file
+Env.Load();
 
 // Add services to the container.
 
