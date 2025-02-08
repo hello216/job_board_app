@@ -154,6 +154,13 @@ public class UserController : ControllerBase
         return Ok(new { message = "Login successful." });
     }
 
+    [HttpGet("check")]
+    [Authorize]
+    public IActionResult CheckAuthentication()
+    {
+        return Ok(true);
+    }
+
     private string HashPassword(string password)
     {
         // Convert password to byte array
