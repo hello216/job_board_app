@@ -2,9 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Data;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Backend.Middleware;
 using Backend.Services;
 
@@ -38,6 +35,8 @@ var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<JwtCookieValidationMiddleware>();
 
 app.MapControllers();
 
