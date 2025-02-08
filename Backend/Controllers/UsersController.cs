@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Data;
 using Backend.Services;
+using Backend.Middleware;
+using Backend.Attributes;
 using Konscious.Security.Cryptography;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
@@ -128,6 +130,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
+    [BypassJwtValidation]
     public async Task<ActionResult> Login(LoginRequest request)
     {
         try
