@@ -52,6 +52,8 @@ public class JwtService
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
                 ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false
             }, out var validatedToken);
 
             if (validatedToken is JwtSecurityToken jwtToken)
@@ -67,13 +69,22 @@ public class JwtService
                     return true;
                 }
             }
-
-            throw new InvalidOperationException("Token validation failed.");
+            else
+            {
+                throw new InvalidOperationException("Failed to validate token as JwtSecurityToken.");
+            }
+        }
+        catch (SecurityTokenInvalidLifetimeException)
+        {
+            throw new InvalidOperationException("Token has expired.");
+        }
+        catch (SecurityTokenInvalidSignatureException)
+        {
+            throw new InvalidOperationException("Token signature is invalid.");
         }
         catch (Exception ex)
         {
-            newToken = null;
-            throw new InvalidOperationException("Error validating token.", ex);
+            throw new InvalidOperationException("Error validating token", ex);
         }
     }
 
@@ -97,14 +108,14 @@ public class JwtService
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var handler = new JwtSecurityTokenHandler();
 
-            var principal = handler.ValidateToken(token, new TokenValidationParameters
+            return handler.ValidateToken(token, new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = key,
                 ValidateLifetime = true,
+                ValidateIssuer = false,
+                ValidateAudience = false
             }, out _);
-
-            return principal;
         }
         catch
         {
