@@ -17,21 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSingleton<JwtService>();
-
-// Configure JWT Bearer authentication
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = "JwtBearer";
-    options.DefaultChallengeScheme = "JwtBearer";
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? throw new InvalidOperationException("JWT secret key is missing."))),
-        ValidateLifetime = true,
-    };
-});
+builder.Services.UseMiddleware<JwtCookieValidationMiddleware>();
 
 builder.Services.AddCors(options =>
 {
@@ -50,9 +36,6 @@ var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 
