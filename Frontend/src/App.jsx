@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { checkAuth } from '../services/authService';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
@@ -10,18 +11,11 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/check`, {
-          credentials: 'include',
-        });
-        setIsAuthenticated(response.ok);
-      } catch (error) {
-        setIsAuthenticated(false);
-      }
-    };
-
-    checkAuth();
+    async function fetchData() {
+      const authStatus = await checkAuth();
+      setIsAuthenticated(authStatus);
+    }
+    fetchData();
   }, []);
 
   return (
