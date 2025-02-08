@@ -1,4 +1,4 @@
-import { validatePassword } from '../services/inputValidation';
+import { validatePassword, validateEmail } from '../services/inputValidation';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -13,15 +13,19 @@ const Register = () => {
     e.preventDefault();
     setErrors({});
 
+    const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
 
+    if (emailError) {
+      setErrors(prev => ({ ...prev, email: emailError }));
+    }
     if (passwordError) {
       setErrors(prev => ({ ...prev, password: passwordError }));
     }
     if (password !== confirmPassword) {
       setErrors(prev => ({ ...prev, confirm_password: 'Passwords do not match.' }));
     }
-    if (passwordError || password !== confirmPassword) {
+    if (emailError || passwordError || password !== confirmPassword) {
       return;
     }
 
