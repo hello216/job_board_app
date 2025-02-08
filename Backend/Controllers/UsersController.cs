@@ -127,32 +127,40 @@ public class UserController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult> Login(LoginRequest request)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
-
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-        if (user == null)
+        try
         {
-            return NotFound("User not found.");
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (!VerifyPassword(request.Password, user.PasswordHash))
+            {
+                return BadRequest("Invalid credentials.");
+            }
+
+            var token = _jwtService.GenerateJwt(user);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddHours(1),
+            };
+
+            Response.Cookies.Append("authToken", token, cookieOptions);
+
+            return Ok(new { message = "Login successful." });
         }
-
-        if (!VerifyPassword(request.Password, user.PasswordHash))
+        catch (Exception ex)
         {
-            return BadRequest("Invalid credentials.");
+            Console.WriteLine($"Login failed: {ex.Message}");
+            return StatusCode(500, "Internal Server Error");
         }
-
-        var token = _jwtService.GenerateJwt(user);
-
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            SameSite = SameSiteMode.None,
-            Secure = true,
-            Expires = DateTime.UtcNow.AddHours(1),
-        };
-
-        Response.Cookies.Append("authToken", token, cookieOptions);
-
-        return Ok(new { message = "Login successful." });
     }
 
     [HttpGet("check")]
