@@ -18,6 +18,11 @@ public class AppDbContext : DbContext
             .Property(u => u.Id)
             .ValueGeneratedOnAdd();
 
+        // Add an index on the Email column
+        modelBuilder.Entity<Users>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
         modelBuilder.Entity<Jobs>()
             .HasOne(j => j.User)
             .WithMany(u => u.Jobs)
