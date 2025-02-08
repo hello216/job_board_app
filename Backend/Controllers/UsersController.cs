@@ -14,10 +14,12 @@ namespace Backend.Controllers;
 public class UserController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly JwtService _jwtService;
 
-    public UserController(AppDbContext context)
+    public UserController(AppDbContext context, JwtService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
     [HttpPost]
@@ -134,7 +136,18 @@ public class UserController : ControllerBase
             return BadRequest("Invalid credentials.");
         }
 
-        // Set auth cookie here
+        var token = _jwtService.GenerateJwt(user);
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.None,
+            Secure = true,
+            Expires = DateTime.UtcNow.AddHours(1),
+        };
+
+        Response.Cookies.Append("authToken", token, cookieOptions);
+
         return Ok("Login successful.");
     }
 
