@@ -13,12 +13,7 @@ const Home = () => {
 
         if (response.ok) {
           const data = await response.json();
-          if (data.length === 0) {
-            setError('No jobs found. Please add a new job!');
-          } else {
-            setJobs(data);
-            setError(null);
-          }
+          setJobs(data);
         } else {
           setError('Failed to retrieve jobs');
         }
@@ -33,10 +28,14 @@ const Home = () => {
 
   return (
     <div id="home-container">
-      {error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : jobs.length === 0 ? (
-        <p style={{ textAlign: 'center' }}>No jobs found. Please add a new job!</p>
+      {error && <p>{error}</p>}
+      
+      <button type="button" onClick={() => window.location.href = '/newjob'}>
+        Add New Job Application
+      </button>
+
+      {jobs.length === 0 ? (
+        <p>No jobs found. Please add a new job!</p>
       ) : (
         <table>
           <thead>
