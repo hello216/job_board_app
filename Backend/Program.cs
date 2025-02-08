@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Data;
 using DotNetEnv;
-using Backend.Middleware;
 using Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,8 +33,6 @@ var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");
 
 app.UseHttpsRedirection();
-
-app.UseMiddleware<JwtCookieValidationMiddleware>();
 
 app.MapControllers();
 
