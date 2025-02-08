@@ -17,35 +17,44 @@ public class JwtCookieValidationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Cookies.TryGetValue("authToken", out var token))
+        try
         {
-            string? newToken;
-            var isValid = _jwtService.ValidateToken(token, out newToken);
+            if (context.Request.Cookies.TryGetValue("authToken", out var token))
+            {
+                string? newToken;
+                var isValid = _jwtService.ValidateToken(token, out newToken);
 
-            if (!isValid)
+                if (!isValid)
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await context.Response.WriteAsync("Unauthorized");
+                    return;
+                }
+
+                if (newToken != null)
+                {
+                    context.Response.Cookies.Append("authToken", newToken, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.None,
+                        Secure = true,
+                    });
+                }
+            }
+            else
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsync("Unauthorized");
                 return;
             }
 
-            if (newToken != null)
-            {
-                context.Response.Cookies.Append("authToken", newToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.None,
-                    Secure = true,
-                });
-            }
+            await _next(context);
         }
-        else
+        catch (Exception ex)
         {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            await context.Response.WriteAsync("Unauthorized");
-            return;
+            Console.WriteLine($"Error in JwtCookieValidationMiddleware: {ex.Message}");
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsync("Internal Server Error");
         }
-
-        await _next(context);
     }
 }
