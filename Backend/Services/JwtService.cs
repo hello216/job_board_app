@@ -36,7 +36,6 @@ public class JwtService
         }
         catch (Exception ex)
         {
-            // Handle token generation error
             throw new InvalidOperationException("Failed to generate JWT token", ex);
         }
     }
@@ -57,10 +56,8 @@ public class JwtService
 
             if (validatedToken is JwtSecurityToken jwtToken)
             {
-                // Generate new token if token is about to expire
                 if (DateTime.UtcNow > jwtToken.ValidTo - TimeSpan.FromMinutes(30))
                 {
-                    // Generate a new token with updated expiration
                     newToken = GenerateJwtFromClaims(jwtToken.Claims);
                     return true;
                 }
@@ -71,26 +68,32 @@ public class JwtService
                 }
             }
 
-            newToken = null;
-            return false;
+            throw new InvalidOperationException("Token validation failed.");
         }
-        catch
+        catch (Exception ex)
         {
             newToken = null;
-            return false;
+            throw new InvalidOperationException("Error validating token.", ex);
         }
     }
 
     private string GenerateJwtFromClaims(IEnumerable<Claim> claims)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        try
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Failed to generate JWT from claims.", ex);
+        }
     }
 }
