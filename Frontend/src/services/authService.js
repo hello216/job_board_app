@@ -1,14 +1,11 @@
 export const checkAuth = async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/auth/check`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/user/check`, {
       method: 'GET',
       credentials: 'include',
     });
-    if (response.ok) {
-      return true;
-    }
+    return response.ok;
   } catch (error) {
-    console.error('Auth check failed:', error);
+    return false;
   }
-  return false;
 };
