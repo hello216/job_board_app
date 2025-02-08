@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace Backend.Controllers;
 
@@ -19,11 +20,13 @@ public class UserController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly JwtService _jwtService;
+    private readonly ILogger<UserController> _logger;
 
-    public UserController(AppDbContext context, JwtService jwtService)
+    public UserController(AppDbContext context, JwtService jwtService, ILogger<UserController> logger)
     {
         _context = context;
         _jwtService = jwtService;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -129,6 +132,8 @@ public class UserController : ControllerBase
     {
         try
         {
+            _logger.LogInformation("Hellooo......");
+
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -158,7 +163,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Login failed: {ex.Message}");
+            _logger.LogError($"Login failed: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
         }
     }
