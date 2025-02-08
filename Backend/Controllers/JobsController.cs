@@ -4,6 +4,7 @@ using Backend.Models;
 using Backend.Data;
 using Backend.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers;
 
