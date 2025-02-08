@@ -67,6 +67,9 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Users>> Get(string id)
     {
+        if (!IsAuthenticated(Request, _jwtService))
+            return Unauthorized("No authentication token provided.");
+
         var user = await _context.Users.FindAsync(id);
         if (user == null)
         {
@@ -87,6 +90,9 @@ public class UserController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<Users>> Update(string id, UpdateUserRequest request)
     {
+        if (!IsAuthenticated(Request, _jwtService))
+            return Unauthorized("No authentication token provided.");
+
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
@@ -116,6 +122,9 @@ public class UserController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
+        if (!IsAuthenticated(Request, _jwtService))
+            return Unauthorized("No authentication token provided.");
+
         var user = await _context.Users.FindAsync(id);
         if (user == null)
         {
@@ -239,6 +248,19 @@ public class UserController : ControllerBase
 
         // Compare generated check hash with stored hash
         return checkHashBytes.SequenceEqual(storedHashBytes);
+    }
+
+    private bool IsAuthenticated(HttpRequest request, JwtService jwtService)
+    {
+        var cookieOptions = new CookieOptions();
+        if (request.Cookies.TryGetValue("authToken", out var token))
+        {
+            return jwtService.IsAuthenticated(token);
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
