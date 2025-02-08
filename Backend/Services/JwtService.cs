@@ -79,7 +79,7 @@ public class JwtService
         }
     }
 
-    private string GenerateJwtFromClaims(Claim[] claims)
+    private string GenerateJwtFromClaims(IEnumerable<Claim> claims)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
