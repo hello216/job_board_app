@@ -22,25 +22,31 @@ public class JobsController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("{userId}")]
-    public async Task<ActionResult<Jobs>> Create(string userId, CreateJobRequest request)
+    [HttpPost]
+    public async Task<ActionResult<Jobs>> Create(CreateJobRequest request)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
 
-        if (request.Title == null || request.Company == null || request.Url == null || request.Location == null)
-        {
-            return BadRequest("Required fields cannot be null.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
-        }
-
         try
         {
-            var user = await _context.Users.FindAsync(userId);
+            if (request.Title == null || request.Company == null || request.Url == null || request.Location == null)
+            {
+                return BadRequest("Required fields cannot be null.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+            }
+
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
             if (user == null)
             {
                 return NotFound("User not found.");
