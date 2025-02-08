@@ -149,7 +149,7 @@ public class UserController : ControllerBase
 
         Response.Cookies.Append("authToken", token, cookieOptions);
 
-        return Ok("Login successful.");
+        return Ok(new { message = "Login successful." });
     }
 
     private string HashPassword(string password)
