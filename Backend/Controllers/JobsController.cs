@@ -98,6 +98,36 @@ public class JobsController : ControllerBase
         }
     }
 
+    [HttpGet("getuserjobs")]
+    public async Task<ActionResult<Jobs[]>> GetUserJobs()
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
+
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var jobs = await _context.Jobs.Where(j => j.UserId == user.Id).ToArrayAsync();
+            return Ok(jobs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Failed to get user's jobs: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<Jobs>> Update(string id, UpdateJobRequest request)
     {
