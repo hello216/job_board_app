@@ -29,7 +29,7 @@ const Home = () => {
   return (
     <div id="home-container">
       {error && <p>{error}</p>}
-      
+
       <button type="button" onClick={() => window.location.href = '/newjob'}>
         Add New Job Application
       </button>
