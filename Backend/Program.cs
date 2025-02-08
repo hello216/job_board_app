@@ -5,6 +5,8 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Backend.Middleware;
+using Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSingleton<JwtService>();
-builder.Services.UseMiddleware<JwtCookieValidationMiddleware>();
+builder.Services.AddSingleton<JwtCookieValidationMiddleware>();
 
 builder.Services.AddCors(options =>
 {

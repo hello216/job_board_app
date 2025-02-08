@@ -4,6 +4,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Backend.Models;
 
+namespace Backend.Services;
+
 public class JwtService
 {
     private readonly string _secretKey;

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Data;
+using Backend.Services;
 using Konscious.Security.Cryptography;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
