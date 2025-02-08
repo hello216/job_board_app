@@ -118,6 +118,26 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("login")]
+    public async Task<ActionResult> Login(LoginRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        if (!VerifyPassword(request.Password, user.PasswordHash))
+        {
+            return BadRequest("Invalid credentials.");
+        }
+
+        // Set auth cookie here
+        return Ok("Login successful.");
+    }
+
     private string HashPassword(string password)
     {
         // Convert password to byte array
@@ -196,4 +216,14 @@ public class UpdateUserRequest
 {
     public string? Email { get; set; }
     public string? Password { get; set; }
+}
+
+public class LoginRequest
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+
+    [Required]
+    public string Password { get; set; }
 }
