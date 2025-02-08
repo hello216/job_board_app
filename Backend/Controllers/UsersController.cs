@@ -132,8 +132,6 @@ public class UserController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Hellooo......");
-
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -152,7 +150,7 @@ public class UserController : ControllerBase
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Secure = true,
                 Expires = DateTime.UtcNow.AddHours(1),
             };
@@ -168,16 +166,24 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost("check")]
-    public IActionResult CheckAuthentication(string token)
+    [HttpGet("check")]
+    public IActionResult CheckAuthentication()
     {
-        var jwtService = new JwtService();
-        if (!jwtService.IsAuthenticated(token))
+        var cookieOptions = new CookieOptions();
+        if (Request.Cookies.TryGetValue("authToken", out var token))
         {
-            return Unauthorized("Invalid or missing token.");
-        }
+            var jwtService = new JwtService();
+            if (!jwtService.IsAuthenticated(token))
+            {
+                return Unauthorized("Invalid or missing token.");
+            }
 
-        return Ok(true);
+            return Ok(true);
+        }
+        else
+        {
+            return Unauthorized("No authentication token provided.");
+        }
     }
 
     private string HashPassword(string password)
