@@ -196,7 +196,7 @@ public class JobsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Jobs>> Update(string id, UpdateJobRequest request)
+    public async Task<ActionResult> Update(string id, UpdateJobRequest request)
     {
         if (!IsAuthenticated())
         {
@@ -248,7 +248,19 @@ public class JobsController : ControllerBase
 
             jobToUpdate.UpdateTimestamps();
             await _context.SaveChangesAsync();
-            return Ok(jobToUpdate);
+            return Ok(new
+            {
+                jobToUpdate.Id,
+                Status = jobToUpdate.Status.ToString(),
+                jobToUpdate.Title,
+                jobToUpdate.Company,
+                jobToUpdate.Url,
+                jobToUpdate.Location,
+                jobToUpdate.Note,
+                jobToUpdate.CreatedAt,
+                jobToUpdate.UpdatedAt,
+                jobToUpdate.UserId
+            });
         }
         catch (Exception ex)
         {
