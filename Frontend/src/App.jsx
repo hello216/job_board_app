@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import CreateJob from './pages/CreateJob';
+import EditJob from './pages/EditJob';
 
 function App() {
   return (
@@ -25,6 +26,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+      <Route path="/edit-job/:id" element={
+        <ProtectedRoute>
+          <EditJob />
+        </ProtectedRoute>
+      } />
       </Routes>
     </Router>
   )
