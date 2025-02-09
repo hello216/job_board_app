@@ -1,5 +1,5 @@
 #root, html, body {
-	background-color: #eeece2;
+	background-color: #da7756;
 	width: 100%;
 	height: 100%;
 	display: flex;
@@ -8,5 +8,5 @@
 	align-content: center;
 	text-align: center;
 	font-family: 'Verdana', 'Geneva', sans-serif;
-	color: #3d3929;
+	color: white;
 }
