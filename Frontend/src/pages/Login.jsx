@@ -68,7 +68,7 @@ const Login = () => {
           </div>
           <button type="submit" className="btn btn-dark">Login</button>
         </form>
-        <a className="link-light link-opacity-50-hover" href="/register">or Register here</a>
+        <a className="link-dark link-opacity-50-hover" href="/register">or Register here</a>
       </div>
     </div>
   );
