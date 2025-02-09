@@ -5,6 +5,8 @@ using Backend.Data;
 using Backend.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Linq;
 
 namespace Backend.Controllers;
 
@@ -187,6 +189,31 @@ public class JobsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError("Failed to delete job: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet("getstatuses")]
+    public IActionResult GetJobStatuses()
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
+
+        try
+        {
+            var types = typeof(JobStatus).GetFields(BindingFlags.Public | BindingFlags.Static);
+            var statuses = types.Select(t =>
+            {
+                var attribute = (DisplayAttribute)t.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault();
+                var name = attribute != null ? attribute.Name : t.Name;
+                return new { Id = (int)((JobStatus)t.GetValue(null)), Name = name };
+            });
+
+            return Ok(statuses);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Failed to get job statuses: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
         }
     }
