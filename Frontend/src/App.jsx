@@ -5,14 +5,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import CreateJob from './pages/CreateJob';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
+        <Route path="/" element={
             <ProtectedRoute>
               <Home />
             </ProtectedRoute>
@@ -20,6 +19,12 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/create-job" element={
+            <ProtectedRoute>
+              <CreateJob />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   )
