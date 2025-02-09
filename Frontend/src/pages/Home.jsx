@@ -63,8 +63,8 @@ const Home = () => {
                 </td>
                 <td>{job.location}</td>
                 <td>
-                  <a href={`/edit/${job.id}`}>Edit</a>
-                  <a href={`/delete/${job.id}`}>Delete</a>
+                  <a href={`/edit-job/${job.id}`}>Edit</a>
+                  <a href={`/delete-job/${job.id}`}>Delete</a>
                 </td>
               </tr>
             ))}
