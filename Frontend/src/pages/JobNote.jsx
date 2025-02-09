@@ -22,6 +22,7 @@ const JobNote = () => {
         if (response.ok) {
           const jobData = await response.json();
           setJob({
+            id: jobData.id,
             note: jobData.note,
           });
         } else {
@@ -40,9 +41,10 @@ const JobNote = () => {
     <div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <h2>Job Note</h2>
-      <textarea value={job.note} readOnly/>
+      <p>{job.note}</p>
       <div>
         <Link to="/">Go Home</Link>
+        <a href={`/edit-job/${job.id}`}>Edit</a>
       </div>
     </div>
   );
