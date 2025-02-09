@@ -1,6 +1,6 @@
 # Job Application Tracker TODO
 
-- [ ] **User Authentication**  
+- [X] **User Authentication**  
   Add user registration and login system for private job application data.
 
 - [ ] **Data Visualization**  
@@ -32,9 +32,3 @@
 
 - [ ] **Gamification**  
   Introduce achievements and progress bars for engaging goal tracking.
-
-- [ ] **Admin Dashboard**  
-  Create a dashboard for monitoring user activity and managing data.
-
-- [ ] **Deploy and Showcase**  
-  Deploy the app live with a demo for public access.
