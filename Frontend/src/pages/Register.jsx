@@ -77,7 +77,9 @@ const Register = () => {
           </div>
           <button type="submit" className="btn btn-dark">Register</button>
         </form>
-        <a className="link-dark link-opacity-50-hover" href="/login">or Login here</a>
+        <div className="mt-4">
+          <a className="link-dark link-opacity-50-hover" href="/login">or Login here</a>
+        </div>
       </div>
     </div>
   );
