@@ -54,21 +54,23 @@ const Login = () => {
   return (
     <div>
       <div>
-        <h2>Login</h2>
         {errors.general && <p>{errors.general}</p>}
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Email:</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input className="form-control" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             {errors.email && <p>{errors.email}</p>}
           </div>
-          <div>
-            <label>Password:</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             {errors.password && <p>{errors.password}</p>}
           </div>
-          <button type="submit">Login</button>
+          <button type="submit" className="btn btn-dark">Login</button>
         </form>
+        <div className="mt-4">
+          <a className="link-dark link-opacity-50-hover" href="/register">or Register here</a>
+        </div>
       </div>
     </div>
   );

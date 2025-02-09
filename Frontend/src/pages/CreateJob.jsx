@@ -93,11 +93,26 @@ const CreateJob = () => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Status:</label>
-          <select name="status" value={job.status} onChange={handleChange}>
+    <div className="container my-5">
+
+      {Object.keys(errors).length > 0 && (
+        <div className="alert alert-danger mt-3">
+          {Object.keys(errors).map((key) => (
+            Array.isArray(errors[key]) ? (
+              errors[key].map((error, index) => (
+                <p key={`${key}-${index}`}>{key}: {error}</p>
+              ))
+            ) : (
+              <p key={key}>{key}: {errors[key]}</p>
+            )
+          ))}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-4">
+        <div className="mb-3">
+          <label className="form-label">Status:</label>
+          <select className="form-select" name="status" value={job.status} onChange={handleChange}>
             <option value="">Select</option>
             {statuses.length > 0 &&
               statuses.map(status => (
@@ -106,48 +121,33 @@ const CreateJob = () => {
           </select>
         </div>
 
-        <div>
-          <label>Title:</label>
-          <input type="text" name="title" value={job.title} onChange={handleChange} />
+        <div className="mb-3">
+          <label className="form-label">Title:</label>
+          <input className="form-control" type="text" name="title" value={job.title} onChange={handleChange} />
         </div>
 
-        <div>
-          <label>Company:</label>
-          <input type="text" name="company" value={job.company} onChange={handleChange} />
+        <div className="mb-3">
+          <label className="form-label">Company:</label>
+          <input className="form-control" type="text" name="company" value={job.company} onChange={handleChange} />
         </div>
 
-        <div>
-          <label>Url:</label>
-          <input type="text" name="url" value={job.url} onChange={handleChange} />
+        <div className="mb-3">
+          <label className="form-label">URL:</label>
+          <input className="form-control" type="text" name="url" value={job.url} onChange={handleChange} />
         </div>
 
-        <div>
-          <label>Location:</label>
-          <input type="text" name="location" value={job.location} onChange={handleChange} />
+        <div className="mb-3">
+          <label className="form-label">Location:</label>
+          <input className="form-control" type="text" name="location" value={job.location} onChange={handleChange} />
         </div>
 
-        <div>
-          <input type="submit" value="Submit" />
-        </div>
-        {Object.keys(errors).length > 0 && (
-          <div style={{ color: 'red' }}>
-            {Object.keys(errors).map((key) => (
-              Array.isArray(errors[key]) ? (
-                errors[key].map((error, index) => (
-                  <p key={`${key}-${index}`}>{key}: {error}</p>
-                ))
-              ) : (
-                <p key={key}>{key}: {errors[key]}</p>
-              )
-            ))}
-          </div>
-        )}
+        <button type="submit" className="btn btn-dark">Add</button>
       </form>
 
-      <div>
-        <Link to="/">Go Home</Link>
+      <div className="mt-4">
+        <Link to="/" className="link-dark link-opacity-50-hover">Go Home</Link>
       </div>
-    </>
+    </div>
   );
 };
 

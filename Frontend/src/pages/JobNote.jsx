@@ -38,13 +38,12 @@ const JobNote = () => {
   }, [id]);
 
   return (
-    <div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <h2>Job Note</h2>
-      <p>{job.note}</p>
-      <div>
-        <Link to="/">Go Home</Link>
-        <a href={`/edit-job/${job.id}`}>Edit</a>
+    <div className="container my-5">
+      {error && <div className="alert alert-danger mt-3">{error}</div>}
+      <p className="fs-5">{job.note}</p>
+      <div className="mt-4">
+        <Link to="/" className="link-dark link-opacity-50-hover">Go Home</Link>
+        <a href={`/edit-job/${job.id}`} className="link-dark link-opacity-50-hover mx-2">Edit</a>
       </div>
     </div>
   );
