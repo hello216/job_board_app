@@ -26,7 +26,7 @@ public class JobsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Jobs>> Create(CreateJobRequest request)
+    public async Task<ActionResult> Create(CreateJobRequest request)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
@@ -41,6 +41,12 @@ public class JobsController : ControllerBase
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+            }
+
+            // Convert string status to JobStatus enum
+            if (!Enum.TryParse(request.Status, true, out JobStatus status))
+            {
+                return BadRequest("Invalid status provided.");
             }
 
             var currentUserId = GetCurrentUserId();
@@ -59,7 +65,7 @@ public class JobsController : ControllerBase
             {
                 UserId = user.Id,
                 User = user,
-                Status = request.Status,
+                Status = status,
                 Title = request.Title!,
                 Company = request.Company!,
                 Url = request.Url!,
@@ -69,7 +75,20 @@ public class JobsController : ControllerBase
 
             _context.Jobs.Add(job);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = job.Id }, job);
+
+            return Ok(new
+            {
+                Id = job.Id,
+                Status = job.Status,
+                Title = job.Title,
+                Company = job.Company,
+                Url = job.Url,
+                Location = job.Location,
+                Note = job.Note,
+                CreatedAt = job.CreatedAt,
+                UpdatedAt = job.UpdatedAt,
+                UserId = job.UserId
+            });
         }
         catch (Exception ex)
         {
@@ -206,7 +225,7 @@ public class JobsController : ControllerBase
             {
                 var attribute = (DisplayAttribute)t.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault();
                 var name = attribute != null ? attribute.Name : t.Name;
-                return new { Id = (int)((JobStatus)t.GetValue(null)), Name = name };
+                return new { Id = (int)t.GetValue(null), Name = name, Value = t.Name };
             });
 
             return Ok(statuses);
@@ -245,8 +264,7 @@ public class JobsController : ControllerBase
 
 public class CreateJobRequest
 {
-    [EnumDataType(typeof(JobStatus))]
-    public JobStatus Status { get; set; }
+    public string? Status { get; set; }
 
     [Required]
     [StringLength(30)]
