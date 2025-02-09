@@ -58,26 +58,26 @@ const Register = () => {
   return (
     <div>
       <div>
-        <h2>Register</h2>
         {errors.general && <p>{errors.general}</p>}
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Email:</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input className="form-control" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
             {errors.email && <p>{errors.email}</p>}
           </div>
-          <div>
-            <label>Password:</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             {errors.password && <p>{errors.password}</p>}
           </div>
-          <div>
-            <label>Confirm Password:</label>
-            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          <div className="mb-3">
+            <label className="form-label">Confirm Password</label>
+            <input className="form-control" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
             {errors.confirm_password && <p>{errors.confirm_password}</p>}
           </div>
-          <button type="submit">Register</button>
+          <button type="submit" className="btn btn-dark">Register</button>
         </form>
+        <a className="link-light link-opacity-50-hover" href="/login">or Login here</a>
       </div>
     </div>
   );
