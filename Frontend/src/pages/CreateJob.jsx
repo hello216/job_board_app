@@ -69,11 +69,21 @@ const CreateJob = () => {
       if (response.ok) {
         navigate('/');
       } else {
-        console.log(response.status);
-        console.log(response.body);
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.errors) {
+            setErrors(errorData.errors);
+          } else {
+            setErrors({ general: 'Failed to create job.' });
+          }
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+          setErrors({ general: 'Failed to parse error response.' });
+        }
       }
     } catch (error) {
       console.log(error);
+      setErrors({ general: 'An unexpected error occurred.' });
     }
   };
 
@@ -119,6 +129,19 @@ const CreateJob = () => {
         <div>
           <input type="submit" value="Submit" />
         </div>
+        {Object.keys(errors).length > 0 && (
+          <div style={{ color: 'red' }}>
+            {Object.keys(errors).map((key) => (
+              Array.isArray(errors[key]) ? (
+                errors[key].map((error, index) => (
+                  <p key={`${key}-${index}`}>{key}: {error}</p>
+                ))
+              ) : (
+                <p key={key}>{key}: {errors[key]}</p>
+              )
+            ))}
+          </div>
+        )}
       </form>
 
       <div>
