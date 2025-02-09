@@ -48,17 +48,17 @@ const Home = () => {
   };
 
   return (
-    <div id="home-container">
-      {error && <p>{error}</p>}
+    <div id="home-container" className="container my-5">
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <button type="button" onClick={() => window.location.href = '/create-job'}>
-        Add New Job Application
+      <button type="button" className="btn btn-dark " onClick={() => window.location.href = '/create-job'}>
+        New Application
       </button>
 
       {jobs.length === 0 ? (
-        <p>No jobs found. Please add a new job!</p>
+        <p className="fs-4 text-center my-5">No jobs found. Please add a new job!</p>
       ) : (
-        <table>
+        <table className="table table-dark table-hover mt-5">
           <thead>
             <tr>
               <th>Submitted At</th>
@@ -87,15 +87,15 @@ const Home = () => {
                 <td>{job.title}</td>
                 <td>{job.company}</td>
                 <td>
-                  <a href={job.url} target="_blank">
+                  <a href={job.url} target="_blank" className="link-light link-opacity-50-hover">
                     {new URL(job.url).host}
                   </a>
                 </td>
                 <td>{job.location}</td>
                 <td>
-                  <a href={`/job-note/${job.id}`}>Notes</a>
-                  <a href={`/edit-job/${job.id}`}>Edit</a>
-                  <button type="button" onClick={() => handleDeleteJob(job.id)}>Delete</button>
+                  <a href={`/job-note/${job.id}`} className="btn btn-sm btn-secondary me-2">Notes</a>
+                  <a href={`/edit-job/${job.id}`} className="btn btn-sm btn-primary me-2">Edit</a>
+                  <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>
                 </td>
               </tr>
             ))}
