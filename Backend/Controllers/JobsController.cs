@@ -121,7 +121,7 @@ public class JobsController : ControllerBase
     }
 
     [HttpGet("getuserjobs")]
-    public async Task<ActionResult<Jobs[]>> GetUserJobs()
+    public async Task<ActionResult> GetUserJobs()
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
@@ -140,7 +140,23 @@ public class JobsController : ControllerBase
                 return NotFound("User not found.");
             }
 
-            var jobs = await _context.Jobs.Where(j => j.UserId == user.Id).ToArrayAsync();
+            var jobs = await _context.Jobs
+                .Where(j => j.UserId == user.Id)
+                .Select(j => new
+                {
+                    j.Id,
+                    j.Status,
+                    j.Title,
+                    j.Company,
+                    j.Url,
+                    j.Location,
+                    j.Note,
+                    j.CreatedAt,
+                    j.UpdatedAt,
+                    j.UserId
+                })
+                .ToArrayAsync();
+
             return Ok(jobs);
         }
         catch (Exception ex)
