@@ -197,7 +197,13 @@ public class JobsController : ControllerBase
                 return NotFound("Job not found.");
             }
 
-            jobToUpdate.Status = request.Status ?? jobToUpdate.Status;
+            JobStatus? status = null;
+            if (request.Status != null && Enum.TryParse(request.Status, true, out JobStatus parsedStatus))
+            {
+                status = parsedStatus;
+            }
+
+            jobToUpdate.Status = status ?? jobToUpdate.Status;
             jobToUpdate.Title = request.Title ?? jobToUpdate.Title;
             jobToUpdate.Company = request.Company ?? jobToUpdate.Company;
             jobToUpdate.Url = request.Url ?? jobToUpdate.Url;
@@ -316,8 +322,7 @@ public class CreateJobRequest
 
 public class UpdateJobRequest
 {
-    [EnumDataType(typeof(JobStatus))]
-    public JobStatus? Status { get; set; }
+    public string? Status { get; set; }
 
     [StringLength(30)]
     public string? Title { get; set; }
