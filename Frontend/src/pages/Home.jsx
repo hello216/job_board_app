@@ -73,7 +73,16 @@ const Home = () => {
           <tbody>
             {jobs.map((job) => (
               <tr key={job.id}>
-                <td>{job.createdAt}</td>
+                <td>
+                  {new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                  }).format(new Date(job.createdAt))}
+                </td>
                 <td>{job.status}</td>
                 <td>{job.title}</td>
                 <td>{job.company}</td>
