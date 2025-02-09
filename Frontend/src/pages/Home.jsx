@@ -93,8 +93,8 @@ const Home = () => {
                 </td>
                 <td>{job.location}</td>
                 <td>
-                  <a href={`/job-note/${job.id}`} className="btn btn-sm btn-secondary me-2">Notes</a>
-                  <a href={`/edit-job/${job.id}`} className="btn btn-sm btn-primary me-2">Edit</a>
+                  <a href={`/job-note/${job.id}`} className="btn btn-sm btn-light me-2">Notes</a>
+                  <a href={`/edit-job/${job.id}`} className="btn btn-sm btn-light me-2">Edit</a>
                   <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>
                 </td>
               </tr>
