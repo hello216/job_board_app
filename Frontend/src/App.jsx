@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import CreateJob from './pages/CreateJob';
 import EditJob from './pages/EditJob';
+import JobNote from './pages/JobNote';
 
 function App() {
   return (
@@ -29,6 +30,11 @@ function App() {
       <Route path="/edit-job/:id" element={
         <ProtectedRoute>
           <EditJob />
+        </ProtectedRoute>
+      } />
+      <Route path="/job-note/:id" element={
+        <ProtectedRoute>
+          <JobNote />
         </ProtectedRoute>
       } />
       </Routes>
