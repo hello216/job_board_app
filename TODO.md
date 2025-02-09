@@ -9,9 +9,6 @@
 - [ ] **Status Tracking with Notifications**  
   Track application status and send reminders via email or notifications.
 
-- [ ] **Collaborative Features**  
-  Allow users to share their tracker with mentors or peers for feedback.
-
 - [ ] **Resume and Cover Letter Storage**  
   Upload and manage resumes, cover letters, and other job-related documents.
 
