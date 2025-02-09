@@ -26,6 +26,27 @@ const Home = () => {
     fetchJobs();
   }, []);
 
+  const handleDeleteJob = async (id) => {
+    if (window.confirm("Are you sure you want to delete this job?")) {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${id}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const updatedJobs = jobs.filter(job => job.id !== id);
+          setJobs(updatedJobs);
+        } else {
+          setError('Failed to delete job');
+        }
+      } catch (error) {
+        console.log(error);
+        setError('Error deleting job');
+      }
+    }
+  };
+
   return (
     <div id="home-container">
       {error && <p>{error}</p>}
@@ -64,7 +85,7 @@ const Home = () => {
                 <td>{job.location}</td>
                 <td>
                   <a href={`/edit-job/${job.id}`}>Edit</a>
-                  <a href={`/delete-job/${job.id}`}>Delete</a>
+                  <button type="button" onClick={() => handleDeleteJob(job.id)}>Delete</button>
                 </td>
               </tr>
             ))}
