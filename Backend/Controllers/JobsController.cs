@@ -123,7 +123,7 @@ public class JobsController : ControllerBase
                 return NotFound("Job not found.");
             }
 
-            if (job.user !== user)
+            if (job.User != user)
             {
                 return Unauthorized("Not authorized to access this resource.");
             }
@@ -228,7 +228,7 @@ public class JobsController : ControllerBase
                 return NotFound("Job not found.");
             }
 
-            if (jobToUpdate.user !== user)
+            if (jobToUpdate.User != user)
             {
                 return Unauthorized("You are not authorized to update this job.");
             }
@@ -285,7 +285,7 @@ public class JobsController : ControllerBase
                 return NotFound("Job not found.");
             }
 
-            if (job.user !== user)
+            if (job.User != user)
             {
                 return Unauthorized("You are not authorized to delete this job.");
             }
