@@ -105,10 +105,27 @@ public class JobsController : ControllerBase
 
         try
         {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
             var job = await _context.Jobs.FindAsync(id);
             if (job == null)
             {
                 return NotFound("Job not found.");
+            }
+
+            if (job.User != user)
+            {
+                return Unauthorized("Not authorized to access this resource.");
             }
 
             return Ok(new
@@ -179,10 +196,12 @@ public class JobsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Jobs>> Update(string id, UpdateJobRequest request)
+    public async Task<ActionResult> Update(string id, UpdateJobRequest request)
     {
         if (!IsAuthenticated())
+        {
             return Unauthorized("No authentication token provided.");
+        }
 
         if (!ModelState.IsValid)
         {
@@ -191,10 +210,27 @@ public class JobsController : ControllerBase
 
         try
         {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return StatusCode(500, "Failed to retrieve current user's ID.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
+            if (user == null)
+            {
+                return StatusCode(500, "User not found.");
+            }
+
             var jobToUpdate = await _context.Jobs.FindAsync(id);
             if (jobToUpdate == null)
             {
                 return NotFound("Job not found.");
+            }
+
+            if (jobToUpdate.User != user)
+            {
+                return Unauthorized("You are not authorized to update this job.");
             }
 
             JobStatus? status = null;
@@ -212,11 +248,23 @@ public class JobsController : ControllerBase
 
             jobToUpdate.UpdateTimestamps();
             await _context.SaveChangesAsync();
-            return Ok(jobToUpdate);
+            return Ok(new
+            {
+                jobToUpdate.Id,
+                Status = jobToUpdate.Status.ToString(),
+                jobToUpdate.Title,
+                jobToUpdate.Company,
+                jobToUpdate.Url,
+                jobToUpdate.Location,
+                jobToUpdate.Note,
+                jobToUpdate.CreatedAt,
+                jobToUpdate.UpdatedAt,
+                jobToUpdate.UserId
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to update job: {ex.Message}", ex);
+            _logger.LogError(ex, "Failed to update job.");
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -225,14 +273,33 @@ public class JobsController : ControllerBase
     public async Task<ActionResult> Delete(string id)
     {
         if (!IsAuthenticated())
+        {
             return Unauthorized("No authentication token provided.");
+        }
 
         try
         {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return StatusCode(500, "Failed to retrieve current user's ID.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
+            if (user == null)
+            {
+                return StatusCode(500, "User not found.");
+            }
+
             var job = await _context.Jobs.FindAsync(id);
             if (job == null)
             {
                 return NotFound("Job not found.");
+            }
+
+            if (job.User != user)
+            {
+                return Unauthorized("You are not authorized to delete this job.");
             }
 
             _context.Jobs.Remove(job);
@@ -241,7 +308,7 @@ public class JobsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to delete job: {ex.Message}", ex);
+            _logger.LogError(ex, "Failed to delete job.");
             return StatusCode(500, "Internal Server Error");
         }
     }
