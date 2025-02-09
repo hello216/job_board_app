@@ -98,7 +98,7 @@ public class JobsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Jobs>> Get(string id)
+    public async Task<ActionResult> Get(string id)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
@@ -111,7 +111,19 @@ public class JobsController : ControllerBase
                 return NotFound("Job not found.");
             }
 
-            return Ok(job);
+            return Ok(new
+            {
+                job.Id,
+                Status = job.Status.ToString(),
+                job.Title,
+                job.Company,
+                job.Url,
+                job.Location,
+                job.Note,
+                job.CreatedAt,
+                job.UpdatedAt,
+                job.UserId
+            });
         }
         catch (Exception ex)
         {
@@ -145,7 +157,7 @@ public class JobsController : ControllerBase
                 .Select(j => new
                 {
                     j.Id,
-                    j.Status,
+                    Status = j.Status.ToString(),
                     j.Title,
                     j.Company,
                     j.Url,
