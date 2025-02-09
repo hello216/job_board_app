@@ -117,7 +117,6 @@ const EditJob = () => {
 
   return (
     <div className="container my-5">
-      <h2>Update Job</h2>
 
       {Object.keys(errors).length > 0 && (
         <div className="alert alert-danger">

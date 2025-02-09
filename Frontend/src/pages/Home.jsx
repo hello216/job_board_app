@@ -52,7 +52,7 @@ const Home = () => {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <button type="button" className="btn btn-dark " onClick={() => window.location.href = '/create-job'}>
-        New Application
+        Add Application
       </button>
 
       {jobs.length === 0 ? (

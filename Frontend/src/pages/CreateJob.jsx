@@ -94,7 +94,6 @@ const CreateJob = () => {
 
   return (
     <div className="container my-5">
-      <h2>Create Job Application</h2>
 
       {Object.keys(errors).length > 0 && (
         <div className="alert alert-danger mt-3">
@@ -142,7 +141,7 @@ const CreateJob = () => {
           <input className="form-control" type="text" name="location" value={job.location} onChange={handleChange} />
         </div>
 
-        <button type="submit" className="btn btn-dark">Submit</button>
+        <button type="submit" className="btn btn-dark">Add</button>
       </form>
 
       <div className="mt-4">
