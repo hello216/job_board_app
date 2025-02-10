@@ -205,7 +205,7 @@ public class UserController : ControllerBase
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
             {
-                return NotFound("User not found.");
+                return BadRequest("Invalid credentials.");
             }
 
             if (!VerifyPassword(request.Password, user.PasswordHash))
