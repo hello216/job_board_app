@@ -1,31 +1,34 @@
 # Job Application Tracker TODO
 
-- [X] **User Authentication**  
+- [X] **User Authentication**
   Add user registration and login system for private job application data.
 
-- [ ] **Data Visualization**  
+- [ ] **Data Visualization**
   Visualize job application metrics with charts and graphs.
 
-- [ ] **Status Tracking with Notifications**  
+- [ ] **Status Tracking with Notifications**
   Track application status and send reminders via email or notifications.
 
-- [ ] **Resume and Cover Letter Storage**  
+- [ ] **Resume and Cover Letter Storage**
   Upload and manage resumes, cover letters, and other job-related documents.
 
-- [ ] **Search and Filter**  
+- [ ] **Search and Filter**
   Advanced search and filtering by job title, location, company, and status.
 
-- [ ] **Export and Reporting**  
+- [ ] **Export and Reporting**
   Export data to Excel, CSV, or PDF and generate application summaries.
 
-- [ ] **Mobile-Friendly Design**  
+- [ ] **Mobile-Friendly Design**
   Make the app mobile-responsive for easy use on phones and tablets.
 
-- [ ] **AI-Driven Insights**  
+- [ ] **AI-Driven Insights**
   Provide AI-generated recommendations or insights based on application data.
 
-- [ ] **Dark Mode and Theming**  
+- [ ] **Dark Mode and Theming**
   Add dark mode and customizable themes for better user experience.
 
-- [ ] **Gamification**  
+- [ ] **Gamification**
   Introduce achievements and progress bars for engaging goal tracking.
+
+- [ ] **Vulnerability Scanning**
+  Scan app for vulnerabilities.
