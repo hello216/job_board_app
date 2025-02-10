@@ -3,36 +3,25 @@ const ValidateSanitize = {
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
       return {
         error: "Invalid email format",
-        sanitized: email.replace(/['"!@#$%^&*()_+={};':"|,.<>?]/g, match => `\\${match}`)
+        sanitized: email.replace(/[^\w@.-]/g, '') // Remove any non-email characters
       };
     }
 
-    // Remove script tags and escape special characters
-    const sanitizedEmail = email.replace(/<script>.*?<\/script>/gmi, '');
     return {
       error: null,
-      sanitized: sanitizedEmail
+      sanitized: email.replace(/[<>]/g, '') // Just remove < and > from the email for safety
     };
   },
 
-  sanitizeAndValidatePassword: (password) => {
+  validatePassword: (password) => {
     if (password.length < 12) {
-      return {
-        error: "Password should be at least 12 characters long",
-        sanitized: password.replace(/['"!@#$%^&*()_+={};':"|,.<>?]/g, match => `\\${match}`)
-      };
+      return "Password should be at least 12 characters long";
     }
     if (password.length > 128) {
-      return {
-        error: "Password cannot be longer than 128 characters",
-        sanitized: password.replace(/['"!@#$%^&*()_+={};':"|,.<>?]/g, match => `\\${match}`)
-      };
+      return "Password cannot be longer than 128 characters";
     }
 
-    return {
-      error: null,
-      sanitized: password.replace(/['"!@#$%^&*()_+={};':"|,.<>?]/g, match => `\\${match}`)
-    };
+    return null;
   },
 
   sanitizeAndValidateString: (input) => {
@@ -43,10 +32,9 @@ const ValidateSanitize = {
       };
     }
 
-    // Remove script tags and escape special characters
     let sanitizedInput = input.replace(/<script>.*?<\/script>/gmi, '');
     sanitizedInput = sanitizedInput.replace(/<style>.*?<\/style>/gmi, '');
-    sanitizedInput = sanitizedInput.replace(/['"!@#$%^&*()_+={};':"|,.<>?]/g, match => `\\${match}`);
+    sanitizedInput = sanitizedInput.replace(/[^\w\s]/g, ''); // Remove any non-word and non-whitespace characters
 
     // Remove suspicious keywords
     const suspiciousKeywords = ['UNION', 'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'FROM', 'WHERE', 'OR', 'AND', 'EXECUTE', 'SYSTEM', 'EXIT', '|', ';', '&&', '||'];
