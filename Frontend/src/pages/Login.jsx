@@ -1,4 +1,4 @@
-import { ValidateSanitize } from '../services/validateSanitizeService';
+import ValidateSanitize from '../services/validateSanitizeService';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -12,16 +12,16 @@ const Login = () => {
     e.preventDefault();
     setErrors({});
 
-    const emailError = ValidateSanitize.sanitizeAndValidateEmail(email);
+    const emailResult = ValidateSanitize.sanitizeAndValidateEmail(email);
     const passwordError = ValidateSanitize.validatePassword(password);
 
-    if (emailError) {
-      setErrors(prev => ({ ...prev, email: emailError }));
+    if (emailResult.error) {
+      setErrors({ general: emailResult.error });
     }
-    if (passwordError) {
-      setErrors(prev => ({ ...prev, password: passwordError }));
+    if (passwordError.error) {
+      setErrors({ general: passwordError.error });
     }
-    if (emailError || passwordError) {
+    if (emailResult.error || passwordError.error) {
       return;
     }
 
@@ -31,22 +31,35 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email, password: password }),
+        body: JSON.stringify({ email: emailResult.sanitized, password: password }),
         credentials: 'include',
       });
 
-      const data = await response.json();
+      let data;
+      const isJson = response.headers.get('content-type')?.includes('application/json');
 
       if (response.ok) {
         navigate('/');
+        return;
+      }
+
+      if (isJson) {
+        data = await response.json();
       } else {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setErrors({ general: 'Login failed. Please try again.' });
+        data = await response.text();
+      }
+
+      if (response.status === 400) {
+        if (isJson && data) {
+          setErrors(data);
+        } else if (data) {
+          setErrors({ general: data });
         }
+      } else {
+        setErrors({ general: 'Login failed. Please try again.' });
       }
     } catch (error) {
+      console.log(error);
       setErrors({ general: 'An unexpected error occurred. Please try again later.' });
     }
   };
@@ -59,12 +72,10 @@ const Login = () => {
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input className="form-control" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            {errors.email && <p>{errors.email}</p>}
           </div>
           <div className="mb-3">
             <label className="form-label">Password</label>
             <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            {errors.password && <p>{errors.password}</p>}
           </div>
           <button type="submit" className="btn btn-dark">Login</button>
         </form>

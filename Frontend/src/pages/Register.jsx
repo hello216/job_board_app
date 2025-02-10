@@ -1,4 +1,4 @@
-import { ValidateSanitize } from '../services/validateSanitizeService';
+import ValidateSanitize from '../services/validateSanitizeService';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -13,19 +13,19 @@ const Register = () => {
     e.preventDefault();
     setErrors({});
 
-    const emailError = ValidateSanitize.sanitizeAndValidateEmail(email);
+    const emailResult = ValidateSanitize.sanitizeAndValidateEmail(email);
     const passwordError = ValidateSanitize.validatePassword(password);
 
-    if (emailError) {
-      setErrors(prev => ({ ...prev, email: emailError }));
+    if (emailResult.error) {
+      setErrors({ general: emailResult.error });
     }
-    if (passwordError) {
-      setErrors(prev => ({ ...prev, password: passwordError }));
+    if (passwordError.error) {
+      setErrors({ general: passwordError.error });
     }
     if (password !== confirmPassword) {
-      setErrors(prev => ({ ...prev, confirm_password: 'Passwords do not match.' }));
+      setErrors({ general: 'Passwords do not match.' });
     }
-    if (emailError || passwordError || password !== confirmPassword) {
+    if (emailResult.error || passwordError.error || password !== confirmPassword) {
       return;
     }
 
@@ -35,22 +35,35 @@ const Register = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: email, password: password }),
+        body: JSON.stringify({ email: emailResult.sanitized, password: password }),
         credentials: 'include',
       });
 
-      const data = await response.json();
+      let data;
+      const isJson = response.headers.get('content-type')?.includes('application/json');
 
       if (response.ok) {
         navigate('/login');
+        return;
+      }
+
+      if (isJson) {
+        data = await response.json();
       } else {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setErrors({ general: 'Registration failed. Please try again.' });
+        data = await response.text();
+      }
+
+      if (response.status === 400) {
+        if (isJson && data) {
+          setErrors(data);
+        } else if (data) {
+          setErrors({ general: data });
         }
+      } else {
+        setErrors({ general: 'Registration failed. Please try again.' });
       }
     } catch (error) {
+      console.log(error);
       setErrors({ general: 'An unexpected error occurred. Please try again later.' });
     }
   };
@@ -63,17 +76,14 @@ const Register = () => {
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input className="form-control" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            {errors.email && <p>{errors.email}</p>}
           </div>
           <div className="mb-3">
             <label className="form-label">Password</label>
             <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            {errors.password && <p>{errors.password}</p>}
           </div>
           <div className="mb-3">
             <label className="form-label">Confirm Password</label>
             <input className="form-control" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-            {errors.confirm_password && <p>{errors.confirm_password}</p>}
           </div>
           <button type="submit" className="btn btn-dark">Register</button>
         </form>

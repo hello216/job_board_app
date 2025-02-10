@@ -1,35 +1,26 @@
 const ValidateSanitize = {
   sanitizeAndValidateEmail: (email) => {
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-      return {
-        error: "Invalid email format",
-        sanitized: email.replace(/[^\w@.-]/g, '') // Remove any non-email characters
-      };
+      return { error: "Invalid email format", sanitized: null };
     }
 
-    return {
-      error: null,
-      sanitized: email.replace(/[<>]/g, '') // Just remove < and > from the email for safety
-    };
+    return { error: null, sanitized: email.replace(/[<>]/g, '') };
   },
 
   validatePassword: (password) => {
     if (password.length < 12) {
-      return "Password should be at least 12 characters long";
+      return { error: "Password should be at least 12 characters long", sanitized: password };
     }
     if (password.length > 128) {
-      return "Password cannot be longer than 128 characters";
+      return { error: "Password cannot be longer than 128 characters", sanitized: password };
     }
 
-    return null;
+    return { error: null, sanitized: password };
   },
 
   sanitizeAndValidateString: (input) => {
     if (typeof input !== 'string') {
-      return {
-        error: null,
-        sanitized: input
-      };
+      return { error: null, sanitized: input };
     }
 
     let sanitizedInput = input.replace(/<script>.*?<\/script>/gmi, '');
@@ -43,10 +34,7 @@ const ValidateSanitize = {
       sanitizedInput = sanitizedInput.replace(regex, '');
     });
 
-    return {
-      error: null,
-      sanitized: sanitizedInput
-    };
+    return { error: null, sanitized: sanitizedInput };
   },
 
   sanitizeAndValidateUrl: (url) => {
@@ -56,31 +44,19 @@ const ValidateSanitize = {
         throw new Error('Invalid URL');
       }
     } catch (error) {
-      return {
-        error: "Invalid URL",
-        sanitized: url.replace(/[^\w:\/\.\-\?\&\=\%]/g, '')
-      };
+      return { error: "Invalid URL", sanitized: url.replace(/[^\w:\/\.\-\?\&\=\%]/g, '') };
     }
 
-    return {
-      error: null,
-      sanitized: url.replace(/[^\w:\/\.\-\?\&\=\%]/g, '')
-    };
+    return { error: null, sanitized: url.replace(/[^\w:\/\.\-\?\&\=\%]/g, '') };
   },
 
   sanitizeAndValidateStatus: (status) => {
     const allowedStatuses = ['Applied', 'Interviewing', 'Offered', 'Accepted', 'Rejected', 'Not Interested', 'Ghosted'];
     if (!allowedStatuses.includes(status)) {
-      return {
-        error: "Invalid status",
-        sanitized: status
-      };
+      return { error: "Invalid status", sanitized: null };
     }
 
-    return {
-      error: null,
-      sanitized: status
-    };
+    return { error: null, sanitized: status };
   }
 };
 
