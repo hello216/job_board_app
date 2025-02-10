@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ValidateSanitize from '../services/validateSanitizeService';
 
 const CreateJob = () => {
   const [job, setJob] = useState({
@@ -40,19 +41,42 @@ const CreateJob = () => {
     fetchStatuses();
   }, []);
 
-  useEffect(() => {
-    console.log('Updated statuses state:', statuses);
-  }, [statuses]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({});
+
+    const titleSanitized = ValidateSanitize.sanitizeAndValidateString(job.title);
+    const companySanitized = ValidateSanitize.sanitizeAndValidateString(job.company);
+    const urlResult = ValidateSanitize.sanitizeAndValidateUrl(job.url);
+    const locationSanitized = ValidateSanitize.sanitizeAndValidateString(job.location);
+    const statusResult = ValidateSanitize.sanitizeAndValidateStatus(job.status);
+
+    if (titleSanitized.error) {
+      setErrors(prev => ({ ...prev, title: titleSanitized.error }));
+    }
+    if (companySanitized.error) {
+      setErrors(prev => ({ ...prev, company: companySanitized.error }));
+    }
+    if (urlResult.error) {
+      setErrors(prev => ({ ...prev, url: urlResult.error }));
+    }
+    if (locationSanitized.error) {
+      setErrors(prev => ({ ...prev, location: locationSanitized.error }));
+    }
+    if (statusResult.error) {
+      setErrors(prev => ({ ...prev, status: statusResult.error }));
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
 
     const body = {
-      status: job.status,
-      title: job.title,
-      company: job.company,
-      url: job.url,
-      location: job.location,
+      status: statusResult.sanitized,
+      title: titleSanitized.sanitized,
+      company: companySanitized.sanitized,
+      url: urlResult.sanitized,
+      location: locationSanitized.sanitized,
       note: '',
     };
 
@@ -66,20 +90,27 @@ const CreateJob = () => {
         credentials: 'include',
       });
 
+      const isJson = response.headers.get('content-type')?.includes('application/json');
+      let data;
+
       if (response.ok) {
         navigate('/');
+        return;
+      }
+
+      if (isJson) {
+        data = await response.json();
       } else {
-        try {
-          const errorData = await response.json();
-          if (errorData && errorData.errors) {
-            setErrors(errorData.errors);
-          } else {
-            setErrors({ general: 'Failed to create job.' });
-          }
-        } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
-          setErrors({ general: 'Failed to parse error response.' });
-        }
+        data = await response.text();
+        setErrors({ general: data });
+        return;
+      }
+
+      if (data.errors) {
+        setErrors(data.errors);
+      } else if (data && data.title) {
+        // Specific handling for title, company, url, location
+        setErrors(prev => ({ ...prev, general: data.title })); // set title error
       }
     } catch (error) {
       console.log(error);
@@ -94,7 +125,6 @@ const CreateJob = () => {
 
   return (
     <div className="container my-5">
-
       {Object.keys(errors).length > 0 && (
         <div className="alert alert-danger mt-3">
           {Object.keys(errors).map((key) => (
