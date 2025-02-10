@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import ValidateSanitize from '../services/validateSanitizeService';
 
 const JobNote = () => {
-  const [job, setJob] = useState({
-    note: '',
-  });
-
+  const [job, setJob] = useState({ note: '' });
   const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,10 +20,17 @@ const JobNote = () => {
 
         if (response.ok) {
           const jobData = await response.json();
-          setJob({
-            id: jobData.id,
-            note: jobData.note,
-          });
+          const noteSanitized = ValidateSanitize.sanitizeAndValidateString(jobData.note || '');
+
+          if(noteSanitized.error){
+            setErrors(prev => ({ ...prev, note: noteSanitized.error }));
+            setJob({ note: '' }); // clear note if there is an error
+          } else {
+            setJob({
+              id: jobData.id,
+              note: noteSanitized.sanitized,
+            });
+          }
         } else {
           setError('Failed to fetch job note');
         }
@@ -40,6 +46,7 @@ const JobNote = () => {
   return (
     <div className="container my-5">
       {error && <div className="alert alert-danger mt-3">{error}</div>}
+      {errors.note && <div className="alert alert-danger mt-3">{errors.note}</div>}
       <p className="fs-5">{job.note}</p>
       <div className="mt-4">
         <Link to="/" className="link-dark link-opacity-50-hover">Go Home</Link>
