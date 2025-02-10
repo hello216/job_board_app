@@ -1,4 +1,4 @@
-import { validateEmail, validatePassword } from '../services/inputValidation';
+import { ValidateSanitize } from '../services/validateSanitizeService';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -12,8 +12,8 @@ const Login = () => {
     e.preventDefault();
     setErrors({});
 
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
+    const emailError = ValidateSanitize.sanitizeAndValidateEmail(email);
+    const passwordError = ValidateSanitize.validatePassword(password);
 
     if (emailError) {
       setErrors(prev => ({ ...prev, email: emailError }));
