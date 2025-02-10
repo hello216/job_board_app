@@ -32,108 +32,167 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Users>> Create(AddUserRequest request)
     {
-        if (_context.Users.Any(u => u.Email == request.Email))
-            return BadRequest("Email is already in use.");
+        try
+        {
+            if (_context.Users.Any(u => u.Email == request.Email))
+                return BadRequest("Email is already in use.");
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+            }
+
+            if (request.Email == null || request.Password == null)
+            {
+                return BadRequest("Request is invalid.");
+            }
+
+            var user = new Users
+            {
+                Email = request.Email,
+                PasswordHash = HashPassword(request.Password)
+            };
+
+            var userResponse = new UserResponse
+            {
+                Id = user.Id,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create user.");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<UserResponse>> Get()
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
+
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("Failed to retrieve current user's ID.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            var userResponse = new UserResponse
+            {
+                Id = user.Id,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt
+            };
+
+            return Ok(userResponse);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get user.");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpPut]
+    public async Task<ActionResult<UserResponse>> Update(UpdateUserRequest request)
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
 
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
         }
 
-        if (request.Email == null || request.Password == null)
+        try
         {
-            return BadRequest("Request is invalid.");
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("Failed to retrieve current user's ID.");
+            }
+
+            var userToUpdate = await _context.Users.FindAsync(currentUserId);
+            if (userToUpdate == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            if (request.Email != null)
+            {
+                userToUpdate.Email = request.Email;
+            }
+
+            if (request.Password != null && request.Password != string.Empty)
+            {
+                userToUpdate.PasswordHash = HashPassword(request.Password);
+            }
+
+            userToUpdate.UpdateTimestamps();
+            await _context.SaveChangesAsync();
+
+            var userResponse = new UserResponse
+            {
+                Id = userToUpdate.Id,
+                Email = userToUpdate.Email,
+                CreatedAt = userToUpdate.CreatedAt,
+                UpdatedAt = userToUpdate.UpdatedAt
+            };
+
+            return Ok(userResponse);
         }
-
-        var user = new Users
+        catch (Exception ex)
         {
-            Email = request.Email,
-            PasswordHash = HashPassword(request.Password)
-        };
-
-        var userResponse = new UserResponse
-        {
-            Id = user.Id,
-            Email = user.Email,
-            CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt
-        };
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
+            _logger.LogError(ex, "Failed to update user.");
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Users>> Get(string id)
+    [HttpDelete]
+    public async Task<ActionResult> Delete()
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
 
-        var user = await _context.Users.FindAsync(id);
-        if (user == null)
+        try
         {
-            return NotFound("User not found.");
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("Failed to retrieve current user's ID.");
+            }
+
+            var user = await _context.Users.FindAsync(currentUserId);
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
-
-        var userResponse = new UserResponse
+        catch (Exception ex)
         {
-            Id = user.Id,
-            Email = user.Email,
-            CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt
-        };
-
-        return Ok(userResponse);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult<Users>> Update(string id, UpdateUserRequest request)
-    {
-        if (!IsAuthenticated())
-            return Unauthorized("No authentication token provided.");
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState.Values.SelectMany(v => v.Errors));
+            _logger.LogError(ex, "Failed to delete user.");
+            return StatusCode(500, "Internal Server Error");
         }
-
-        var userToUpdate = await _context.Users.FindAsync(id);
-        if (userToUpdate == null)
-        {
-            return NotFound("User not found.");
-        }
-
-        if (request.Email != null)
-        {
-            userToUpdate.Email = request.Email;
-        }
-
-        if (request.Password != null && request.Password != string.Empty)
-        {
-            userToUpdate.PasswordHash = HashPassword(request.Password);
-        }
-
-        userToUpdate.UpdateTimestamps();
-        await _context.SaveChangesAsync();
-        return Ok(userToUpdate);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(string id)
-    {
-        if (!IsAuthenticated())
-            return Unauthorized("No authentication token provided.");
-
-        var user = await _context.Users.FindAsync(id);
-        if (user == null)
-        {
-            return NotFound("User not found.");
-        }
-
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
-        return NoContent();
     }
 
     [HttpPost("login")]
@@ -178,18 +237,16 @@ public class UserController : ControllerBase
     [HttpGet("check")]
     public IActionResult CheckAuthentication()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        try
         {
-            if (!_jwtService.IsAuthenticated(token))
-            {
-                return Unauthorized("Invalid or missing token.");
-            }
-
+            if (!IsAuthenticated())
+                return Unauthorized("No authentication token provided.");
             return Ok(true);
         }
-        else
+        catch (Exception ex)
         {
-            return Unauthorized("No authentication token provided.");
+            _logger.LogError($"Failed while authenticating user: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
         }
     }
 
@@ -257,6 +314,18 @@ public class UserController : ControllerBase
         else
         {
             return false;
+        }
+    }
+
+    private string? GetCurrentUserId()
+    {
+        if (Request.Cookies.TryGetValue("authToken", out var token))
+        {
+            return _jwtService.GetUserIdFromToken(token);
+        }
+        else
+        {
+            return null;
         }
     }
 }
