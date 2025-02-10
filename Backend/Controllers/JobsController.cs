@@ -92,7 +92,7 @@ public class JobsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to create job: {ex.Message}", ex);
+            _logger.LogError($"Failed to create job: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -144,7 +144,7 @@ public class JobsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to get job: {ex.Message}", ex);
+            _logger.LogError($"Failed to get job: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -190,7 +190,7 @@ public class JobsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to get user's jobs: {ex.Message}", ex);
+            _logger.LogError($"Failed to get user's jobs: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -333,7 +333,7 @@ public class JobsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError("Failed to get job statuses: {ex.Message}", ex);
+            _logger.LogError($"Failed to get job statuses: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
         }
     }
