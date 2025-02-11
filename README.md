@@ -7,21 +7,61 @@ Clone repo
 git clone https://github.com/borelli28/Jobs.git
 ```
 
-##### Backend
-Setup backend
+Cd into project
 ```bash
-cd Jobs/Backend && echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env && dotnet ef migrations add InitialCreate && dotnet ef database update && dotnet watch run --launch-profile https & gnome-terminal --tab -- bash -c "cd ../Frontend && exec bash"
+cd Jobs
+```
+
+##### Backend
+Cd into backend
+```bash
+cd Backend
+```
+
+Create .env in /backend
+```bash
+echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && \
+echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env
+```
+
+Create migrations
+```bash
+dotnet ef migrations add InitialCreate
+```
+
+Apply migrations
+```bash
+dotnet ef database update
+```
+
+Run app server
+```bash
+dotnet watch run --launch-profile https
 ```
 
 ##### Frontend
-Setup frontend in a new tab using BUN
+Setup frontend in a new tab
 ```bash
-cd Jobs/Frontend && echo "VITE_BACKEND_API_URL=https://localhost:7190/api" > .env && bun install && echo 'Frontend setup complete! Starting server...' && bun dev
+cd ../Frontend && bun install
+```
+or use NPM
+```bash
+cd ../Frontend && npm install
 ```
 
-OR Setup frontend in a new tab using NPM
+Create .env in /frontend
 ```bash
-cd Jobs/Frontend && echo "VITE_BACKEND_API_URL=https://localhost:7190/api" > .env && npm install && echo 'Frontend setup complete! Starting server...' && npm run dev
+echo "VITE_BACKEND_API_URL=https://localhost:7190/api" >> .env
+```
+Or whatever your backend URL is...
+
+Start frontend server
+```bash
+bun dev
+```
+or use NPM
+```bash
+npm run dev
 ```
 
 Open browser in http://localhost:3000/register
