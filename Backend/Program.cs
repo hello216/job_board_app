@@ -6,8 +6,14 @@ using Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load environment variables from .env file
 Env.Load();
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+string applicationUrl = environment == "Production"
+    ? "https://localhost:5000"
+    : "https://localhost:7190";
+
+builder.WebHost.UseUrls(applicationUrl);
 
 builder.Services.AddControllers();
 
@@ -31,7 +37,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
-
 app.UseHttpsRedirection();
 
 app.MapControllers();
