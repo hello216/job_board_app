@@ -21,6 +21,7 @@ cd Backend
 Create .env in /backend
 ```bash
 echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && \
+echo "ASPNETCORE_ENVIRONMENT=Development" >> .env && \
 echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env
 ```
 
