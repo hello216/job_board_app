@@ -7,36 +7,10 @@ Clone repo
 git clone https://github.com/borelli28/Jobs.git
 ```
 
-Cd into project
-```bash
-cd Jobs
-```
-
 ##### Backend
-Cd into backend
+Setup backend
 ```bash
-cd Backend
-```
-
-Create .env in /backend
-```bash
-echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && \
-echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env
-```
-
-Create migrations
-```bash
-dotnet ef migrations add InitialCreate
-```
-
-Apply migrations
-```bash
-dotnet ef database update
-```
-
-Run app server
-```bash
-dotnet watch run --launch-profile https
+cd Jobs/Backend && echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env && dotnet ef migrations add InitialCreate && dotnet ef database update && dotnet watch run --launch-profile https
 ```
 
 ##### Frontend
