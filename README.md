@@ -42,11 +42,11 @@ dotnet watch run --launch-profile https
 ##### Frontend
 Setup frontend in a new tab
 ```bash
-cd ../frontend && bun install
+gnome-terminal --tab -- bash -c "cd ../Frontend && bun install && echo 'Frontend setup complete! Starting server...' && bun dev; exec bash"
 ```
 or use NPM
 ```bash
-cd ../frontend && npm install
+gnome-terminal --tab -- bash -c "cd ../Frontend && npm install && echo 'Frontend setup complete! Starting server...' && npm run dev; exec bash"
 ```
 
 Create .env in /frontend
