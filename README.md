@@ -27,17 +27,12 @@ echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env
 
 Create migrations
 ```bash
-dotnet ef migrations add InitialCreate
-```
-
-Apply migrations
-```bash
-dotnet ef database update
+dotnet ef migrations add InitialCreate && dotnet ef database update
 ```
 
 Run app server
 ```bash
-dotnet watch run --launch-profile https
+dotnet run
 ```
 
 ##### Frontend
