@@ -60,7 +60,7 @@ const Home = () => {
     <div id="home-container" className="container my-5">
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <button type="button" className="btn btn-dark " onClick={() => window.location.href = '/create-job'}>
+      <button type="button" className="btn btn-dark " id="new-job-btn" onClick={() => window.location.href = '/create-job'}>
         Add Application
       </button>
 
