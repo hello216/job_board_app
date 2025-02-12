@@ -42,7 +42,7 @@ echo "✅ Frontend .env configured successfully."
 # Publish Backend
 echo "Publishing Backend..."
 cd Backend
-dotnet publish -c Release -o ../Jobs/jobs-bundle/backend-publish
+dotnet publish -c Release -o ../jobs-bundle/backend-publish
 cd ..
 echo "✅ Backend published successfully."
 
@@ -64,8 +64,8 @@ else
   exit 1
 fi
 
-# Move frontend build to the new location
-mv dist ../Jobs/jobs-bundle/dist
+# Move frontend build to the correct location
+mv dist ../jobs-bundle/dist
 
 cd ..
 echo "✅ Frontend built and moved successfully."
