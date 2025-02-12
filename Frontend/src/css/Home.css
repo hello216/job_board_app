@@ -6,9 +6,15 @@
     --delete-button-hover-color: #aa473b; /* A darker shade for hover effect */
 }
 
+#home-container {
+  width: 100%;
+  height: 100%;
+}
+
 .job-list-container {
-  display: block; /* Make sure it's block-level */
-  width: 100%; /* Fill the container */
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .custom-table {
@@ -166,7 +172,11 @@ form button, a {
   .mobile-card-list {
     display: block; /* Ensure the cards are visible on mobile */
     width: 100%;  /* Fill the container */
-    margin-top: 2%; /* Add some margin for better spacing */
+    margin-top: 1%; /* Add some margin for better spacing */
+  }
+
+  #new-job-btn {
+    margin-top: 3%;
   }
 }
 
