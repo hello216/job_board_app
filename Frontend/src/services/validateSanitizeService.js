@@ -51,7 +51,7 @@ const ValidateSanitize = {
   },
 
   sanitizeAndValidateStatus: (status) => {
-    const allowedStatuses = ['Applied', 'Interviewing', 'Offered', 'Accepted', 'Rejected', 'Not Interested', 'Ghosted'];
+    const allowedStatuses = ['Applied', 'Interviewing', 'Offered', 'Accepted', 'Rejected', 'Not Interested', 'NotInterested', 'Ghosted'];
     if (!allowedStatuses.includes(status)) {
       return { error: "Invalid status", sanitized: null };
     }
