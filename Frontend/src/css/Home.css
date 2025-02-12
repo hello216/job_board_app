@@ -11,8 +11,17 @@
   height: 100%;
 }
 
-#new-job-btn {
-  margin-top: 3%;
+#home-top {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 3% 0;
+}
+
+#home-top .search-bar, #new-job-btn button {
+  width: 100%;
 }
 
 .job-list-container {

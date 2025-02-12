@@ -66,11 +66,12 @@ const Home = () => {
     <div id="home-container" className="container my-5">
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="d-flex justify-content-between mb-3">
-        <button type="button" className="btn btn-dark me-2" id="new-job-btn" onClick={() => window.location.href = '/create-job'}>
-          Add Application
-        </button>
-
+      <div id="home-top">
+        <div className="d-flex justify-content-between mb-3" id="new-job-btn">
+          <button type="button" className="btn btn-dark me-2" onClick={() => window.location.href = '/create-job'}>
+            Add Application
+          </button>
+        </div>
         <div className="search-bar">
           <input
             type="text"
