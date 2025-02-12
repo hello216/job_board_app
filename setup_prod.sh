@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Ensure script runs from the project root
+if [ ! -d "Backend" ] || [ ! -d "Frontend" ]; then
+  echo "Error: Run this script from the project root (where Backend & Frontend directories exist)."
+  exit 1
+fi
+
+# Prompt user for required values
+read -p "Enter the first part of the database path (e.g., /home/user/): " DB_PATH_PREFIX
+read -p "Enter the frontend domain (e.g., subdomain.your-domain.com): " ALLOWED_ORIGINS
+read -p "Enter the backend domain (e.g., subdomain.your-domain.com): " BACKEND_API_URL
+
+# Generate Secure 32-character Keys for JWT & Encryption
+generate_secure_key() {
+  openssl rand -base64 32 | tr -d '=' | cut -c1-32
+}
+
+JWT_SECRET=$(generate_secure_key)
+ENCRYPTION_KEY=$(generate_secure_key)
+
+# Backend .env Setup
+echo "Setting up Backend .env file..."
+cat > Backend/.env <<EOL
+JWT_SECRET_KEY=$JWT_SECRET
+ENCRYPTION_KEY=$ENCRYPTION_KEY
+ASPNETCORE_ENVIRONMENT=Production
+ALLOWED_ORIGINS=https://$ALLOWED_ORIGINS
+DB_PATH=${DB_PATH_PREFIX}jobs.db
+EOL
+
+echo "✅ Backend .env configured successfully."
+
+# Frontend .env Setup
+echo "Setting up Frontend .env file..."
+cat > Frontend/.env <<EOL
+VITE_BACKEND_API_URL=https://$BACKEND_API_URL/api
+EOL
+
+echo "✅ Frontend .env configured successfully."
+
+# Run Entity Framework Migrations
+echo "Running database migrations..."
+cd Backend
+
+# Ensure migrations exist
+if [ ! -d "Migrations" ]; then
+  echo "No migrations found. Creating initial migrations..."
+  dotnet ef migrations add InitialCreate
+fi
+
+dotnet ef database update
+cd ..
+
+echo "✅ Database migrations completed."
+
+# Publish Backend
+echo "Publishing Backend..."
+cd Backend
+dotnet publish -c Release -o ../backend-publish
+cd ..
+
+echo "✅ Backend published successfully."
+
+# Build Frontend
+echo "Building Frontend..."
+cd Frontend
+if command -v bun &> /dev/null; then
+  bun vite build
+else
+  npm run build
+fi
+cd ..
+
+echo "✅ Frontend built successfully."
+
+echo "🎉 Production setup complete!"

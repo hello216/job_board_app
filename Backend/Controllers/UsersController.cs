@@ -214,16 +214,7 @@ public class UserController : ControllerBase
             }
 
             var token = _jwtService.GenerateJwt(user);
-
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.Lax,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddHours(1),
-            };
-
-            Response.Cookies.Append("authToken", token, cookieOptions);
+            SetAuthTokenCookie(token);
 
             return Ok(new { message = "Login successful." });
         }
@@ -327,6 +318,21 @@ public class UserController : ControllerBase
         {
             return null;
         }
+    }
+
+    private void SetAuthTokenCookie(string token)
+    {
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = environment == "Production",  // Set HttpOnly to true in production
+            SameSite = SameSiteMode.Lax,
+            Secure = environment == "Production",  // Set Secure to true in production
+            Expires = DateTime.UtcNow.AddHours(1),
+        };
+
+        Response.Cookies.Append("authToken", token, cookieOptions);
     }
 }
 
