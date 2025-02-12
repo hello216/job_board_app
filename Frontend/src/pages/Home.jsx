@@ -102,7 +102,7 @@ const Home = () => {
                     </a>
                   </td>
                   <td>{job.location}</td>
-                  <td>
+                  <td id="actions">
                     <a href={`/job-note/${job.id}`} className="custom-black-action-button">Notes</a>
                     <a href={`/edit-job/${job.id}`} className="custom-black-action-button">Edit</a>
                     <button type="button" className="custom-delete-button" onClick={() => handleDeleteJob(job.id)}>Delete</button>

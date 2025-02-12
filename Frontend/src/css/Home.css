@@ -22,6 +22,7 @@
   color: #fff; /* White text for better readability on the dark background */
   border-bottom: 1px solid var(--table-border-color);
   text-align: center;
+  width: 100%;
 }
 
 .custom-table td {
@@ -30,6 +31,7 @@
   background-color: var(--table-row-color);
   color: #3d3929; /* Text color consistent with table header */
   text-align: center;
+  width: 100%;
 }
 
 .custom-link {
@@ -82,6 +84,16 @@
   background-color: var(--delete-button-hover-color);
 }
 
+#actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+table form button, a {
+  width: 100%;
+}
+
 .desktop-table {
   display: block;
 }
@@ -95,7 +107,7 @@
     display: none;
   }
   .mobile-card-list {
-    display: block;
+    width: 100%;
   }
 }
 
