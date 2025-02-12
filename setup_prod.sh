@@ -49,14 +49,21 @@ echo "✅ Backend published successfully."
 # Build Frontend
 echo "Building Frontend..."
 cd Frontend
+
+# Install dependencies first
 if command -v bun &> /dev/null; then
+  echo "Using bun to install dependencies..."
+  bun install
   bun run build
 elif command -v npm &> /dev/null; then
+  echo "Using npm to install dependencies..."
+  npm install
   npm run build
 else
   echo "Error: Neither 'bun' nor 'npm' found. Please install one to build the frontend."
   exit 1
 fi
+
 cd ..
 echo "✅ Frontend built successfully."
 
