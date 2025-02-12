@@ -39,27 +39,11 @@ EOL
 
 echo "✅ Frontend .env configured successfully."
 
-# Run Entity Framework Migrations
-echo "Running database migrations..."
-cd Backend
-
-# Ensure migrations exist
-if [ ! -d "Migrations" ]; then
-  echo "No migrations found. Creating initial migrations..."
-  dotnet ef migrations add InitialCreate
-fi
-
-dotnet ef database update
-cd ..
-
-echo "✅ Database migrations completed."
-
 # Publish Backend
 echo "Publishing Backend..."
 cd Backend
 dotnet publish -c Release -o ../backend-publish
 cd ..
-
 echo "✅ Backend published successfully."
 
 # Build Frontend
@@ -67,11 +51,13 @@ echo "Building Frontend..."
 cd Frontend
 if command -v bun &> /dev/null; then
   bun vite build
-else
+elif command -v npm &> /dev/null; then
   npm run build
+else
+  echo "Error: Neither 'bun' nor 'npm' found. Please install one to build the frontend."
+  exit 1
 fi
 cd ..
-
 echo "✅ Frontend built successfully."
 
 echo "🎉 Production setup complete!"
