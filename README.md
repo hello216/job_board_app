@@ -23,7 +23,8 @@ Create .env in /backend
 echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && \
 echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env && \
 echo "ASPNETCORE_ENVIRONMENT=Development" >> .env && \
-echo "ALLOWED_ORIGINS=http://localhost:3000" >> .env
+echo "ALLOWED_ORIGINS=http://localhost:3000" >> .env && \
+echo "DB_PATH=jobs.db" >> .env
 ```
 
 Create migrations
