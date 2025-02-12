@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../css/Home.css';
 
 const Home = () => {
   const [jobs, setJobs] = useState([]);
@@ -67,7 +68,7 @@ const Home = () => {
         <p className="fs-4 text-center my-5">No jobs found. Please add a new job!</p>
       ) : (
         <div>
-          <table className="table table-dark table-hover mt-5">
+          <table className="custom-table mt-5">
             <thead>
               <tr>
                 <th>Submitted At</th>
@@ -96,48 +97,48 @@ const Home = () => {
                   <td>{job.title}</td>
                   <td>{job.company}</td>
                   <td>
-                    <a href={job.url} target="_blank" className="link-light link-opacity-50-hover">
+                    <a href={job.url} target="_blank" className="custom-link">
                       {new URL(job.url).host}
                     </a>
                   </td>
                   <td>{job.location}</td>
                   <td>
-                    <a href={`/job-note/${job.id}`} className="btn btn-sm btn-light me-2">Notes</a>
-                    <a href={`/edit-job/${job.id}`} className="btn btn-sm btn-light me-2">Edit</a>
-                    <button type="button" className="btn btn-sm btn-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>
+                    <a href={`/job-note/${job.id}`} className="custom-black-action-button">Notes</a>
+                    <a href={`/edit-job/${job.id}`} className="custom-black-action-button">Edit</a>
+                    <button type="button" className="custom-delete-button" onClick={() => handleDeleteJob(job.id)}>Delete</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-        <nav aria-label="Page navigation example">
-          <ul className="pagination justify-content-center">
-            {currentPage === 1 ? (
-              <li className="page-item disabled">
-                <span className="page-link bg-dark text-light">Previous</span>
-              </li>
-            ) : (
-              <li className="page-item">
-                <button className="page-link bg-dark text-light" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-              </li>
-            )}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
-                <button className={`page-link bg-dark text-light ${currentPage === page ? 'border-white' : ''}`} onClick={() => setCurrentPage(page)}>{page}</button>
-              </li>
-            ))}
-            {currentPage === totalPages ? (
-              <li className="page-item disabled">
-                <span className="page-link bg-dark text-light">Next</span>
-              </li>
-            ) : (
-              <li className="page-item">
-                <button className="page-link bg-dark text-light" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-              </li>
-            )}
-          </ul>
-        </nav>
+          <nav aria-label="Page navigation example">
+            <ul className="pagination justify-content-center">
+              {currentPage === 1 ? (
+                <li className="page-item disabled">
+                  <span className="page-link bg-dark text-light">Previous</span>
+                </li>
+              ) : (
+                <li className="page-item">
+                  <button className="page-link bg-dark text-light" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
+                </li>
+              )}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
+                  <button className={`page-link bg-dark text-light ${currentPage === page ? 'border-white' : ''}`} onClick={() => setCurrentPage(page)}>{page}</button>
+                </li>
+              ))}
+              {currentPage === totalPages ? (
+                <li className="page-item disabled">
+                  <span className="page-link bg-dark text-light">Next</span>
+                </li>
+              ) : (
+                <li className="page-item">
+                  <button className="page-link bg-dark text-light" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
+                </li>
+              )}
+            </ul>
+          </nav>
         </div>
       )}
     </div>

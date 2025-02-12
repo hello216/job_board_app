@@ -1,0 +1,83 @@
+:root {
+    --table-header-color: #3d3929; /* Font color */
+    --table-row-color: #eeece2; /* Background similar to website background */
+    --table-border-color: #bd5d3a; /* Chat Buttons color */
+    --delete-button-color: #bd5d3a; /* Use a unified color for delete buttons */
+    --delete-button-hover-color: #aa473b; /* A darker shade for hover effect */
+}
+
+.custom-table {
+  border-collapse: collapse;
+  border: 1px solid var(--table-border-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  width: 100%;
+  margin: 2% 0;
+}
+
+.custom-table th {
+  padding: 0.5em;
+  background-color: var(--table-header-color);
+  color: #fff; /* White text for better readability on the dark background */
+  border-bottom: 1px solid var(--table-border-color);
+  text-align: center;
+}
+
+.custom-table td {
+  padding: 0.5em;
+  border-bottom: 1px solid var(--table-border-color);
+  background-color: var(--table-row-color);
+  color: #3d3929; /* Text color consistent with table header */
+  text-align: center;
+}
+
+.custom-link {
+  color: #000; /* Black text for links */
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+}
+
+.custom-action-button {
+  background-color: #bd5d3a;
+  color: #fff;
+  padding: 0.5em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.custom-action-button:hover {
+  background-color: #aa473b;
+}
+
+.custom-black-action-button {
+  background-color: #000;
+  color: #fff;
+  padding: 0.5em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.custom-black-action-button:hover {
+  background-color: #444; /* Darker black on hover */
+}
+
+.custom-delete-button {
+  background-color: var(--delete-button-color);
+  color: #fff;
+  padding: 0.5em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-delete-button:hover {
+  background-color: var(--delete-button-hover-color);
+}
