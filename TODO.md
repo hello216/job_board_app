@@ -12,7 +12,7 @@
 - [ ] **Resume and Cover Letter Storage**
   Upload and manage resumes, cover letters, and other job-related documents.
 
-- [ ] **Search and Filter**
+- [X] **Search and Filter**
   Advanced search and filtering by job title, location, company, and status.
 
 - [ ] **Export and Reporting**

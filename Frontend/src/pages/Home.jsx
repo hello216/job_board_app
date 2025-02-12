@@ -5,7 +5,8 @@ const Home = () => {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10; // number of jobs per page
+  const [searchTerm, setSearchTerm] = useState('');
+  const jobsPerPage = 10;
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -50,22 +51,40 @@ const Home = () => {
     }
   };
 
-  // Get the jobs to display on the current page
-  const currentJobs = jobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
+  // Function to filter jobs based on search term
+  const filteredJobs = jobs.filter(job => {
+    const jobInfo = `${job.title} ${job.company} ${job.status} ${job.location}`;
+    return jobInfo.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
-  // Calculate the number of pages
-  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  // Get the jobs to display on the current page
+  const currentFilteredJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
+  // Calculate the number of pages based on filtered jobs
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   return (
     <div id="home-container" className="container my-5">
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <button type="button" className="btn btn-dark " id="new-job-btn" onClick={() => window.location.href = '/create-job'}>
-        Add Application
-      </button>
+      <div id="home-top">
+        <div className="d-flex justify-content-between mb-3" id="new-job-btn">
+          <button type="button" className="btn btn-dark me-2" onClick={() => window.location.href = '/create-job'}>
+            Add Application
+          </button>
+        </div>
+        <div className="search-bar">
+          <input
+            type="text"
+            className="form-control"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search jobs"
+          />
+        </div>
+      </div>
 
-      {jobs.length === 0 ? (
-        <p className="fs-4 text-center my-5">No jobs found. Please add a new job!</p>
+      {filteredJobs.length === 0 && searchTerm !== '' ? (
+        <p className="fs-4 text-center my-5">No jobs match your search.</p>
       ) : (
         <div className="job-list-container">
           <table className="custom-table mt-5 desktop-table">
@@ -81,7 +100,7 @@ const Home = () => {
               </tr>
             </thead>
             <tbody>
-              {currentJobs.map((job) => (
+              {currentFilteredJobs.map((job) => (
                 <tr key={job.id}>
                   <td>
                     {new Intl.DateTimeFormat('en-US', {
@@ -113,7 +132,7 @@ const Home = () => {
           </table>
 
           <div className="mobile-card-list">
-            {currentJobs.map((job) => (
+            {currentFilteredJobs.map((job) => (
               <div key={job.id} className="mobile-card">
                 <h3 className="card-title">{job.title}</h3>
                 <div className="card-info">
