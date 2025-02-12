@@ -79,6 +79,8 @@ const EditJob = () => {
     const statusResult = ValidateSanitize.sanitizeAndValidateStatus(job.status);
     const noteSanitized = ValidateSanitize.sanitizeAndValidateString(job.note || '');
 
+    console.log(job.status);
+
     if (titleSanitized.error) {
       setErrors(prev => ({ ...prev, title: titleSanitized.error }));
     }

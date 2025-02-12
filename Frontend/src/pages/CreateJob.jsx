@@ -27,7 +27,6 @@ const CreateJob = () => {
         const data = await response.json();
 
         if (response.ok) {
-          console.log('Fetched statuses:', data);
           setStatuses(data);
         } else {
           setErrors({ general: 'Failed to fetch job statuses.' });
