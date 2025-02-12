@@ -6,6 +6,7 @@ using Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from .env file
 Env.Load();
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
@@ -17,17 +18,22 @@ builder.WebHost.UseUrls(applicationUrl);
 
 builder.Services.AddControllers();
 
+// Add DbContext for SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add the JwtService
 builder.Services.AddSingleton<JwtService>();
+
+string corsOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "http://localhost:3000,https://localhost:3000";
+var allowedOrigins = corsOrigins.Split(',');
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000", "https://localhost:3000")
+            builder.WithOrigins(allowedOrigins)
                    .AllowAnyMethod()
                    .AllowAnyHeader()
                    .AllowCredentials();
@@ -36,8 +42,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Enable HTTPS redirection only in non-production environments
+if (environment != "Production")
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowSpecificOrigin");
-app.UseHttpsRedirection();
 
 app.MapControllers();
 
