@@ -21,8 +21,9 @@ cd Backend
 Create .env in /backend
 ```bash
 echo "JWT_SECRET_KEY=SuperLongSecretKey1234567890123456" > .env && \
+echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env && \
 echo "ASPNETCORE_ENVIRONMENT=Development" >> .env && \
-echo "ENCRYPTION_KEY=SomeVerySecretKey32CharactersLong" >> .env
+echo "ALLOWED_ORIGINS=http://localhost:3000" >> .env
 ```
 
 Create migrations
@@ -47,7 +48,7 @@ cd ../Frontend && npm install
 
 Create .env in /frontend
 ```bash
-echo "VITE_BACKEND_API_URL=https://localhost:7190/api" >> .env
+echo "VITE_BACKEND_API_URL=http://localhost:7190/api" >> .env
 ```
 Or whatever your backend URL is...
 
