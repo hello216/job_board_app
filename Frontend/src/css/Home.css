@@ -6,6 +6,11 @@
     --delete-button-hover-color: #aa473b; /* A darker shade for hover effect */
 }
 
+.job-list-container {
+  display: block; /* Make sure it's block-level */
+  width: 100%; /* Fill the container */
+}
+
 .custom-table {
   border-collapse: collapse;
   border: 1px solid var(--table-border-color);
@@ -14,6 +19,7 @@
   font-family: Arial, sans-serif;
   width: 100%;
   margin: 2% 0;
+  table-layout: fixed; /* Ensure consistent column widths */
 }
 
 .custom-table th {
@@ -22,7 +28,7 @@
   color: #fff; /* White text for better readability on the dark background */
   border-bottom: 1px solid var(--table-border-color);
   text-align: center;
-  width: 100%;
+  word-break: break-word; /* Prevent long words from breaking layout */
 }
 
 .custom-table td {
@@ -31,7 +37,42 @@
   background-color: var(--table-row-color);
   color: #3d3929; /* Text color consistent with table header */
   text-align: center;
-  width: 100%;
+  word-break: break-word; /* Prevent long words from breaking layout */
+}
+
+.custom-table th:nth-child(1),
+.custom-table td:nth-child(1) {
+  width: 15%; /* Adjust width for "Submitted At" */
+}
+
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) {
+  width: 10%; /* Adjust width for "Status" */
+}
+
+.custom-table th:nth-child(3),
+.custom-table td:nth-child(3) {
+  width: 20%; /* Adjust width for "Title" */
+}
+
+.custom-table th:nth-child(4),
+.custom-table td:nth-child(4) {
+  width: 15%; /* Adjust width for "Company" */
+}
+
+.custom-table th:nth-child(5),
+.custom-table td:nth-child(5) {
+  width: 12%; /* Adjust width for "URL" */
+}
+
+.custom-table th:nth-child(6),
+.custom-table td:nth-child(6) {
+  width: 13%; /* Adjust width for "Location" */
+}
+
+.custom-table th:nth-child(7),
+.custom-table td:nth-child(7) {
+  width: 15%; /* Adjust width for "Actions" */
 }
 
 .custom-link {
@@ -84,13 +125,24 @@
   background-color: var(--delete-button-hover-color);
 }
 
-#actions {
+table #actions {
   width: 100%;
   display: flex;
   justify-content: space-around;
+  align-content: center;
+  flex-wrap: wrap;
 }
 
-table form button, a {
+table #actions a {
+  width: 100%;
+  margin: 1% 0;
+}
+
+table #actions button {
+  width: 100%;
+}
+
+form button, a {
   width: 100%;
 }
 
@@ -107,7 +159,9 @@ table form button, a {
     display: none;
   }
   .mobile-card-list {
-    width: 100%;
+    display: block; /* Ensure the cards are visible on mobile */
+    width: 100%;  /* Fill the container */
+    margin-top: 2%; /* Add some margin for better spacing */
   }
 }
 
