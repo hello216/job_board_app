@@ -136,6 +136,7 @@ table #actions {
 table #actions a {
   width: 100%;
   margin: 1% 0;
+  text-decoration: none;
 }
 
 table #actions button {
