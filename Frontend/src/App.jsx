@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import Logout from './components/Logout';
 import CreateJob from './pages/CreateJob';
 import EditJob from './pages/EditJob';
 import JobNote from './pages/JobNote';
@@ -22,6 +23,7 @@ function App() {
         />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/create-job" element={
             <ProtectedRoute>
               <CreateJob />
