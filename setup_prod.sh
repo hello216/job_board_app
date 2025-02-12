@@ -39,6 +39,25 @@ EOL
 
 echo "✅ Frontend .env configured successfully."
 
+# Ensure jobs-bundle directory exists
+mkdir -p jobs-bundle
+
+# Save environment variables to env-variables.txt
+echo "Saving environment variables..."
+cat > jobs-bundle/env-variables.txt <<EOL
+*** Backend ***
+JWT_SECRET_KEY=$JWT_SECRET
+ENCRYPTION_KEY=$ENCRYPTION_KEY
+ASPNETCORE_ENVIRONMENT=Production
+ALLOWED_ORIGINS=https://$ALLOWED_ORIGINS
+DB_PATH=${DB_PATH_PREFIX}jobs.db
+
+*** Frontend ***
+VITE_BACKEND_API_URL=https://$BACKEND_API_URL/api
+EOL
+
+echo "✅ Environment variables saved successfully."
+
 # Publish Backend
 echo "Publishing Backend..."
 cd Backend
