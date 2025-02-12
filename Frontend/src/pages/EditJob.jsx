@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ValidateSanitize from '../services/validateSanitizeService';
+import '../css/EditJob.css';
 
 const EditJob = () => {
   const [job, setJob] = useState({
