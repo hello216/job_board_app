@@ -12,7 +12,7 @@ Env.Load();
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 string applicationUrl = environment == "Production"
     ? "https://localhost:5000"
-    : "https://localhost:7190";
+    : "http://localhost:7190";
 
 builder.WebHost.UseUrls(applicationUrl);
 
@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add the JwtService
 builder.Services.AddSingleton<JwtService>();
 
-string corsOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "http://localhost:3000,https://localhost:3000";
+string corsOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "http://localhost:3000";
 var allowedOrigins = corsOrigins.Split(',');
 
 builder.Services.AddCors(options =>
@@ -41,12 +41,6 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-
-// Enable HTTPS redirection only in non-production environments
-if (environment != "Production")
-{
-    app.UseHttpsRedirection();
-}
 
 app.UseCors("AllowSpecificOrigin");
 
