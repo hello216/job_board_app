@@ -25,7 +25,9 @@ const ValidateSanitize = {
 
     let sanitizedInput = input.replace(/<script>.*?<\/script>/gmi, '');
     sanitizedInput = sanitizedInput.replace(/<style>.*?<\/style>/gmi, '');
-    sanitizedInput = sanitizedInput.replace(/[^\w\s]/g, ''); // Remove any non-word and non-whitespace characters
+
+    // Allow periods in addition to word characters and whitespace
+    sanitizedInput = sanitizedInput.replace(/[^\w\s\.]/g, '');
 
     // Remove suspicious keywords
     const suspiciousKeywords = ['UNION', 'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'FROM', 'WHERE', 'OR', 'AND', 'EXECUTE', 'SYSTEM', 'EXIT', '|', ';', '&&', '||'];

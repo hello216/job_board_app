@@ -1,0 +1,200 @@
+:root {
+    --table-header-color: #3d3929; /* Font color */
+    --table-row-color: #eeece2; /* Background similar to website background */
+    --table-border-color: #bd5d3a; /* Chat Buttons color */
+    --delete-button-color: #bd5d3a; /* Use a unified color for delete buttons */
+    --delete-button-hover-color: #aa473b; /* A darker shade for hover effect */
+}
+
+.job-list-container {
+  display: block; /* Make sure it's block-level */
+  width: 100%; /* Fill the container */
+}
+
+.custom-table {
+  border-collapse: collapse;
+  border: 1px solid var(--table-border-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  width: 100%;
+  margin: 2% 0;
+  table-layout: fixed; /* Ensure consistent column widths */
+}
+
+.custom-table th {
+  padding: 0.5em;
+  background-color: var(--table-header-color);
+  color: #fff; /* White text for better readability on the dark background */
+  border-bottom: 1px solid var(--table-border-color);
+  text-align: center;
+  word-break: break-word; /* Prevent long words from breaking layout */
+}
+
+.custom-table td {
+  padding: 0.5em;
+  border-bottom: 1px solid var(--table-border-color);
+  background-color: var(--table-row-color);
+  color: #3d3929; /* Text color consistent with table header */
+  text-align: center;
+  word-break: break-word; /* Prevent long words from breaking layout */
+}
+
+.custom-table th:nth-child(1),
+.custom-table td:nth-child(1) {
+  width: 15%; /* Adjust width for "Submitted At" */
+}
+
+.custom-table th:nth-child(2),
+.custom-table td:nth-child(2) {
+  width: 10%; /* Adjust width for "Status" */
+}
+
+.custom-table th:nth-child(3),
+.custom-table td:nth-child(3) {
+  width: 20%; /* Adjust width for "Title" */
+}
+
+.custom-table th:nth-child(4),
+.custom-table td:nth-child(4) {
+  width: 15%; /* Adjust width for "Company" */
+}
+
+.custom-table th:nth-child(5),
+.custom-table td:nth-child(5) {
+  width: 12%; /* Adjust width for "URL" */
+}
+
+.custom-table th:nth-child(6),
+.custom-table td:nth-child(6) {
+  width: 13%; /* Adjust width for "Location" */
+}
+
+.custom-table th:nth-child(7),
+.custom-table td:nth-child(7) {
+  width: 15%; /* Adjust width for "Actions" */
+}
+
+.custom-link {
+  color: #000; /* Black text for links */
+  text-decoration: none;
+}
+
+.custom-link:hover {
+  text-decoration: underline;
+}
+
+.custom-action-button {
+  background-color: #bd5d3a;
+  color: #fff;
+  padding: 0.5em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.custom-action-button:hover {
+  background-color: #aa473b;
+}
+
+.custom-black-action-button {
+  background-color: #000;
+  color: #fff;
+  padding: 0.5em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.custom-black-action-button:hover {
+  background-color: #444; /* Darker black on hover */
+}
+
+.custom-delete-button {
+  background-color: var(--delete-button-color);
+  color: #fff;
+  padding: 0.5em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.custom-delete-button:hover {
+  background-color: var(--delete-button-hover-color);
+}
+
+table #actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+table #actions a {
+  width: 100%;
+  margin: 1% 0;
+  text-decoration: none;
+}
+
+table #actions button {
+  width: 100%;
+}
+
+table td {
+  font-size: 18px;
+}
+
+form button, a {
+  width: 100%;
+}
+
+.desktop-table {
+  display: block;
+}
+
+.mobile-card-list {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .desktop-table {
+    display: none;
+  }
+  .mobile-card-list {
+    display: block; /* Ensure the cards are visible on mobile */
+    width: 100%;  /* Fill the container */
+    margin-top: 2%; /* Add some margin for better spacing */
+  }
+}
+
+.mobile-card {
+  margin-bottom: 1em;
+  padding: 1em;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--table-row-color); /* Use the same background color as table rows */
+}
+
+.mobile-card .card-title {
+  color: #3d3929; /* Text color consistent with table rows */
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.mobile-card .card-info, .mobile-card .card-actions {
+  margin-top: 1em;
+}
+
+.mobile-card .card-info p {
+  color: #3d3929; /* Adjust text color to match table rows */
+  margin-bottom: 0.3em;
+}
+
+.mobile-card .card-info p span {
+  color: #3d3929; /* Use a darker color for better readability */
+  font-weight: bold;
+}
