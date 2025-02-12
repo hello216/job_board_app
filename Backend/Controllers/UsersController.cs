@@ -225,6 +225,23 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = environment == "Production",
+            SameSite = SameSiteMode.Lax,
+            Secure = environment == "Production",
+            Expires = DateTime.UtcNow.AddDays(-1), // Set to a past date to remove the cookie
+        };
+
+        Response.Cookies.Append("authToken", "", cookieOptions);
+        return Ok(new { message = "Logout successful." });
+    }
+
     [HttpGet("check")]
     public IActionResult CheckAuthentication()
     {
