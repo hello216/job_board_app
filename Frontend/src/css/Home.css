@@ -11,6 +11,10 @@
   height: 100%;
 }
 
+#new-job-btn {
+  margin-top: 3%;
+}
+
 .job-list-container {
   display: block;
   width: 100%;
@@ -173,10 +177,6 @@ form button, a {
     display: block; /* Ensure the cards are visible on mobile */
     width: 100%;  /* Fill the container */
     margin-top: 1%; /* Add some margin for better spacing */
-  }
-
-  #new-job-btn {
-    margin-top: 3%;
   }
 }
 
