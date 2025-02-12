@@ -143,6 +143,10 @@ table #actions button {
   width: 100%;
 }
 
+table td {
+  font-size: 18px;
+}
+
 form button, a {
   width: 100%;
 }
