@@ -493,3 +493,4 @@ $RECYCLE.BIN/
 
 *.db-shm
 *.db-wal
+jobs-bundle/
