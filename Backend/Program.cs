@@ -10,8 +10,8 @@ Env.Load();
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 string applicationUrl = environment == "Production"
-    ? "https://localhost:5000"
-    : "https://localhost:7190";
+    ? "http://localhost:5000"
+    : "http://localhost:7190";
 
 builder.WebHost.UseUrls(applicationUrl);
 
@@ -27,7 +27,7 @@ builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddCors(options =>
 {
-    var allowedOrigins = (Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "http://localhost:3000,https://localhost:3000")
+    var allowedOrigins = (Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "http://localhost:3000")
                          .Split(',')
                          .Select(o => o.Trim())
                          .ToArray();
