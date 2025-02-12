@@ -50,7 +50,7 @@ echo "✅ Backend published successfully."
 echo "Building Frontend..."
 cd Frontend
 if command -v bun &> /dev/null; then
-  bun vite build
+  bun run build
 elif command -v npm &> /dev/null; then
   npm run build
 else
