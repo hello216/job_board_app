@@ -81,3 +81,49 @@
 .custom-delete-button:hover {
   background-color: var(--delete-button-hover-color);
 }
+
+.desktop-table {
+  display: block;
+}
+
+.mobile-card-list {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .desktop-table {
+    display: none;
+  }
+  .mobile-card-list {
+    display: block;
+  }
+}
+
+.mobile-card {
+  margin-bottom: 1em;
+  padding: 1em;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--table-row-color); /* Use the same background color as table rows */
+}
+
+.mobile-card .card-title {
+  color: #3d3929; /* Text color consistent with table rows */
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.mobile-card .card-info, .mobile-card .card-actions {
+  margin-top: 1em;
+}
+
+.mobile-card .card-info p {
+  color: #3d3929; /* Adjust text color to match table rows */
+  margin-bottom: 0.3em;
+}
+
+.mobile-card .card-info p span {
+  color: #3d3929; /* Use a darker color for better readability */
+  font-weight: bold;
+}

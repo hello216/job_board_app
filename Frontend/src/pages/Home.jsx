@@ -67,8 +67,8 @@ const Home = () => {
       {jobs.length === 0 ? (
         <p className="fs-4 text-center my-5">No jobs found. Please add a new job!</p>
       ) : (
-        <div>
-          <table className="custom-table mt-5">
+        <div className="job-list-container">
+          <table className="custom-table mt-5 desktop-table">
             <thead>
               <tr>
                 <th>Submitted At</th>
@@ -111,6 +111,33 @@ const Home = () => {
               ))}
             </tbody>
           </table>
+
+          <div className="mobile-card-list">
+            {currentJobs.map((job) => (
+              <div key={job.id} className="mobile-card">
+                <h3 className="card-title">{job.title}</h3>
+                <div className="card-info">
+                  <p><span>Submitted At:</span> {new Intl.DateTimeFormat('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                  }).format(new Date(job.createdAt))}</p>
+                  <p><span>Status:</span> {job.status}</p>
+                  <p><span>Company:</span> {job.company}</p>
+                  <p><span>URL:</span> <a href={job.url} target="_blank" className="custom-link">{new URL(job.url).host}</a></p>
+                  <p><span>Location:</span> {job.location}</p>
+                </div>
+                <div className="card-actions">
+                  <a href={`/job-note/${job.id}`} className="custom-black-action-button">Notes</a>
+                  <a href={`/edit-job/${job.id}`} className="custom-black-action-button">Edit</a>
+                  <button type="button" className="custom-delete-button" onClick={() => handleDeleteJob(job.id)}>Delete</button>
+                </div>
+              </div>
+            ))}
+          </div>
 
           <nav aria-label="Page navigation example">
             <ul className="pagination justify-content-center">
