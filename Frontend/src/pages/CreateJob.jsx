@@ -99,17 +99,21 @@ const CreateJob = () => {
 
       if (isJson) {
         data = await response.json();
+        if (data.errors) {
+          const extractedErrors = {};
+          for (const [field, messages] of Object.entries(data.errors)) {
+            extractedErrors[field] = messages.join(', ');
+            // Convert 'Url' to 'url'
+            extractedErrors['url'] = extractedErrors['Url'];
+            delete extractedErrors['Url'];
+          }
+          setErrors(extractedErrors);
+        } else {
+          setErrors({ general: data.title || 'Failed to create the job.' });
+        }
       } else {
-        data = await response.text();
-        setErrors({ general: data });
-        return;
-      }
-
-      if (data.errors) {
-        setErrors(data.errors);
-      } else if (data && data.title) {
-        // Specific handling for title, company, url, location
-        setErrors(prev => ({ ...prev, general: data.title })); // set title error
+        // Directly set a generic error message if response is not JSON
+        setErrors({ general: 'Invalid URL.' });
       }
     } catch (error) {
       console.log(error);
