@@ -63,3 +63,31 @@ npm run dev
 ```
 
 Open browser in http://localhost:3000/register
+
+### Production Setup
+
+To quickly configure the environment for production and bundle both the frontend and backend, follow these steps:
+
+#### 1. Run the `setup_prod.sh` Script
+
+Make sure you're in the root directory of the project (`/Jobs/`). Then, run the `setup_prod.sh` script to set up your environment variables, build the frontend, and publish the backend.
+
+```bash
+bash setup_prod.sh
+```
+
+#### 2. Script Details
+
+- **Backend Setup**:  
+  The script will generate a secure JWT and encryption key, and create a `.env` file in the `/Backend` directory with the necessary configuration (including database path, allowed origins, and environment variables).
+  
+- **Frontend Setup**:  
+  It will create a `.env` file in the `/Frontend` directory to link the frontend to the backend API. The script will also install frontend dependencies using `bun` or `npm` and then build the frontend assets.
+
+- **Backend Publish**:  
+  The backend will be published and output to the `jobs-bundle/backend-publish` directory, prepared for deployment.
+
+- **Frontend Build**:  
+  The script moves the built frontend assets to the `jobs-bundle/dist` directory.
+
+Once the script completes successfully, you’ll have both the frontend and backend ready for production, bundled in `jobs-bundle`.
