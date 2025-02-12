@@ -5,7 +5,7 @@ const Home = () => {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const jobsPerPage = 10; // number of jobs per page
+  const jobsPerPage = 10;
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -52,7 +52,6 @@ const Home = () => {
 
   // Get the jobs to display on the current page
   const currentJobs = jobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
-
   // Calculate the number of pages
   const totalPages = Math.ceil(jobs.length / jobsPerPage);
 
