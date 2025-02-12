@@ -1,7 +1,7 @@
 # Job Application Tracker
 Simple CRUD app in ASP.NET Core MVC, used to track job applications.
 
-### Setup
+### Local Setup
 Clone repo
 ```bash
 git clone https://github.com/borelli28/Jobs.git
