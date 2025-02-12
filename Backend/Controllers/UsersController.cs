@@ -339,7 +339,7 @@ public class UserController : ControllerBase
 
     private void SetAuthTokenCookie(string token)
     {
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
 
         var cookieOptions = new CookieOptions
         {
