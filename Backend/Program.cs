@@ -8,14 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 Env.Load();
 
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-string applicationUrl = environment == "Production"
-    ? "http://localhost:5000"
-    : "http://localhost:7190";
+string applicationUrl = "http://localhost:5000";
 
 builder.WebHost.UseUrls(applicationUrl);
 
-// Load the database path from the environment variable
 string dbPath = Environment.GetEnvironmentVariable("DB_PATH") ?? "jobs.db";
 
 builder.Services.AddControllers();
