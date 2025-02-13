@@ -361,6 +361,17 @@ public class JobsController : ControllerBase
             return null;
         }
     }
+
+    private void CreateJobStatusHistory(Jobs job, JobStatus status)
+    {
+        var jobStatusHistory = new JobStatusHistory
+        {
+            JobId = job.Id,
+            Job = job,
+            Status = status
+        };
+        job.StatusHistories.Add(jobStatusHistory);
+    }
 }
 
 public class CreateJobRequest
