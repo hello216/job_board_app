@@ -21,12 +21,15 @@ public class UserController : ControllerBase
     private readonly AppDbContext _context;
     private readonly JwtService _jwtService;
     private readonly ILogger<UserController> _logger;
+    private readonly ICookieEncryptionService _cookieEncryptionService;
 
-    public UserController(AppDbContext context, JwtService jwtService, ILogger<UserController> logger)
+    public UserController(AppDbContext context, JwtService jwtService, ILogger<UserController> logger, 
+        ICookieEncryptionService cookieEncryptionService)
     {
         _context = context;
         _jwtService = jwtService;
         _logger = logger;
+        _cookieEncryptionService = cookieEncryptionService;
     }
 
     [HttpPost]
@@ -315,9 +318,11 @@ public class UserController : ControllerBase
 
     private bool IsAuthenticated()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
         {
-            return _jwtService.IsAuthenticated(token);
+            var token = _cookieEncryptionService.Decrypt(encryptedToken);
+            // Checking for null ensures the method doesn't throw when decrypting fails or token is missing.
+            return token != null && _jwtService.IsAuthenticated(token);
         }
         else
         {
@@ -327,9 +332,11 @@ public class UserController : ControllerBase
 
     private string? GetCurrentUserId()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
         {
-            return _jwtService.GetUserIdFromToken(token);
+            var token = _cookieEncryptionService.Decrypt(encryptedToken);
+            // Checking for null ensures the method doesn't throw when decrypting fails or token is missing.
+            return token != null ? _jwtService.GetUserIdFromToken(token) : null;
         }
         else
         {
@@ -340,6 +347,7 @@ public class UserController : ControllerBase
     private void SetAuthTokenCookie(string token)
     {
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+        var encryptedToken = _cookieEncryptionService.Encrypt(token);
 
         var cookieOptions = new CookieOptions
         {
@@ -349,7 +357,7 @@ public class UserController : ControllerBase
             Expires = DateTime.UtcNow.AddHours(1),
         };
 
-        Response.Cookies.Append("authToken", token, cookieOptions);
+        Response.Cookies.Append("authToken", encryptedToken, cookieOptions);
     }
 }
 
