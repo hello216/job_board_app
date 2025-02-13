@@ -49,6 +49,7 @@ public class Jobs
 
     public string UserId { get; set; }
     public Users User { get; set; }
+    public ICollection<JobStatusHistory> StatusHistories { get; set; } = new List<JobStatusHistory>();
 
     public void UpdateTimestamps()
     {
