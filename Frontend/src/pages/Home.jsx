@@ -51,16 +51,14 @@ const Home = () => {
     }
   };
 
-  // Function to filter jobs based on search term
+  // Filter jobs based on search term
   const filteredJobs = jobs.filter(job => {
     const jobInfo = `${job.title} ${job.company} ${job.status} ${job.location}`;
     return jobInfo.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  // Get the jobs to display on the current page
   const currentFilteredJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
-  // Calculate the number of pages based on filtered jobs
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage); // Calculate the number of pages based on filtered jobs
 
   return (
     <div id="home-container" className="container my-5">
@@ -83,7 +81,9 @@ const Home = () => {
         </div>
       </div>
 
-      {filteredJobs.length === 0 && searchTerm !== '' ? (
+      {jobs.length === 0 ? (
+        <p className="fs-4 text-center my-5">No jobs found. Add a new job application to get started!</p>
+      ) : jobs.length > 0 && filteredJobs.length === 0 && searchTerm !== '' ? (
         <p className="fs-4 text-center my-5">No jobs match your search.</p>
       ) : (
         <div className="job-list-container">
