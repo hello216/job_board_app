@@ -74,6 +74,7 @@ public class JobsController : ControllerBase
             };
 
             _context.Jobs.Add(job);
+            CreateJobStatusHistory(job, job.Status);
             await _context.SaveChangesAsync();
 
             return Ok(new
@@ -237,6 +238,17 @@ public class JobsController : ControllerBase
             if (request.Status != null && Enum.TryParse(request.Status, true, out JobStatus parsedStatus))
             {
                 status = parsedStatus;
+                // Create the new JobStatusHistory instance if the status its being changed
+                if (parsedStatus != jobToUpdate.Status) // Only log if status changes
+                {
+                    CreateJobStatusHistory(jobToUpdate, parsedStatus);
+
+                    jobToUpdate.Status = parsedStatus;
+                }
+                else
+                {
+                    jobToUpdate.Status = parsedStatus;
+                }
             }
 
             jobToUpdate.Status = status ?? jobToUpdate.Status;
@@ -247,6 +259,7 @@ public class JobsController : ControllerBase
             jobToUpdate.Note = request.Note ?? jobToUpdate.Note;
 
             jobToUpdate.UpdateTimestamps();
+
             await _context.SaveChangesAsync();
             return Ok(new
             {
