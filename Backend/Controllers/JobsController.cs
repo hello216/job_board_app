@@ -70,7 +70,7 @@ public class JobsController : ControllerBase
                 Company = request.Company!,
                 Url = request.Url!,
                 Location = request.Location!,
-                Note = request.Note
+                Note = request.Note ?? "No notes yet...",
             };
 
             _context.Jobs.Add(job);
@@ -335,12 +335,28 @@ public class JobsController : ControllerBase
         try
         {
             var types = typeof(JobStatus).GetFields(BindingFlags.Public | BindingFlags.Static);
-            var statuses = types.Select(t =>
-            {
-                var attribute = (DisplayAttribute)t.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault();
-                var name = attribute != null ? attribute.Name : t.Name;
-                return new { Id = (int)t.GetValue(null), Name = name, Value = t.Name };
-            });
+            var statuses = types
+                .Where(t => t.FieldType == typeof(JobStatus)) // Ensure the field is of type JobStatus
+                .Select(t =>
+                {
+                   var displayAttribute = t.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
+                   var name = displayAttribute?.Name ?? t.Name; // Check for non null values
+
+                   // Safe unboxing with explicit check for null values
+                   var value = t.GetValue(null);
+                   if (value is JobStatus statusValue) // Check the value type safely
+                   {
+                       return new
+                       {
+                           Id = (int)(object)statusValue, // Cast to object, then to int
+                           Name = name,
+                           Value = t.Name
+                       };
+                   }
+
+                   return null; // Or handle the case where value is null
+                })
+                .Where(status => status != null); // Filter out any null entries
 
             return Ok(statuses);
         }
