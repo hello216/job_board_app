@@ -367,6 +367,32 @@ public class JobsController : ControllerBase
         }
     }
 
+    [HttpGet("statushistory")]
+    public async Task<ActionResult<IEnumerable<JobStatusHistory>>> GetJobStatusHistory()
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized("No authentication token provided.");
+        }
+
+        try
+        {
+            var userJobs = await _context.Jobs
+                .Include(j => j.StatusHistories)
+                .Where(j => j.UserId == currentUserId)
+                .SelectMany(j => j.StatusHistories)
+                .ToListAsync();
+
+            return Ok(userJobs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to fetch job status history");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     private bool IsAuthenticated()
     {
         if (Request.Cookies.TryGetValue("authToken", out var token))
