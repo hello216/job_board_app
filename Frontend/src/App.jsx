@@ -10,6 +10,7 @@ import Logout from './components/Logout';
 import CreateJob from './pages/CreateJob';
 import EditJob from './pages/EditJob';
 import JobNote from './pages/JobNote';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -38,6 +39,11 @@ function App() {
       <Route path="/job-note/:id" element={
         <ProtectedRoute>
           <JobNote />
+        </ProtectedRoute>
+      } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
         </ProtectedRoute>
       } />
       </Routes>

@@ -6,12 +6,12 @@ import {
   AreaChart, Area,
 } from 'recharts';
 
-import TimeToMetric from './dashboard/TimeToMetric';
-import IndustryChart from './dashboard/IndustryChart';
-import AppTimelineChart from './dashboard/AppTimelineChart';
-import JobStatusChart from './dashboard/JobStatusChart';
-import LocationChart from './dashboard/LocationChart';
-import TopPerformingIndustriesChart from './dashboard/TopPerformingIndustriesChart';
+import TimeToMetric from '../components/dashboard/TimeToMetric';
+import IndustryChart from '../components/dashboard/IndustryChart';
+import AppTimelineChart from '../components/dashboard/AppTimelineChart';
+import JobStatusChart from '../components/dashboard/JobStatusChart';
+import LocationChart from '../components/dashboard/LocationChart';
+import TopPerformingIndustriesChart from '../components/dashboard/TopPerformingIndustriesChart';
 
 const Dashboard = () => {
   const [jobs, setJobs] = useState([]);
