@@ -393,12 +393,7 @@ public class JobsController : ControllerBase
 
     private void CreateJobStatusHistory(Jobs job, JobStatus status)
     {
-        var jobStatusHistory = new JobStatusHistory
-        {
-            JobId = job.Id,
-            Job = job,
-            Status = status
-        };
+        var jobStatusHistory = new JobStatusHistory(job.Id, status, job);
         job.StatusHistories.Add(jobStatusHistory);
     }
 }
