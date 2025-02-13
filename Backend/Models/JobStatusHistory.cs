@@ -14,10 +14,9 @@ public class JobStatusHistory
     [Required]
     public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
 
-    [Required]
-    public Jobs Job { get; set; }
+    public Jobs? Job { get; set; }
 
-    public JobStatusHistory(string jobId, JobStatus status, Jobs job)
+    public JobStatusHistory(string jobId, JobStatus status)
     {
         JobId = jobId;
         Status = status;
