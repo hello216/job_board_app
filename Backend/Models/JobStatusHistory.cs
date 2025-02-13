@@ -21,6 +21,5 @@ public class JobStatusHistory
     {
         JobId = jobId;
         Status = status;
-        Job = job;
     }
 }
