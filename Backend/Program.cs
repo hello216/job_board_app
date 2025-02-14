@@ -47,20 +47,5 @@ var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
 
-// Apply database migrations before mapping controllers
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetService<AppDbContext>();
-    if (context != null)
-    {
-        context.Database.Migrate();
-    }
-    else
-    {
-        throw new InvalidOperationException("AppDbContext could not be found.");
-    }
-}
-
 app.MapControllers();
 app.Run();
