@@ -20,6 +20,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<ICookieEncryptionService>(provider =>
+{
+    var encryptionKey = Environment.GetEnvironmentVariable("ENCRYPTION_KEY");
+    return new CookieEncryptionService(encryptionKey);
+});
 
 builder.Services.AddCors(options =>
 {

@@ -13,7 +13,7 @@ read -p "Enter the backend domain (e.g., subdomain.your-domain.com): " BACKEND_A
 
 # Generate Secure 32-character Keys for JWT & Encryption
 generate_secure_key() {
-  openssl rand -base64 32 | tr -d '=' | cut -c1-32
+  openssl rand 32 | base64 | tr -d '='
 }
 
 JWT_SECRET=$(generate_secure_key)

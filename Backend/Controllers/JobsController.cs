@@ -17,12 +17,15 @@ public class JobsController : ControllerBase
     private readonly AppDbContext _context;
     private readonly JwtService _jwtService;
     private readonly ILogger<JobsController> _logger;
+    private readonly ICookieEncryptionService _cookieEncryptionService;
 
-    public JobsController(AppDbContext context, JwtService jwtService, ILogger<JobsController> logger)
+    public JobsController(AppDbContext context, JwtService jwtService, ILogger<JobsController> logger,
+        ICookieEncryptionService cookieEncryptionService)
     {
         _context = context;
         _jwtService = jwtService;
         _logger = logger;
+        _cookieEncryptionService = cookieEncryptionService;
     }
 
     [HttpPost]
@@ -70,25 +73,14 @@ public class JobsController : ControllerBase
                 Company = request.Company!,
                 Url = request.Url!,
                 Location = request.Location!,
-                Note = request.Note
+                Note = request.Note ?? "No notes yet...",
             };
 
             _context.Jobs.Add(job);
+            CreateJobStatusHistory(job, job.Status);
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                Id = job.Id,
-                Status = job.Status,
-                Title = job.Title,
-                Company = job.Company,
-                Url = job.Url,
-                Location = job.Location,
-                Note = job.Note,
-                CreatedAt = job.CreatedAt,
-                UpdatedAt = job.UpdatedAt,
-                UserId = job.UserId
-            });
+            return Ok(new { message = "Job created succesfully." });
         }
         catch (Exception ex)
         {
@@ -139,7 +131,6 @@ public class JobsController : ControllerBase
                 job.Note,
                 job.CreatedAt,
                 job.UpdatedAt,
-                job.UserId
             });
         }
         catch (Exception ex)
@@ -182,7 +173,6 @@ public class JobsController : ControllerBase
                     j.Note,
                     j.CreatedAt,
                     j.UpdatedAt,
-                    j.UserId
                 })
                 .ToArrayAsync();
 
@@ -237,6 +227,17 @@ public class JobsController : ControllerBase
             if (request.Status != null && Enum.TryParse(request.Status, true, out JobStatus parsedStatus))
             {
                 status = parsedStatus;
+                // Create the new JobStatusHistory instance if the status its being changed
+                if (parsedStatus != jobToUpdate.Status) // Only log if status changes
+                {
+                    CreateJobStatusHistory(jobToUpdate, parsedStatus);
+
+                    jobToUpdate.Status = parsedStatus;
+                }
+                else
+                {
+                    jobToUpdate.Status = parsedStatus;
+                }
             }
 
             jobToUpdate.Status = status ?? jobToUpdate.Status;
@@ -248,19 +249,8 @@ public class JobsController : ControllerBase
 
             jobToUpdate.UpdateTimestamps();
             await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                jobToUpdate.Id,
-                Status = jobToUpdate.Status.ToString(),
-                jobToUpdate.Title,
-                jobToUpdate.Company,
-                jobToUpdate.Url,
-                jobToUpdate.Location,
-                jobToUpdate.Note,
-                jobToUpdate.CreatedAt,
-                jobToUpdate.UpdatedAt,
-                jobToUpdate.UserId
-            });
+
+            return Ok(new { message = "Update succesful." });
         }
         catch (Exception ex)
         {
@@ -322,12 +312,28 @@ public class JobsController : ControllerBase
         try
         {
             var types = typeof(JobStatus).GetFields(BindingFlags.Public | BindingFlags.Static);
-            var statuses = types.Select(t =>
-            {
-                var attribute = (DisplayAttribute)t.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault();
-                var name = attribute != null ? attribute.Name : t.Name;
-                return new { Id = (int)t.GetValue(null), Name = name, Value = t.Name };
-            });
+            var statuses = types
+                .Where(t => t.FieldType == typeof(JobStatus)) // Ensure the field is of type JobStatus
+                .Select(t =>
+                {
+                   var displayAttribute = t.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault() as DisplayAttribute;
+                   var name = displayAttribute?.Name ?? t.Name; // Check for non null values
+
+                   // Safe unboxing with explicit check for null values
+                   var value = t.GetValue(null);
+                   if (value is JobStatus statusValue) // Check the value type safely
+                   {
+                       return new
+                       {
+                           Id = (int)(object)statusValue, // Cast to object, then to int
+                           Name = name,
+                           Value = t.Name
+                       };
+                   }
+
+                   return null; // Or handle the case where value is null
+                })
+                .Where(status => status != null); // Filter out any null entries
 
             return Ok(statuses);
         }
@@ -338,11 +344,39 @@ public class JobsController : ControllerBase
         }
     }
 
+    [HttpGet("statushistory")]
+    public async Task<ActionResult<IEnumerable<JobStatusHistory>>> GetJobStatusHistory()
+    {
+        var currentUserId = GetCurrentUserId();
+        if (currentUserId == null)
+        {
+            return Unauthorized("No authentication token provided.");
+        }
+
+        try
+        {
+            var userJobs = await _context.Jobs
+                .Include(j => j.StatusHistories)
+                .Where(j => j.UserId == currentUserId)
+                .SelectMany(j => j.StatusHistories)
+                .ToListAsync();
+
+            return Ok(userJobs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to fetch job status history");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     private bool IsAuthenticated()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
         {
-            return _jwtService.IsAuthenticated(token);
+            var token = _cookieEncryptionService.Decrypt(encryptedToken);
+            // Checking for null ensures the method doesn't throw when decrypting fails or token is missing.
+            return token != null && _jwtService.IsAuthenticated(token);
         }
         else
         {
@@ -352,14 +386,22 @@ public class JobsController : ControllerBase
 
     private string? GetCurrentUserId()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
         {
-            return _jwtService.GetUserIdFromToken(token);
+            var token = _cookieEncryptionService.Decrypt(encryptedToken);
+            // Checking for null ensures the method doesn't throw when decrypting fails or token is missing.
+            return token != null ? _jwtService.GetUserIdFromToken(token) : null;
         }
         else
         {
             return null;
         }
+    }
+
+    private void CreateJobStatusHistory(Jobs job, JobStatus status)
+    {
+        var jobStatusHistory = new JobStatusHistory(job.Id, status);
+        job.StatusHistories.Add(jobStatusHistory);
     }
 }
 

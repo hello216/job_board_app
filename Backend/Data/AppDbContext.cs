@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Users> Users { get; set; }
     public DbSet<Jobs> Jobs { get; set; }
+    public DbSet<JobStatusHistory> JobStatusHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,5 +32,14 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Jobs>()
             .Property(j => j.Id)
             .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<JobStatusHistory>()
+            .HasOne(jsh => jsh.Job)
+            .WithMany(j => j.StatusHistories)
+            .HasForeignKey(jsh => jsh.JobId);
+
+        modelBuilder.Entity<JobStatusHistory>()
+            .Property(jsh => jsh.ChangedAt)
+            .HasDefaultValueSql("getutcdate()");
     }
 }
