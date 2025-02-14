@@ -64,8 +64,8 @@ const Dashboard = () => {
       <JobStatusChart jobs={jobs} />
       <h3>Location</h3>
       <LocationChart jobs={jobs} />
-{/*      <h3>Top performers</h3>
-      <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />*/}
+      <h3>Top performers</h3>
+      <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />
     </div>
   );
 };

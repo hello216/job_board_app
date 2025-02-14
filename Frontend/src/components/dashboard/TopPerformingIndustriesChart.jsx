@@ -2,11 +2,19 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
 const TopPerformingIndustriesChart = ({ jobStatusHistory }) => {
+  if (jobStatusHistory.length === 0) {
+    return <p>No industry performance data available.</p>;
+  }
+
   const successRates = jobStatusHistory
-    .filter(h => h.Status === "Interviewing" || h.Status === "Offered")
+    .filter(h => h.status === "Interviewing" || h.status === "Offered")
     .reduce((acc, h) => {
-      if (!acc[h.Industry]) acc[h.Industry] = 0;
-      acc[h.Industry]++;
+      if (!h.industry) {
+        console.log(`Skipping job with undefined industry: ${h.title}`);
+        return acc;
+      }
+      if (!acc[h.industry]) acc[h.industry] = 0;
+      acc[h.industry]++;
       return acc;
     }, {});
 
@@ -14,6 +22,10 @@ const TopPerformingIndustriesChart = ({ jobStatusHistory }) => {
     name: industry,
     count: successRates[industry],
   }));
+
+  if (barData.length === 0) {
+    return <p>No successful industries to display.</p>;
+  }
 
   return (
     <div>
