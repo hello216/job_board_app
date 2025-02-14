@@ -49,14 +49,23 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  console.log('jobs');
+  console.log(jobs);
+
   return (
     <div>
+      <h3>Time to metric</h3>
       <TimeToMetric jobStatusHistory={jobStatusHistory} />
+      <h3>Industry</h3>
       <IndustryChart jobs={jobs} />
+{/*      <h3>Applications Timeline</h3>
       <AppTimelineChart jobs={jobs} />
+      <h3>Job status</h3>
       <JobStatusChart jobs={jobs} />
+      <h3>Location</h3>
       <LocationChart jobs={jobs} />
-      <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />
+      <h3>Top performers</h3>
+      <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />*/}
     </div>
   );
 };

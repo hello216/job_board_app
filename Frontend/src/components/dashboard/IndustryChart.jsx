@@ -3,8 +3,13 @@ import { PieChart, Pie, Tooltip } from 'recharts';
 
 const IndustryChart = ({ jobs }) => {
   const industryData = jobs.reduce((acc, job) => {
-    if (!acc[job.Industry]) acc[job.Industry] = 0;
-    acc[job.Industry]++;
+    const industry = job.Industry;
+
+    // Only increment count if industry is valid
+    if (industry) {
+      if (!acc[industry]) acc[industry] = 0;
+      acc[industry]++;
+    }
     return acc;
   }, {});
 
@@ -12,6 +17,11 @@ const IndustryChart = ({ jobs }) => {
     name: industry,
     value: industryData[industry],
   }));
+
+  // Only render chart if pieData has entries
+  if (pieData.length === 0 || jobs.length === 0) {
+    return <p>No industry data available.</p>;
+  }
 
   return (
     <div>
