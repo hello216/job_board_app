@@ -2,9 +2,17 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 
 const LocationChart = ({ jobs }) => {
+  if (jobs.length === 0) {
+    return <p>No job location data available.</p>;
+  }
+
   const locationData = jobs.reduce((acc, job) => {
-    if (!acc[job.Location]) acc[job.Location] = 0;
-    acc[job.Location]++;
+    if (!job.location) {
+      console.log(`Skipping job with undefined location: ${job.title}`);
+      return acc;
+    }
+    if (!acc[job.location]) acc[job.location] = 0;
+    acc[job.location]++;
     return acc;
   }, {});
 

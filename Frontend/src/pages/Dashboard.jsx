@@ -62,9 +62,9 @@ const Dashboard = () => {
       <AppTimelineChart jobs={jobs} />
       <h3>Job status</h3>
       <JobStatusChart jobs={jobs} />
-{/*      <h3>Location</h3>
+      <h3>Location</h3>
       <LocationChart jobs={jobs} />
-      <h3>Top performers</h3>
+{/*      <h3>Top performers</h3>
       <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />*/}
     </div>
   );
