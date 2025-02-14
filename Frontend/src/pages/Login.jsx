@@ -55,6 +55,8 @@ const Login = () => {
         } else if (data) {
           setErrors({ general: data });
         }
+      } else if (response.status === 429) {
+        setErrors({ general: 'Too many requests. Please try again later.' });
       } else {
         setErrors({ general: 'Login failed. Please try again.' });
       }
