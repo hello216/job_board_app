@@ -17,12 +17,15 @@ public class JobsController : ControllerBase
     private readonly AppDbContext _context;
     private readonly JwtService _jwtService;
     private readonly ILogger<JobsController> _logger;
+    private readonly ICookieEncryptionService _cookieEncryptionService;
 
-    public JobsController(AppDbContext context, JwtService jwtService, ILogger<JobsController> logger)
+    public JobsController(AppDbContext context, JwtService jwtService, ILogger<JobsController> logger,
+        ICookieEncryptionService cookieEncryptionService)
     {
         _context = context;
         _jwtService = jwtService;
         _logger = logger;
+        _cookieEncryptionService = cookieEncryptionService;
     }
 
     [HttpPost]
@@ -395,9 +398,11 @@ public class JobsController : ControllerBase
 
     private bool IsAuthenticated()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
         {
-            return _jwtService.IsAuthenticated(token);
+            var token = _cookieEncryptionService.Decrypt(encryptedToken);
+            // Checking for null ensures the method doesn't throw when decrypting fails or token is missing.
+            return token != null && _jwtService.IsAuthenticated(token);
         }
         else
         {
@@ -407,9 +412,11 @@ public class JobsController : ControllerBase
 
     private string? GetCurrentUserId()
     {
-        if (Request.Cookies.TryGetValue("authToken", out var token))
+        if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
         {
-            return _jwtService.GetUserIdFromToken(token);
+            var token = _cookieEncryptionService.Decrypt(encryptedToken);
+            // Checking for null ensures the method doesn't throw when decrypting fails or token is missing.
+            return token != null ? _jwtService.GetUserIdFromToken(token) : null;
         }
         else
         {
