@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Linq;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Backend.Controllers;
 
@@ -28,6 +29,7 @@ public class JobsController : ControllerBase
         _cookieEncryptionService = cookieEncryptionService;
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpPost]
     public async Task<ActionResult> Create(CreateJobRequest request)
     {
@@ -89,6 +91,7 @@ public class JobsController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpGet("{id}")]
     public async Task<ActionResult> Get(string id)
     {
@@ -140,6 +143,7 @@ public class JobsController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpGet("getuserjobs")]
     public async Task<ActionResult> GetUserJobs()
     {
@@ -185,6 +189,7 @@ public class JobsController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(string id, UpdateJobRequest request)
     {
@@ -259,6 +264,7 @@ public class JobsController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
@@ -303,6 +309,7 @@ public class JobsController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpGet("getstatuses")]
     public IActionResult GetJobStatuses()
     {
@@ -344,6 +351,7 @@ public class JobsController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpGet("statushistory")]
     public async Task<ActionResult<IEnumerable<JobStatusHistory>>> GetJobStatusHistory()
     {
