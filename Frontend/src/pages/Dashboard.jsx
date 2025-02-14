@@ -5,6 +5,7 @@ import {
   PieChart, Pie,
   AreaChart, Area,
 } from 'recharts';
+import '../css/Dashboard.css';
 
 import TimeToMetric from '../components/dashboard/TimeToMetric';
 import IndustryChart from '../components/dashboard/IndustryChart';
@@ -49,23 +50,44 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  console.log('jobs');
-  console.log(jobs);
-
   return (
-    <div>
-      <h3>Time to metric</h3>
-      <TimeToMetric jobStatusHistory={jobStatusHistory} />
-      <h3>Industry</h3>
-      <IndustryChart jobs={jobs} />
-      <h3>Applications Timeline</h3>
-      <AppTimelineChart jobs={jobs} />
-      <h3>Job status</h3>
-      <JobStatusChart jobs={jobs} />
-      <h3>Location</h3>
-      <LocationChart jobs={jobs} />
-      <h3>Top performers</h3>
-      <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />
+    <div id="dashboard-container">
+      <div className="graph-container">
+        <h3>Average Time to Interview/Offer</h3>
+        <div className="component-container">
+          <TimeToMetric jobStatusHistory={jobStatusHistory} />
+        </div>
+      </div>
+      <div className="graph-container">
+        <h3>Industry Distribution</h3>
+        <div className="component-container">
+          <IndustryChart jobs={jobs} />
+        </div>
+      </div>
+      <div className="graph-container">
+        <h3>Applications Timeline Overview</h3>
+        <div className="component-container">
+          <AppTimelineChart jobs={jobs} />
+        </div>
+      </div>
+      <div className="graph-container">
+        <h3>Job Status Breakdown</h3>
+        <div className="component-container">
+          <JobStatusChart jobs={jobs} />
+        </div>
+      </div>
+      <div className="graph-container">
+        <h3>Geographical Location</h3>
+        <div className="component-container">
+          <LocationChart jobs={jobs} />
+        </div>
+      </div>
+      <div className="graph-container">
+        <h3>Top Performing Industries</h3>
+        <div className="component-container">
+          <TopPerformingIndustriesChart jobStatusHistory={jobStatusHistory} />
+        </div>
+      </div>
     </div>
   );
 };
