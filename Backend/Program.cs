@@ -3,7 +3,6 @@ using Backend.Models;
 using Backend.Data;
 using DotNetEnv;
 using Backend.Services;
-using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,13 +14,6 @@ builder.WebHost.UseUrls(applicationUrl);
 
 string dbPath = Environment.GetEnvironmentVariable("DB_PATH") ?? "jobs.db";
 
-builder.Services.AddOptions();
-builder.Services.AddMemoryCache();
-builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
-builder.Services.AddInMemoryRateLimiting();
-
-builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -54,8 +46,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
-
-app.UseIpRateLimiting();
 
 app.MapControllers();
 app.Run();
