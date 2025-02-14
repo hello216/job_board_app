@@ -9,10 +9,11 @@
 }
 
 .graph-container {
-    width: 100%;
+    width: 40%;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    margin-bottom: 5%;
 }
 
 .graph-container h3 {
