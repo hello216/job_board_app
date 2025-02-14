@@ -33,7 +33,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Users>> Create(AddUserRequest request)
+    public async Task<ActionResult> Create(AddUserRequest request)
     {
         try
         {
@@ -66,7 +66,7 @@ public class UserController : ControllerBase
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Create), new { id = user.Id }, user);
+            return Ok(new { message = "User created succesfully." });
         }
         catch (Exception ex)
         {
@@ -97,7 +97,6 @@ public class UserController : ControllerBase
 
             var userResponse = new UserResponse
             {
-                Id = user.Id,
                 Email = user.Email,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
@@ -113,7 +112,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<UserResponse>> Update(UpdateUserRequest request)
+    public async Task<ActionResult> Update(UpdateUserRequest request)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
@@ -150,15 +149,7 @@ public class UserController : ControllerBase
             userToUpdate.UpdateTimestamps();
             await _context.SaveChangesAsync();
 
-            var userResponse = new UserResponse
-            {
-                Id = userToUpdate.Id,
-                Email = userToUpdate.Email,
-                CreatedAt = userToUpdate.CreatedAt,
-                UpdatedAt = userToUpdate.UpdatedAt
-            };
-
-            return Ok(userResponse);
+            return Ok(new { message = "Update succesful." });
         }
         catch (Exception ex)
         {
