@@ -80,19 +80,7 @@ public class JobsController : ControllerBase
             CreateJobStatusHistory(job, job.Status);
             await _context.SaveChangesAsync();
 
-            return Ok(new
-            {
-                Id = job.Id,
-                Status = job.Status,
-                Title = job.Title,
-                Company = job.Company,
-                Url = job.Url,
-                Location = job.Location,
-                Note = job.Note,
-                CreatedAt = job.CreatedAt,
-                UpdatedAt = job.UpdatedAt,
-                UserId = job.UserId
-            });
+            return Ok(new { message = "Job created succesfully." });
         }
         catch (Exception ex)
         {
@@ -143,7 +131,6 @@ public class JobsController : ControllerBase
                 job.Note,
                 job.CreatedAt,
                 job.UpdatedAt,
-                job.UserId
             });
         }
         catch (Exception ex)
@@ -186,7 +173,6 @@ public class JobsController : ControllerBase
                     j.Note,
                     j.CreatedAt,
                     j.UpdatedAt,
-                    j.UserId
                 })
                 .ToArrayAsync();
 
@@ -262,21 +248,9 @@ public class JobsController : ControllerBase
             jobToUpdate.Note = request.Note ?? jobToUpdate.Note;
 
             jobToUpdate.UpdateTimestamps();
-
             await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                jobToUpdate.Id,
-                Status = jobToUpdate.Status.ToString(),
-                jobToUpdate.Title,
-                jobToUpdate.Company,
-                jobToUpdate.Url,
-                jobToUpdate.Location,
-                jobToUpdate.Note,
-                jobToUpdate.CreatedAt,
-                jobToUpdate.UpdatedAt,
-                jobToUpdate.UserId
-            });
+
+            return Ok(new { message = "Update succesful." });
         }
         catch (Exception ex)
         {
