@@ -59,6 +59,8 @@ const Register = () => {
         } else if (data) {
           setErrors({ general: data });
         }
+      } else if (response.status === 429) {
+        setErrors({ general: 'Too many requests. Please try again later.' });
       } else {
         setErrors({ general: 'Registration failed. Please try again.' });
       }

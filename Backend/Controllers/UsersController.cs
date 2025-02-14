@@ -11,6 +11,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Backend.Controllers;
 
@@ -32,6 +33,7 @@ public class UserController : ControllerBase
         _cookieEncryptionService = cookieEncryptionService;
     }
 
+    [EnableRateLimiting("AuthenticationLimit")]
     [HttpPost]
     public async Task<ActionResult> Create(AddUserRequest request)
     {
@@ -75,6 +77,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpGet]
     public async Task<ActionResult<UserResponse>> Get()
     {
@@ -111,6 +114,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpPut]
     public async Task<ActionResult> Update(UpdateUserRequest request)
     {
@@ -158,6 +162,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpDelete]
     public async Task<ActionResult> Delete()
     {
@@ -189,6 +194,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("AuthenticationLimit")]
     [HttpPost("login")]
     public async Task<ActionResult> Login(LoginRequest request)
     {
@@ -219,6 +225,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [EnableRateLimiting("FixedWindow")]
     [HttpPost("logout")]
     public IActionResult Logout()
     {
