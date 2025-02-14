@@ -29,7 +29,7 @@
 }
 
 @media only screen and (max-width: 768px) {
-	##dashboard-container {
+	#dashboard-container {
 		width: 90%;
 	}
 	.graph-container {
