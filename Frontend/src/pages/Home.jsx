@@ -6,6 +6,7 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sort, setSort] = useState({ column: '', ascending: true });
   const jobsPerPage = 10;
 
   useEffect(() => {
@@ -57,8 +58,34 @@ const Home = () => {
     return jobInfo.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const currentFilteredJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage); // Calculate the number of pages based on filtered jobs
+  const sortJobs = (column) => {
+    setSort({ column, ascending: sort.column === column ? !sort.ascending : true });
+  };
+
+  const sortedJobs = sort.column ? 
+    filteredJobs.sort((a, b) => {
+      if (sort.column === 'createdAt') {
+        return sort.ascending ? 
+          new Date(a.createdAt) - new Date(b.createdAt) : 
+          new Date(b.createdAt) - new Date(a.createdAt);
+      } else {
+        let valueA = a[sort.column].toString().toLowerCase();
+        let valueB = b[sort.column].toString().toLowerCase();
+
+        return sort.ascending ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+      }
+    }) 
+    : filteredJobs;
+
+  const SortingIndicator = ({ column }) => {
+    if (sort.column === column) {
+      return sort.ascending ? '↑' : '↓';
+    }
+    return '';
+  };
+
+  const currentSortedJobs = sortedJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage);
+  const totalPages = Math.ceil(sortedJobs.length / jobsPerPage);
 
   return (
     <div id="home-container" className="container my-5">
@@ -90,17 +117,17 @@ const Home = () => {
           <table className="custom-table mt-5 desktop-table">
             <thead>
               <tr>
-                <th>Submitted At</th>
-                <th>Status</th>
-                <th>Title</th>
-                <th>Company</th>
-                <th>URL</th>
-                <th>Location</th>
+                <th onClick={() => sortJobs('createdAt')}>Submitted At <SortingIndicator column={'createdAt'} /> </th>
+                <th onClick={() => sortJobs('status')}>Status <SortingIndicator column={'status'} /> </th>
+                <th onClick={() => sortJobs('title')}>Title <SortingIndicator column={'title'} /> </th>
+                <th onClick={() => sortJobs('company')}>Company <SortingIndicator column={'company'} /> </th>
+                <th onClick={() => sortJobs('url')}>URL <SortingIndicator column={'url'} /> </th>
+                <th onClick={() => sortJobs('location')}>Location <SortingIndicator column={'location'} /> </th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {currentFilteredJobs.map((job) => (
+              {currentSortedJobs.map((job) => (
                 <tr key={job.id}>
                   <td>
                     {new Intl.DateTimeFormat('en-US', {
@@ -132,7 +159,7 @@ const Home = () => {
           </table>
 
           <div className="mobile-card-list">
-            {currentFilteredJobs.map((job) => (
+            {currentSortedJobs.map((job) => (
               <div key={job.id} className="mobile-card">
                 <h3 className="card-title">{job.title}</h3>
                 <div className="card-info">
