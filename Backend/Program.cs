@@ -17,6 +17,7 @@ string dbPath = Environment.GetEnvironmentVariable("DB_PATH") ?? "jobs.db";
 
 builder.Services.AddRateLimiter(_ =>
 {
+    _.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
     _.AddFixedWindowLimiter(
         policyName: "FixedWindow",
         options =>
@@ -34,9 +35,9 @@ builder.Services.AddRateLimiter(_ =>
         options =>
         {
             // Maximum allowed requests
-            options.PermitLimit = 4;
+            options.PermitLimit = 5;
             // Maximum allowed requests in queue
-            options.QueueLimit = 2;
+            options.QueueLimit = 0;
             // Time window
             options.Window = TimeSpan.FromMinutes(1);
         });
