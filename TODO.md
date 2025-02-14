@@ -3,7 +3,7 @@
 - [X] **User Authentication**
   Add user registration and login system for private job application data.
 
-- [ ] **Data Visualization**
+- [X] **Data Visualization**
   Visualize job application metrics with charts and graphs.
 
 - [ ] **Status Tracking with Notifications**
