@@ -23,7 +23,7 @@ builder.Services.AddRateLimiter(_ =>
         options =>
         {
             // Maximum allowed requests
-            options.PermitLimit = 20;
+            options.PermitLimit = 30;
             // Maximum allowed requests in queue
             options.QueueLimit = 5;
             // Time window
