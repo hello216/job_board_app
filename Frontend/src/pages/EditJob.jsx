@@ -159,7 +159,7 @@ const EditJob = () => {
   };
 
   return (
-    <div className="container my-5">
+    <div className="container">
       {Object.keys(errors).length > 0 && (
         <div className="alert alert-danger">
           {Object.keys(errors).map((key) => (
@@ -174,8 +174,8 @@ const EditJob = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-4">
-        <div className="mb-3">
+      <form onSubmit={handleSubmit}>
+        <div className="inputs">
           <label className="form-label">Status:</label>
           <select className="form-select" name="status" value={job.status} onChange={handleChange}>
             <option value="">Select</option>
@@ -184,38 +184,43 @@ const EditJob = () => {
                 <option key={status.id} value={status.value}>{status.name}</option>
               ))}
           </select>
+          {errors.status && <div className="error-message">{errors.status}</div>}
         </div>
 
-        <div className="mb-3">
+        <div className="inputs">
           <label className="form-label">Title:</label>
           <input className="form-control" type="text" name="title" value={job.title} onChange={handleChange} />
+          {errors.title && <div className="error-message">{errors.title}</div>}
         </div>
 
-        <div className="mb-3">
+        <div className="inputs">
           <label className="form-label">Company:</label>
           <input className="form-control" type="text" name="company" value={job.company} onChange={handleChange} />
+          {errors.company && <div className="error-message">{errors.company}</div>}
         </div>
 
-        <div className="mb-3">
+        <div className="inputs">
           <label className="form-label">URL:</label>
           <input className="form-control" type="text" name="url" value={job.url} onChange={handleChange} />
+          {errors.url && <div className="error-message">{errors.url}</div>}
         </div>
 
-        <div className="mb-3">
+        <div className="inputs">
           <label className="form-label">Location:</label>
           <input className="form-control" type="text" name="location" value={job.location} onChange={handleChange} />
+          {errors.location && <div className="error-message">{errors.location}</div>}
         </div>
 
-        <div className="mb-3">
+        <div className="inputs">
           <label className="form-label">Note:</label>
           <textarea className="form-control" name="note" value={job.note} onChange={handleChange} />
         </div>
 
-        <button type="submit" className="btn btn-dark">Update</button>
+        <button type="submit" className="custom-button">Update</button>
       </form>
 
-      <div className="mt-4">
-        <Link to="/" className="link-dark link-opacity-50-hover">Go Home</Link>
+      <div>
+        <a href="/">Go Home</a>
       </div>
     </div>
   );

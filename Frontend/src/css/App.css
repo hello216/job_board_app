@@ -1,5 +1,8 @@
+@import './Globals.css';
+
 #root, html, body {
-    background-color: #da7756 !important;
+    background-color: var(--color-background) !important;
+    color: white;
     width: 100%;
     min-height: 100vh;
     display: flex;
@@ -8,7 +11,6 @@
     align-content: center;
     text-align: center;
     font-family: 'Verdana', 'Geneva', sans-serif;
-    color: white;
     margin: 0;
     padding: 0;
     overscroll-behavior: none;

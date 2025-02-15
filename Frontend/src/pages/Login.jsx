@@ -1,6 +1,7 @@
 import ValidateSanitize from '../services/validateSanitizeService';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
+import '../css/LogReg.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -67,22 +68,23 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="LogReg-container">
       <div>
         {errors.general && <p>{errors.general}</p>}
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
+          <div className="inputs">
             <label className="form-label">Email</label>
             <input className="form-control" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-          <div className="mb-3">
+          <div className="inputs">
             <label className="form-label">Password</label>
             <input className="form-control" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
-          <button type="submit" className="btn btn-dark">Login</button>
+          <button type="submit" className="custom-button">Login</button>
         </form>
-        <div className="mt-4">
-          <a className="link-dark link-opacity-50-hover" href="/register">or Register here</a>
+
+        <div>
+          <a href="/register">or Register here</a>
         </div>
       </div>
     </div>

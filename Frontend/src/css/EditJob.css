@@ -1,3 +1,51 @@
+@import './Globals.css';
+
 .container input, select, textarea {
-	text-align: center;
+  text-align: center;
+}
+
+.form-control {
+  padding: 0.5em;
+  border: 1px solid var(--color-third);
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+  padding-bottom: 0.5em;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.75em;
+  margin-top: 0.25em;
+}
+
+select {
+  padding: 0.5em;
+  border: 1px solid var(--color-third);
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box; /* Include padding and border in the width */
+  background-color: white;
+  width: 100%;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
