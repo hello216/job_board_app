@@ -29,7 +29,6 @@
 .custom-table {
   border-collapse: collapse;
   border: 1px solid var(--table-border-color);
-  border-radius: 5px;
   font-size: 1.5rem;
   font-family: Arial, sans-serif;
   width: 95%;

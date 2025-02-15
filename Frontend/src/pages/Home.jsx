@@ -114,7 +114,7 @@ const Home = () => {
         <p className="fs-4 text-center my-5">No jobs match your search.</p>
       ) : (
         <div className="job-list-container">
-          <table className="custom-table mt-5 desktop-table">
+          <table className="custom-table desktop-table">
             <thead>
               <tr>
                 <th onClick={() => sortJobs('createdAt')}>Submitted At <SortingIndicator column={'createdAt'} /> </th>
