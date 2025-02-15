@@ -133,14 +133,14 @@ form button, a {
 }
 
 .pagination {
-  margin-top: 1em;
+  outline: 1px solid blue;
   display: flex;
   justify-content: center;
+  padding: 0;
 }
 
 .pagination li {
   list-style: none;
-  margin-right: 10px;
 }
 
 .pagination li button,
@@ -198,10 +198,31 @@ form button, a {
   .desktop-table {
     display: none;
   }
+
   .mobile-card-list {
     display: block; /* Ensure the cards are visible on mobile */
-    width: 100%;  /* Fill the container */
-    margin-top: 1%; /* Add some margin for better spacing */
+    width: 100%;
+    margin-top: 1%;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 5%;
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+
+  .pagination li button,
+  .pagination li span {
+    padding: 0.5em;
+    font-size: 0.8em;
+  }
+
+  /* Remove width limit from nav */
+  nav {
+    width: 100%;
   }
 }
 
@@ -212,6 +233,9 @@ form button, a {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: var(--color-primary);
   color: black;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .mobile-card .card-title {
@@ -231,4 +255,20 @@ form button, a {
 .mobile-card .card-info p span {
   color: var(--color-secondary);
   font-weight: bold;
+}
+
+.card-actions {
+  width: 75%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card-actions a, button {
+  width: 100%;
+  margin-bottom: 2%;
+}
+
+* {
+  outline: 1px dashed red;
 }

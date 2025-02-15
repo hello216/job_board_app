@@ -157,6 +157,7 @@ const Home = () => {
               ))}
             </tbody>
           </table>
+
           <div className="mobile-card-list">
             {currentSortedJobs.map((job) => (
               <div key={job.id} className="mobile-card">
