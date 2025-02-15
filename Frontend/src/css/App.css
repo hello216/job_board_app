@@ -1,14 +1,15 @@
 #root, html, body {
-	background-color: #da7756;
-	width: 100%;
-	height: 100%;
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-	align-content: center;
-	text-align: center;
-	font-family: 'Verdana', 'Geneva', sans-serif;
-	color: white;
-	margin: 0;
-	padding: 0;
+    background-color: #da7756 !important;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-content: center;
+    text-align: center;
+    font-family: 'Verdana', 'Geneva', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior: none;
 }
