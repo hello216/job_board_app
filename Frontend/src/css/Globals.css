@@ -55,3 +55,7 @@ form .inputs {
 .inputs label, input, textarea {
   width: 100%;
 }
+
+.inputs {
+  margin: 2% 0;
+}

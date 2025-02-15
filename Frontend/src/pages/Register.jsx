@@ -72,7 +72,7 @@ const Register = () => {
   };
 
   return (
-    <div>
+    <div className="LogReg-container">
       <div>
         {errors.general && <p>{errors.general}</p>}
         <form onSubmit={handleSubmit}>
