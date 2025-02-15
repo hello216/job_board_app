@@ -6,6 +6,7 @@
     height: 100%;
     width: 100%;
     overflow-y: scroll;
+    color: var(--color-secondary);
 }
 
 .graph-container {
@@ -25,7 +26,7 @@
     border-radius: 10px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: black;
+    color: var(--color-third);
 }
 
 @media only screen and (max-width: 768px) {
