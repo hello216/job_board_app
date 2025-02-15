@@ -1,0 +1,22 @@
+.note-container {
+	width: 75%;
+	height: 75%;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+ .note-container p {
+	background-color: var(--color-primary);
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.5rem;
+}
+
+.note-container #links {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}

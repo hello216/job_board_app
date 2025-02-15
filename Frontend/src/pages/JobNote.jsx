@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import ValidateSanitize from '../services/validateSanitizeService';
+import '../css/Notes.css';
 
 const JobNote = () => {
   const [job, setJob] = useState({ note: '' });
@@ -44,13 +45,13 @@ const JobNote = () => {
   }, [id]);
 
   return (
-    <div className="container my-5">
-      {error && <div className="alert alert-danger mt-3">{error}</div>}
-      {errors.note && <div className="alert alert-danger mt-3">{errors.note}</div>}
-      <p className="fs-5">{job.note}</p>
-      <div className="mt-4">
-        <Link to="/" className="link-dark link-opacity-50-hover">Go Home</Link>
-        <a href={`/edit-job/${job.id}`} className="link-dark link-opacity-50-hover mx-2">Edit</a>
+    <div className="note-container">
+      {error && <div className="alert alert-danger">{error}</div>}
+      {errors.note && <div className="alert alert-danger">{errors.note}</div>}
+      <p>{job.note}</p>
+      <div id="links">
+        <a href="/">Go Home</a>
+        <a href={`/edit-job/${job.id}`}>Edit</a>
       </div>
     </div>
   );
