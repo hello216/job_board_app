@@ -31,6 +31,8 @@ const EditJob = () => {
         if (!responseJob.ok) {
           if (responseJob.status === 404) {
             setErrors({ general: 'Job not found.' });
+          } else if (response.status === 429) {
+            setErrors({ general: 'Too many requests. Please try again later.' });
           } else if (responseJob.status === 401 || responseJob.status === 403) {
             navigate('/login');
           } else {
@@ -57,6 +59,8 @@ const EditJob = () => {
         if (responseStatuses.ok) {
           const statusesData = await responseStatuses.json();
           setStatuses(statusesData);
+        } else if (response.status === 429) {
+          setErrors({ general: 'Too many requests. Please try again later.' });
         } else {
           setErrors({ general: 'Failed to fetch job statuses.' });
         }
@@ -127,30 +131,31 @@ const EditJob = () => {
       if (response.ok) {
         navigate('/');
         return;
-      }
-
-      if (isJson) {
-        data = await response.json();
+      } else if (response.status === 429) {
+        setErrors({ general: 'Too many requests. Please try again later.' });
       } else {
-        return;
-      }
-
-      // Extract errors properly and display them
-      if (data.errors) {
-        console.log(data.errors);
-        const extractedErrors = {};
-        for (const [field, messages] of Object.entries(data.errors)) {
-          extractedErrors[field] = messages.join(', ');
+        if (isJson) {
+          data = await response.json();
+        } else {
+          return;
         }
-        setErrors(extractedErrors);
-      } else {
-        setErrors({ general: data.title || 'Failed to update the job.' });
-      }
 
+        // Extract errors properly and display them
+        if (data.errors) {
+          console.log(data.errors);
+          const extractedErrors = {};
+          for (const [field, messages] of Object.entries(data.errors)) {
+            extractedErrors[field] = messages.join(', ');
+          }
+          setErrors(extractedErrors);
+        } else {
+          setErrors({ general: data.title || 'Failed to update the job.' });
+        }
+      }
     } catch (error) {
       console.log(error);
       setErrors({ general: 'An unexpected error occurred.' });
-    }
+    };
   };
 
   const handleChange = (e) => {

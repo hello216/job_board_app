@@ -32,6 +32,8 @@ const JobNote = () => {
               note: noteSanitized.sanitized,
             });
           }
+        } else if (response.status === 429) {
+          setErrors({ general: 'Too many requests. Please try again later.' });
         } else {
           setError('Failed to fetch job note');
         }
