@@ -1,10 +1,4 @@
-:root {
-    --table-header-color: #3d3929; /* Font color */
-    --table-row-color: #eeece2; /* Background similar to website background */
-    --table-border-color: #bd5d3a; /* Chat Buttons color */
-    --delete-button-color: #bd5d3a; /* Use a unified color for delete buttons */
-    --delete-button-hover-color: #aa473b; /* A darker shade for hover effect */
-}
+@import './Globals.css';
 
 #home-container {
   width: 100%;
@@ -34,7 +28,7 @@
   border-collapse: collapse;
   border: 1px solid var(--table-border-color);
   border-radius: 5px;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-family: Arial, sans-serif;
   width: 100%;
   margin: 2% 0;
@@ -43,9 +37,8 @@
 
 .custom-table th {
   padding: 0.5em;
-  background-color: var(--table-header-color);
-  color: #fff; /* White text for better readability on the dark background */
-  border-bottom: 1px solid var(--table-border-color);
+  background-color: var(--color-secondary);
+  border-bottom: 1px solid var(--color-third);
   text-align: center;
   word-break: break-word; /* Prevent long words from breaking layout */
 }
@@ -53,8 +46,8 @@
 .custom-table td {
   padding: 0.5em;
   border-bottom: 1px solid var(--table-border-color);
-  background-color: var(--table-row-color);
-  color: #3d3929; /* Text color consistent with table header */
+  background-color: var(--color-primary);
+  color: black;
   text-align: center;
   word-break: break-word; /* Prevent long words from breaking layout */
 }
@@ -194,11 +187,11 @@ form button, a {
   padding: 1em;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: var(--table-row-color); /* Use the same background color as table rows */
+  background-color: var(--color-primary);
+  color: black;
 }
 
 .mobile-card .card-title {
-  color: #3d3929; /* Text color consistent with table rows */
   font-weight: bold;
   font-size: 1.5em;
   margin-bottom: 0.5em;
@@ -209,11 +202,10 @@ form button, a {
 }
 
 .mobile-card .card-info p {
-  color: #3d3929; /* Adjust text color to match table rows */
   margin-bottom: 0.3em;
 }
 
 .mobile-card .card-info p span {
-  color: #3d3929; /* Use a darker color for better readability */
+  color: var(--color-secondary);
   font-weight: bold;
 }
