@@ -19,9 +19,11 @@
 }
 
 .job-list-container {
-  display: block;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .custom-table {
@@ -30,9 +32,13 @@
   border-radius: 5px;
   font-size: 1.5rem;
   font-family: Arial, sans-serif;
-  width: 100%;
+  width: 95%;
   margin: 2% 0;
   table-layout: fixed; /* Ensure consistent column widths */
+}
+
+.custom-table th, td {
+  box-sizing: border-box; /* Ensures padding and borders are included in element width calc*/
 }
 
 .custom-table th {
@@ -41,10 +47,10 @@
   border-bottom: 1px solid var(--color-third);
   text-align: center;
   word-break: break-word; /* Prevent long words from breaking layout */
+  width: 100%;
 }
 
 .custom-table td {
-  padding: 0.5em;
   border-bottom: 1px solid var(--table-border-color);
   background-color: var(--color-primary);
   color: black;
@@ -54,87 +60,46 @@
 
 .custom-table th:nth-child(1),
 .custom-table td:nth-child(1) {
-  width: 15%; /* Adjust width for "Submitted At" */
+  width: 15%;
 }
 
 .custom-table th:nth-child(2),
 .custom-table td:nth-child(2) {
-  width: 10%; /* Adjust width for "Status" */
+  width: 10%;
 }
 
 .custom-table th:nth-child(3),
 .custom-table td:nth-child(3) {
-  width: 20%; /* Adjust width for "Title" */
+  width: 20%;
 }
 
 .custom-table th:nth-child(4),
 .custom-table td:nth-child(4) {
-  width: 15%; /* Adjust width for "Company" */
+  width: 15%;
 }
 
 .custom-table th:nth-child(5),
 .custom-table td:nth-child(5) {
-  width: 12%; /* Adjust width for "URL" */
+  width: 12%;
 }
 
 .custom-table th:nth-child(6),
 .custom-table td:nth-child(6) {
-  width: 13%; /* Adjust width for "Location" */
+  width: 13%;
 }
 
 .custom-table th:nth-child(7),
 .custom-table td:nth-child(7) {
-  width: 15%; /* Adjust width for "Actions" */
+  width: 15%;
 }
 
 .custom-link {
-  color: #000; /* Black text for links */
+  color: white;
   text-decoration: none;
 }
 
 .custom-link:hover {
   text-decoration: underline;
-}
-
-.custom-action-button {
-  background-color: #bd5d3a;
-  color: #fff;
-  padding: 0.5em;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 5px;
-}
-
-.custom-action-button:hover {
-  background-color: #aa473b;
-}
-
-.custom-black-action-button {
-  background-color: #000;
-  color: #fff;
-  padding: 0.5em;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 5px;
-}
-
-.custom-black-action-button:hover {
-  background-color: #444; /* Darker black on hover */
-}
-
-.custom-delete-button {
-  background-color: var(--delete-button-color);
-  color: #fff;
-  padding: 0.5em;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.custom-delete-button:hover {
-  background-color: var(--delete-button-hover-color);
 }
 
 table #actions {
@@ -161,6 +126,59 @@ table td {
 
 form button, a {
   width: 100%;
+}
+
+.pagination {
+  margin-top: 1em;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination li {
+  list-style: none;
+  margin-right: 10px;
+}
+
+.pagination li button,
+.pagination li span {
+  padding: 0.5em 1em;
+  background-color: var(--color-third);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block; /* Make span behave like a button */
+}
+
+.pagination li button:hover {
+  background-color: var(--color-secondary);
+}
+
+.pagination li.active button {
+  border: 1px solid white;
+  background-color: var(--color-secondary);
+}
+
+/* Disabled pagination buttons/spans */
+.pagination li.disabled button,
+.pagination li.disabled span {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.search-bar input {
+  padding: 0.5em;
+  border: 1px solid var(--color-third);
+  border-radius: 5px;
+  width: 100%;
+  font-size: 1em;
+}
+
+.search-bar input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .desktop-table {

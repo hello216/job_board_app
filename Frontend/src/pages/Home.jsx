@@ -93,7 +93,7 @@ const Home = () => {
 
       <div id="home-top">
         <div className="d-flex justify-content-between mb-3" id="new-job-btn">
-          <button type="button" className="btn btn-dark me-2" onClick={() => window.location.href = '/create-job'}>
+          <button type="button" className="custom-button me-2" onClick={() => window.location.href = '/create-job'}>
             Add Application
           </button>
         </div>
@@ -149,15 +149,14 @@ const Home = () => {
                   </td>
                   <td>{job.location}</td>
                   <td id="actions">
-                    <a href={`/job-note/${job.id}`} className="custom-black-action-button">Notes</a>
-                    <a href={`/edit-job/${job.id}`} className="custom-black-action-button">Edit</a>
-                    <button type="button" className="custom-delete-button" onClick={() => handleDeleteJob(job.id)}>Delete</button>
+                    <a href={`/job-note/${job.id}`} className="custom-button">Notes</a>
+                    <a href={`/edit-job/${job.id}`} className="custom-button">Edit</a>
+                    <button type="button" className="custom-button-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
           <div className="mobile-card-list">
             {currentSortedJobs.map((job) => (
               <div key={job.id} className="mobile-card">
@@ -177,9 +176,9 @@ const Home = () => {
                   <p><span>Location:</span> {job.location}</p>
                 </div>
                 <div className="card-actions">
-                  <a href={`/job-note/${job.id}`} className="custom-black-action-button">Notes</a>
-                  <a href={`/edit-job/${job.id}`} className="custom-black-action-button">Edit</a>
-                  <button type="button" className="custom-delete-button" onClick={() => handleDeleteJob(job.id)}>Delete</button>
+                  <a href={`/job-note/${job.id}`} className="custom-button">Notes</a>
+                  <a href={`/edit-job/${job.id}`} className="custom-button">Edit</a>
+                  <button type="button" className="custom-button-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>
                 </div>
               </div>
             ))}

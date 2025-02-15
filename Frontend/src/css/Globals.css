@@ -1,6 +1,46 @@
+/* globals.css */
 :root {
   --color-primary: #F7C4A5;
   --color-secondary: #9E7682;
   --color-third: #605770;
   --color-background: #4D4861;
+  --button-text-color: #fff; /* Default text color for buttons */
+}
+
+/* Regular Button Style */
+.custom-button {
+  background-color: var(--color-secondary);
+  color: var(--button-text-color);
+  padding: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.custom-button:hover {
+  background-color: var(--color-third);
+}
+
+/* Danger (Delete) Button Style */
+.custom-button-danger {
+  background-color: var(--color-third);
+  color: var(--button-text-color);
+  padding: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.custom-button-danger:hover {
+  background-color: var(--color-secondary);
 }
