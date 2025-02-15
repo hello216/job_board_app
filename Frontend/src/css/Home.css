@@ -133,7 +133,6 @@ form button, a {
 }
 
 .pagination {
-  outline: 1px solid blue;
   display: flex;
   justify-content: center;
   padding: 0;
