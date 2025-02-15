@@ -137,6 +137,7 @@ form button, a {
   display: flex;
   justify-content: center;
   padding: 0;
+  gap: 5%; /* Add space between pagination items */
 }
 
 .pagination li {
@@ -267,8 +268,4 @@ form button, a {
 .card-actions a, button {
   width: 100%;
   margin-bottom: 2%;
-}
-
-* {
-  outline: 1px dashed red;
 }
