@@ -72,7 +72,7 @@ To quickly configure the environment for production and bundle both the frontend
 Make sure you're in the root directory of the project (`/Jobs/`). Then, run the `setup_prod.sh` script to set up your environment variables, build the frontend, and publish the backend.
 
 ```bash
-bash setup_prod.sh
+./setup_prod.sh
 ```
 
 #### 2. Script Details
