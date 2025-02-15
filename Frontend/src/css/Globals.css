@@ -44,3 +44,14 @@
 .custom-button-danger:hover {
   background-color: var(--color-secondary);
 }
+
+form .inputs {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.inputs label, input, textarea {
+  width: 100%;
+}
