@@ -28,19 +28,21 @@ const Dashboard = () => {
         if (response.ok) {
           const data = await response.json();
           setJobs(data);
-
-          const historyResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/statushistory`, {
-            credentials: 'include'
-          });
-
-          if (historyResponse.ok) {
-            const historyData = await historyResponse.json();
-            setJobStatusHistory(historyData);
-          } else {
-            console.error('Failed to fetch status history');
-          }
+        } else if (response.status === 429) {
+          setErrors({ general: 'Too many requests. Please try again later.' });
         } else {
           console.error('Failed to fetch jobs');
+        }
+
+        const historyResponse = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/statushistory`, {
+          credentials: 'include'
+        });
+
+        if (historyResponse.ok) {
+          const historyData = await historyResponse.json();
+          setJobStatusHistory(historyData);
+        } else {
+          console.error('Failed to fetch status history');
         }
       } catch (error) {
         console.error(error);

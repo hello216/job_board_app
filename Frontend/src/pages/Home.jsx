@@ -19,6 +19,8 @@ const Home = () => {
         if (response.ok) {
           const data = await response.json();
           setJobs(data);
+        } else if (response.status === 429) {
+          setErrors({ general: 'Too many requests. Please try again later.' });
         } else {
           setError('Failed to retrieve jobs');
         }
@@ -42,6 +44,8 @@ const Home = () => {
         if (response.ok) {
           const updatedJobs = jobs.filter(job => job.id !== id);
           setJobs(updatedJobs);
+        } else if (response.status === 429) {
+          setErrors({ general: 'Too many requests. Please try again later.' });
         } else {
           setError('Failed to delete job');
         }

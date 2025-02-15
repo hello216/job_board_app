@@ -29,6 +29,8 @@ const CreateJob = () => {
 
         if (response.ok) {
           setStatuses(data);
+        } else if (response.status === 429) {
+          setErrors({ general: 'Too many requests. Please try again later.' });
         } else {
           setErrors({ general: 'Failed to fetch job statuses.' });
         }
@@ -96,6 +98,8 @@ const CreateJob = () => {
       if (response.ok) {
         navigate('/');
         return;
+      } else if (response.status === 429) {
+        setErrors({ general: 'Too many requests. Please try again later.' });
       }
 
       if (isJson) {
