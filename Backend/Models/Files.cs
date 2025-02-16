@@ -32,6 +32,9 @@ public class Files
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
+    public string UserId { get; set; }
+    public Users User { get; set; }
+
     public List<Jobs> Jobs { get; set; } = new List<Jobs>();
 
     public void UpdateTimestamps()

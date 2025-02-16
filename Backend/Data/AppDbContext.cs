@@ -46,5 +46,10 @@ public class AppDbContext : DbContext
             .HasMany(j => j.Files)
             .WithMany(f => f.Jobs)
             .UsingEntity(j => j.ToTable("JobFiles"));
+
+        modelBuilder.Entity<Files>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.Files)
+            .HasForeignKey(f => f.UserId);
     }
 }
