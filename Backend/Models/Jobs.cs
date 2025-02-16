@@ -18,8 +18,7 @@ public enum JobStatus
 public class Jobs
 {
     [Key]
-    [StringLength(12)]
-    public string Id { get; set; } = Guid.NewGuid().ToString().Substring(0, 12);
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 
     [Required]
     [EnumDataType(typeof(JobStatus))]
@@ -50,6 +49,7 @@ public class Jobs
     public string UserId { get; set; }
     public Users User { get; set; }
     public ICollection<JobStatusHistory> StatusHistories { get; set; } = new List<JobStatusHistory>();
+    public ICollection<JobFileRel> JobFileRels { get; set; } = new List<JobFileRel>();
 
     public void UpdateTimestamps()
     {
