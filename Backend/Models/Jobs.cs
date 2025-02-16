@@ -1,5 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System;
 
 namespace Backend.Models;
 
@@ -49,7 +50,7 @@ public class Jobs
     public string UserId { get; set; }
     public Users User { get; set; }
     public ICollection<JobStatusHistory> StatusHistories { get; set; } = new List<JobStatusHistory>();
-    public ICollection<JobFileRel> JobFileRels { get; set; } = new List<JobFileRel>();
+    public List<Files> Files { get; set; } = new List<Files>();
 
     public void UpdateTimestamps()
     {

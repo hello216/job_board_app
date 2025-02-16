@@ -1,5 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System;
 
 namespace Backend.Models;
 
@@ -31,7 +32,7 @@ public class Files
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
-    public ICollection<JobFileRel> JobFileRel { get; set; } = new List<JobFileRel>();
+    public List<Jobs> Jobs { get; set; } = new List<Jobs>();
 
     public void UpdateTimestamps()
     {

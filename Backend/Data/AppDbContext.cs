@@ -13,7 +13,6 @@ public class AppDbContext : DbContext
     public DbSet<Jobs> Jobs { get; set; }
     public DbSet<JobStatusHistory> JobStatusHistories { get; set; }
     public DbSet<Files> Files { get; set; }
-    public DbSet<JobFileRel> JobFileRels { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,17 +42,9 @@ public class AppDbContext : DbContext
             .Property(jsh => jsh.ChangedAt)
             .HasDefaultValueSql("getutcdate()");
 
-        modelBuilder.Entity<JobFileRel>()
-            .HasKey(jfa => jfa.Id);
-
-        modelBuilder.Entity<JobFileRel>()
-            .HasOne(jfa => jfa.Job)
-            .WithMany(j => j.JobFileRels)
-            .HasForeignKey(jfa => jfa.JobId);
-
-        modelBuilder.Entity<JobFileRel>()
-            .HasOne(jfa => jfa.File)
-            .WithMany(f => f.JobFileRel)
-            .HasForeignKey(jfa => jfa.FileId);
+        modelBuilder.Entity<Jobs>()
+            .HasMany(j => j.Files)
+            .WithMany(f => f.Jobs)
+            .UsingEntity(j => j.ToTable("JobFiles"));
     }
 }
