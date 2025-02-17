@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
 using iText.Kernel.Pdf;
+using System.Security.Cryptography;
+using System.Text.Json;
+using DotNetEnv;
 
 namespace Backend.Controllers;
 
@@ -27,6 +30,7 @@ public class FilesController : ControllerBase
 
     private const long FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5 MB
     private long FileSizeLimitInMB => FILE_SIZE_LIMIT / (1024 * 1024);
+    private string EncryptionKey => Environment.GetEnvironmentVariable("ENCRYPTION_KEY");
 
     public FilesController(AppDbContext context, JwtService jwtService, ILogger<FilesController> logger,
         ICookieEncryptionService cookieEncryptionService, IWebHostEnvironment env, InputSanitizerService sanitizerService)
@@ -93,7 +97,8 @@ public class FilesController : ControllerBase
             await file.CopyToAsync(stream);
 
             await RemovePdfMetadata(filePath);
-            var hash = HashFile(filePath);
+            await EncryptFileAsync(filePath);
+            var hash = HashFile(filePath + ".enc");
 
             var dbFile = new Files
             {
@@ -101,7 +106,7 @@ public class FilesController : ControllerBase
                 User = user,
                 Name = sanitizedFileName,
                 Hash = hash,
-                SizeInBytes = file.Length,
+                SizeInBytes = new FileInfo(filePath + ".enc").Length,
                 FileType = fileTypeEnum
             };
 
@@ -146,8 +151,7 @@ public class FilesController : ControllerBase
         var hashBytes = sha256.ComputeHash(stream);
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
-
-    private Task RemovePdfMetadata(string filePath)
+ private Task RemovePdfMetadata(string filePath)
     {
         try
         {
@@ -174,7 +178,6 @@ public class FilesController : ControllerBase
 
         return Task.CompletedTask;
     }
-
     private bool IsAuthenticated()
     {
         if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
@@ -200,6 +203,91 @@ public class FilesController : ControllerBase
         else
         {
             return null;
+        }
+    }
+    private async Task EncryptFileAsync(string filePath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(EncryptionKey))
+            {
+                throw new Exception("Encryption key is missing.");
+            }
+
+            var key = Convert.FromBase64String(EncryptionKey);
+            if (key.Length != 32) // AES-256 requires 256-bit key
+            {
+                throw new ArgumentException("Invalid key size. Expected AES-256 key (32 bytes).");
+            }
+
+            using var aes = Aes.Create();
+            aes.Key = key;
+            aes.GenerateIV();
+
+            var iv = aes.IV;
+            using var ms = new MemoryStream();
+            ms.Write(iv, 0, iv.Length);
+
+            using (var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
+            {
+                using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                await fileStream.CopyToAsync(cs);
+                cs.FlushFinalBlock();
+            }
+
+            ms.Position = 0;
+
+            // Save encrypted data
+            using var fileStreamOutput = new FileStream(filePath + ".enc", FileMode.Create);
+            await ms.CopyToAsync(fileStreamOutput);
+            fileStreamOutput.Close();
+
+            // Securely delete the original file after encryption
+            System.IO.File.Delete(filePath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to encrypt file: {ex.Message} {ex.StackTrace}", ex);
+            throw;
+        }
+    }
+
+    private async Task DecryptFileAsync(string encryptedFilePath)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(EncryptionKey))
+            {
+                throw new Exception("Encryption key is missing.");
+            }
+
+            var key = Convert.FromBase64String(EncryptionKey);
+            if (key.Length != 32) // AES-256 requires 256-bit key
+            {
+                throw new ArgumentException("Invalid key size. Expected AES-256 key (32 bytes).");
+            }
+
+            using var aes = Aes.Create();
+            aes.Key = key;
+
+            using var ms = new MemoryStream();
+            using var fileStream = new FileStream(encryptedFilePath, FileMode.Open);
+            await fileStream.CopyToAsync(ms);
+            ms.Position = 0;
+
+            var iv = new byte[16]; // AES IV is 16 bytes
+            ms.Read(iv, 0, iv.Length);
+            aes.IV = iv;
+
+            using var cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read);
+            using var decryptedStream = new FileStream(encryptedFilePath + ".dec", FileMode.Create);
+
+            await cs.CopyToAsync(decryptedStream);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to decrypt file: {ex.Message} {ex.StackTrace}", ex);
+            throw;
         }
     }
 }
