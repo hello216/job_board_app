@@ -21,18 +21,20 @@ public class FilesController : ControllerBase
     private readonly JwtService _jwtService;
     private readonly ILogger<FilesController> _logger;
     private readonly ICookieEncryptionService _cookieEncryptionService;
+    private readonly InputSanitizerService _sanitizerService;
     private readonly string _filesFolder;
 
     private const long FILE_SIZE_LIMIT = 5 * 1024 * 1024; // 5 MB
     private long FileSizeLimitInMB => FILE_SIZE_LIMIT / (1024 * 1024);
 
     public FilesController(AppDbContext context, JwtService jwtService, ILogger<FilesController> logger,
-        ICookieEncryptionService cookieEncryptionService, IWebHostEnvironment env)
+        ICookieEncryptionService cookieEncryptionService, IWebHostEnvironment env, InputSanitizerService sanitizerService)
     {
         _context = context;
         _jwtService = jwtService;
         _logger = logger;
         _cookieEncryptionService = cookieEncryptionService;
+        _sanitizerService = sanitizerService;
         _filesFolder = Path.Combine(env.ContentRootPath, "files");
     }
 
@@ -56,11 +58,7 @@ public class FilesController : ControllerBase
                 return BadRequest("No file provided");
             }
 
-            var sanitizedName = file.FileName.Trim()
-                .Replace("<", "").Replace(">", "")
-                .Replace("\\", "").Replace("/", "")
-                .Replace("?", "").Replace("*", "")
-                .Replace("|", "");
+            var sanitizedFileName = _sanitizerService.Sanitize(file.FileName);
 
             // Validate file type
             FileType fileTypeEnum = FileType.Resume;
@@ -99,7 +97,7 @@ public class FilesController : ControllerBase
             {
                 UserId = user.Id,
                 User = user,
-                Name = sanitizedName,
+                Name = sanitizedFileName,
                 Hash = hash,
                 SizeInBytes = file.Length,
                 FileType = fileTypeEnum

@@ -66,6 +66,7 @@ builder.Services.AddSingleton<ICookieEncryptionService>(provider =>
     var encryptionKey = Environment.GetEnvironmentVariable("ENCRYPTION_KEY");
     return new CookieEncryptionService(encryptionKey);
 });
+builder.Services.AddSingleton<InputSanitizerService>();
 
 builder.Services.AddCors(options =>
 {
