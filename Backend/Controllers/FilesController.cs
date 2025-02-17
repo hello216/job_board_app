@@ -121,7 +121,15 @@ public class FilesController : ControllerBase
     {
         using var stream = file.OpenReadStream();
         var magicNumberBytes = new byte[5]; // First 5 bytes of the file(magic number)
-        await stream.ReadAsync(magicNumberBytes);
+
+        int bytesRead = await stream.ReadAsync(magicNumberBytes);
+
+        if (bytesRead != magicNumberBytes.Length)
+        {
+            // Handle the case where fewer than 5 bytes were read
+            throw new EndOfStreamException("Could not read enough bytes for magic number.");
+        }
+
         return magicNumberBytes;
     }
 
