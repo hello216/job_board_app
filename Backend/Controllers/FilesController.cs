@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
+using iText.Kernel.Pdf;
 
 namespace Backend.Controllers;
 
@@ -91,6 +92,7 @@ public class FilesController : ControllerBase
             using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
+            await RemovePdfMetadata(filePath);
             var hash = HashFile(filePath);
 
             var dbFile = new Files
@@ -143,6 +145,34 @@ public class FilesController : ControllerBase
         using var sha256 = System.Security.Cryptography.SHA256.Create();
         var hashBytes = sha256.ComputeHash(stream);
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+    }
+
+    private Task RemovePdfMetadata(string filePath)
+    {
+        try
+        {
+            using var reader = new PdfReader(filePath);
+            using var writer = new PdfWriter(filePath);
+
+            var pdf = new PdfDocument(reader, writer);
+            var docInfo = pdf.GetDocumentInfo();
+
+            // Reset metadata properties
+            docInfo.SetAuthor("");
+            docInfo.SetCreator("");
+            docInfo.SetKeywords("");
+            docInfo.SetProducer("");
+            docInfo.SetSubject("");
+            docInfo.SetTitle("");
+
+            pdf.Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to remove PDF metadata: {ex.Message}");
+        }
+
+        return Task.CompletedTask;
     }
 
     private bool IsAuthenticated()
