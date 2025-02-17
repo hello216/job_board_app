@@ -41,6 +41,18 @@ builder.Services.AddRateLimiter(_ =>
             // Time window
             options.Window = TimeSpan.FromMinutes(1);
         });
+
+    _.AddFixedWindowLimiter(
+        policyName: "FileUploadLimit",
+        options =>
+        {
+            // Maximum allowed requests
+            options.PermitLimit = 2;
+            // Maximum allowed requests in queue
+            options.QueueLimit = 0;
+            // Time window
+            options.Window = TimeSpan.FromMinutes(1);
+        });
 });
 
 builder.Services.AddControllers();
