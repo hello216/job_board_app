@@ -174,6 +174,43 @@ public class FilesController : ControllerBase
         }
     }
 
+    [HttpGet("all")]
+    public async Task<ActionResult<IEnumerable<FilesModel>>> GetAllFilesForUser()
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
+
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var files = await _context.Files
+                .Where(f => f.UserId == currentUserId)
+                .ToListAsync();
+
+            if (files == null)
+                return NotFound("No files found for this user.");
+
+            var filesModel = files.Select(file => new FilesModel
+            {
+                Id = file.Id,
+                Name = file.Name,
+                FileType = file.FileType.ToString(),
+            }).ToList();
+
+            return Ok(filesModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to fetch files for user: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteFile(int id)
     {
@@ -387,4 +424,11 @@ public class FilesController : ControllerBase
             throw;
         }
     }
+}
+
+public class FilesModel
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string FileType { get; set; }
 }
