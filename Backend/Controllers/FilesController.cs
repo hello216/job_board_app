@@ -45,7 +45,7 @@ public class FilesController : ControllerBase
 
     [EnableRateLimiting("FileUploadLimit")]
     [HttpPost("upload")]
-    public async Task<ActionResult> UploadFile(IFormFile file, string fileType)
+    public async Task<ActionResult> UploadFile(IFormFile file)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
@@ -63,11 +63,19 @@ public class FilesController : ControllerBase
                 return BadRequest("No file provided");
             }
 
+            // Read fileType from form data
+            var fileType = Request.Form["fileType"];
+
+            if (string.IsNullOrEmpty(fileType))
+            {
+                return BadRequest("The fileType field is required.");
+            }
+
             var sanitizedFileName = _sanitizerService.Sanitize(file.FileName);
 
             // Validate file type
             FileType fileTypeEnum = FileType.Resume;
-            if (fileType != null && !Enum.TryParse(fileType, true, out fileTypeEnum))
+            if (!Enum.TryParse(fileType, true, out fileTypeEnum))
             {
                 return BadRequest("Invalid file type provided.");
             }
@@ -92,7 +100,11 @@ public class FilesController : ControllerBase
             var randomizedName = Guid.NewGuid().ToString() + ".pdf";
             var filePath = Path.Combine(_filesFolder, randomizedName);
 
-            // Save file to disk
+            if (!Directory.Exists(_filesFolder))
+            {
+                Directory.CreateDirectory(_filesFolder);
+            }
+
             using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
 
