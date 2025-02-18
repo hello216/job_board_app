@@ -14,6 +14,8 @@ using iText.Kernel.Pdf;
 using System.Security.Cryptography;
 using System.Text.Json;
 using DotNetEnv;
+using iText.Kernel.Pdf;
+using iText.Kernel.XMP;
 
 namespace Backend.Controllers;
 
@@ -63,7 +65,6 @@ public class FilesController : ControllerBase
                 return BadRequest("No file provided");
             }
 
-            // Read fileType from form data
             var fileType = Request.Form["fileType"];
 
             if (string.IsNullOrEmpty(fileType))
@@ -109,7 +110,16 @@ public class FilesController : ControllerBase
             await file.CopyToAsync(stream);
             stream.Close(); // Close the stream after writing
 
-            await RemovePdfMetadata(filePath);
+            try
+            {
+                await RemovePdfMetadata(filePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning($"Failed to remove PDF metadata, but continuing with upload: {ex.Message}");
+                // Continue with the upload process
+            }
+
             await EncryptFileAsync(filePath);
             var hash = HashFile(filePath + ".enc");
 
@@ -296,32 +306,50 @@ public class FilesController : ControllerBase
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 
-    private Task RemovePdfMetadata(string filePath)
+    private async Task RemovePdfMetadata(string filePath)
     {
         try
         {
             using var reader = new PdfReader(filePath);
-            using var writer = new PdfWriter(filePath);
+            using var writer = new PdfWriter(filePath + ".temp");
+            using var pdf = new PdfDocument(reader, writer);
 
-            var pdf = new PdfDocument(reader, writer);
-            var docInfo = pdf.GetDocumentInfo();
+            var info = pdf.GetDocumentInfo();
+            if (info != null)
+            {
+                info.SetAuthor("");
+                info.SetCreator("");
+                info.SetKeywords("");
+                info.SetProducer("");
+                info.SetSubject("");
+                info.SetTitle("");
+            }
 
-            // Reset metadata properties
-            docInfo.SetAuthor("");
-            docInfo.SetCreator("");
-            docInfo.SetKeywords("");
-            docInfo.SetProducer("");
-            docInfo.SetSubject("");
-            docInfo.SetTitle("");
+            // Remove metadata stream if it exists
+            if (pdf.GetCatalog().GetPdfObject().ContainsKey(PdfName.Metadata))
+            {
+                pdf.GetCatalog().GetPdfObject().Remove(PdfName.Metadata);
+            }
+
+            // Remove XMP metadata if it exists
+            if (pdf.GetXmpMetadata() != null)
+            {
+                pdf.SetXmpMetadata(null);
+            }
 
             pdf.Close();
+
+            // Replace the original file with the cleaned version
+            System.IO.File.Delete(filePath);
+            System.IO.File.Move(filePath + ".temp", filePath);
+
+            _logger.LogInformation("PDF metadata removal attempt completed.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Failed to remove PDF metadata: {ex.Message}");
+            _logger.LogError($"Failed to remove PDF metadata: {ex.Message}", ex);
+            throw; // Re-throw the exception to be caught in the calling method
         }
-
-        return Task.CompletedTask;
     }
 
     private bool IsAuthenticated()
