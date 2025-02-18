@@ -132,6 +132,11 @@ public class FilesController : ControllerBase
         try
         {
             var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
             fileRecord = await _context.Files.FindAsync(id);
 
             if (fileRecord == null)
