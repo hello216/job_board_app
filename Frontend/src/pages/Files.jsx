@@ -4,7 +4,7 @@ const Files = () => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [newFile, setNewFile] = useState(null);
-    const [fileType, setFileType] = useState(null); // State to hold selected file type
+    const [fileType, setFileType] = useState(null);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -169,8 +169,8 @@ const Files = () => {
 
             <ul>
                 {files.map(file => (
-                    <li key={file.Id}>
-                        <span>{file.Name}</span>
+                    <li key={file.id}>
+                        <span>{file.name}</span>
                         <button className="custom-button" onClick={() => handleDownloadFile(file.Id)}>Download</button>
                         <button className="custom-button" onClick={() => handleDeleteFile(file.Id)}>Delete</button>
                     </li>
