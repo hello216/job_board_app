@@ -106,9 +106,10 @@ public class FilesController : ControllerBase
                 Directory.CreateDirectory(_filesFolder);
             }
 
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
-            stream.Close(); // Close the stream after writing
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
 
             try
             {
@@ -117,7 +118,6 @@ public class FilesController : ControllerBase
             catch (Exception ex)
             {
                 _logger.LogWarning($"Failed to remove PDF metadata, but continuing with upload: {ex.Message}");
-                // Continue with the upload process
             }
 
             await EncryptFileAsync(filePath);
@@ -127,7 +127,7 @@ public class FilesController : ControllerBase
             {
                 UserId = user.Id,
                 User = user,
-                Name = sanitizedFileName,
+                Name = randomizedName,
                 Hash = hash,
                 SizeInBytes = new FileInfo(filePath + ".enc").Length,
                 FileType = fileTypeEnum
@@ -135,6 +135,12 @@ public class FilesController : ControllerBase
 
             _context.Files.Add(dbFile);
             await _context.SaveChangesAsync();
+
+            // Clean up temporary and unencrypted files
+            if (System.IO.File.Exists(filePath))
+                System.IO.File.Delete(filePath);
+            if (System.IO.File.Exists(filePath + ".temp"))
+                System.IO.File.Delete(filePath + ".temp");
 
             return Ok(new { message = "File uploaded successfully." });
         }
