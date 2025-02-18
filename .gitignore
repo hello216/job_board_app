@@ -495,4 +495,4 @@ $RECYCLE.BIN/
 *.db-wal
 jobs-bundle/
 gen-data.py
-files/*
+files/
