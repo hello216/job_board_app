@@ -4,6 +4,7 @@ const Files = () => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [newFile, setNewFile] = useState(null);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         fetchUserFiles();
@@ -19,9 +20,12 @@ const Files = () => {
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     console.error('Access denied or unauthorized.');
-                    navigate('/login');
+                    // Handle unauthorized access
+                } else if (response.status === 404) {
+                    setErrors({ general: 'No files found.' });
                 } else {
                     console.error('Failed to fetch files:', response.status);
+                    setErrors({ general: 'Failed to fetch files.' });
                 }
                 return;
             }
@@ -30,12 +34,13 @@ const Files = () => {
             setFiles(filesData);
         } catch (error) {
             console.error('Failed to fetch user files:', error);
+            setErrors({ general: 'An unexpected error occurred while fetching files.' });
         }
     };
 
     const handleDownloadFile = async (fileId) => {
         try {
-            const response = await fetch(`${BASE_API_URL}/files/${fileId}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: {
@@ -45,9 +50,10 @@ const Files = () => {
 
             if (!response.ok) {
                 if (response.status === 404) {
-                    console.error('File not found.');
+                    setErrors({ general: 'File not found.' });
                 } else {
                     console.error('Failed to download file:', response.status);
+                    setErrors({ general: 'Failed to download file.' });
                 }
                 return;
             }
@@ -61,6 +67,7 @@ const Files = () => {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error('Failed to download file:', error);
+            setErrors({ general: 'An unexpected error occurred while downloading the file.' });
         }
     };
 
@@ -75,38 +82,46 @@ const Files = () => {
             formData.append('file', newFile);
             formData.append('fileType', 'Resume');
 
-            const response = await fetch(`${BASE_API_URL}/files`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/upload`, {
                 method: 'POST',
                 body: formData,
                 credentials: 'include',
             });
 
             if (!response.ok) {
-                console.error('Failed to upload file:', response.status);
-                if (response.status === 500) {
-                    console.error('Internal server error while uploading file.');
+                if (response.status === 400) {
+                    const errorData = await response.json();
+                    setErrors(errorData.errors || { general: 'Failed to upload the file.' });
+                } else if (response.status === 500) {
+                    setErrors({ general: 'Internal server error while uploading file.' });
+                } else {
+                    console.error('Failed to upload file:', response.status);
+                    setErrors({ general: 'Failed to upload file.' });
                 }
                 return;
             }
 
+            setErrors({}); // Clear any previous errors
             fetchUserFiles(); // Refresh the list
         } catch (error) {
             console.error('Failed to upload file:', error);
+            setErrors({ general: 'An unexpected error occurred while uploading the file.' });
         }
     };
 
     const handleDeleteFile = async (fileId) => {
         try {
-            const response = await fetch(`${BASE_API_URL}/files/${fileId}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
                 method: 'DELETE',
                 credentials: 'include',
             });
 
             if (!response.ok) {
                 if (response.status === 404) {
-                    console.error('File not found.');
+                    setErrors({ general: 'File not found.' });
                 } else {
                     console.error('Failed to delete file:', response.status);
+                    setErrors({ general: 'Failed to delete file.' });
                 }
                 return;
             }
@@ -114,6 +129,7 @@ const Files = () => {
             fetchUserFiles(); // Refresh the list
         } catch (error) {
             console.error('Failed to delete file:', error);
+            setErrors({ general: 'An unexpected error occurred while deleting the file.' });
         }
     };
 
@@ -125,6 +141,14 @@ const Files = () => {
     return (
         <div className="files-container">
             <h2>Files</h2>
+
+            {Object.keys(errors).length > 0 && (
+                <div className="alert alert-danger">
+                    {Object.keys(errors).map((key) => (
+                        <p key={key}>{key === 'general' ? errors[key] : <span>{key}: {errors[key]}</span>}</p>
+                    ))}
+                </div>
+            )}
 
             <form onSubmit={handleUploadFile}>
                 <input type="file" onChange={handleChangeFile} />
