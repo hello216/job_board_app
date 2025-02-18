@@ -11,6 +11,7 @@ import CreateJob from './pages/CreateJob';
 import EditJob from './pages/EditJob';
 import JobNote from './pages/JobNote';
 import Dashboard from './pages/Dashboard';
+import Files from './pages/Files';
 
 function App() {
   return (
@@ -44,6 +45,11 @@ function App() {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <Dashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/files" element={
+        <ProtectedRoute>
+          <Files />
         </ProtectedRoute>
       } />
       </Routes>

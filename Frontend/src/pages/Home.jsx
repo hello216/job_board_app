@@ -100,7 +100,11 @@ const Home = () => {
           <button type="button" className="custom-button me-2" onClick={() => window.location.href = '/create-job'}>
             Add Application
           </button>
+          <button type="button" className="custom-button me-2" onClick={() => window.location.href = '/files'}>
+            Files
+          </button>
         </div>
+
         <div className="search-bar">
           <input
             type="text"
