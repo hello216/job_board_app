@@ -4,6 +4,7 @@ const Files = () => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [newFile, setNewFile] = useState(null);
+    const [fileType, setFileType] = useState(null); // State to hold selected file type
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -74,13 +75,15 @@ const Files = () => {
     const handleUploadFile = async (event) => {
         event.preventDefault();
 
-        if (!newFile)
+        if (!newFile || !fileType)
             return;
 
         try {
             const formData = new FormData();
             formData.append('file', newFile);
-            formData.append('fileType', 'Resume');
+            formData.append('fileType', fileType);
+
+            console.log(`file type: ${fileType}`);
 
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/upload`, {
                 method: 'POST',
@@ -138,6 +141,10 @@ const Files = () => {
         setNewFile(event.target.files[0]);
     };
 
+    const handleFileTypeChange = (event) => {
+        setFileType(event.target.value);
+    };
+
     return (
         <div className="files-container">
             <h2>Files</h2>
@@ -152,6 +159,11 @@ const Files = () => {
 
             <form onSubmit={handleUploadFile}>
                 <input type="file" onChange={handleChangeFile} />
+                <select name="fileType" value={fileType} onChange={handleFileTypeChange}>
+                    <option value="">Select File Type</option>
+                    <option value="Resume">Resume</option>
+                    <option value="CoverLetter">Cover Letter</option>
+                </select>
                 <button type="submit" className="custom-button">Upload File</button>
             </form>
 
