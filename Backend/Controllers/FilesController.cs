@@ -107,6 +107,7 @@ public class FilesController : ControllerBase
 
             using var stream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(stream);
+            stream.Close(); // Close the stream after writing
 
             await RemovePdfMetadata(filePath);
             await EncryptFileAsync(filePath);
@@ -351,51 +352,20 @@ public class FilesController : ControllerBase
         }
     }
 
-    private async Task EncryptFileAsync(string filePath)
+    public async Task EncryptFileAsync(string filePath)
     {
-        try
-        {
-            if (string.IsNullOrEmpty(EncryptionKey))
-            {
-                throw new Exception("Encryption key is missing.");
-            }
+        var encryptionKey = Convert.FromBase64String(Environment.GetEnvironmentVariable("ENCRYPTION_KEY"));
+        using var aes = Aes.Create();
+        aes.Key = encryptionKey;
 
-            var key = Convert.FromBase64String(EncryptionKey);
-            if (key.Length != 32) // AES-256 requires 256-bit key
-            {
-                throw new ArgumentException("Invalid key size. Expected AES-256 key (32 bytes).");
-            }
+        using var fileStream = new FileStream(filePath, FileMode.Open);
+        using var outputStream = new FileStream(filePath + ".enc", FileMode.Create);
 
-            using var aes = Aes.Create();
-            aes.Key = key;
-            aes.GenerateIV();
+        using var cryptoStream = new CryptoStream(outputStream, aes.CreateEncryptor(), CryptoStreamMode.Write);
+        await fileStream.CopyToAsync(cryptoStream);
 
-            var iv = aes.IV;
-            using var ms = new MemoryStream();
-            ms.Write(iv, 0, iv.Length);
-
-            using (var cs = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
-            {
-                using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                await fileStream.CopyToAsync(cs);
-                cs.FlushFinalBlock();
-            }
-
-            ms.Position = 0;
-
-            // Save encrypted data
-            using var fileStreamOutput = new FileStream(filePath + ".enc", FileMode.Create);
-            await ms.CopyToAsync(fileStreamOutput);
-            fileStreamOutput.Close();
-
-            // Securely delete the original file after encryption
-            System.IO.File.Delete(filePath);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Failed to encrypt file: {ex.Message} {ex.StackTrace}", ex);
-            throw;
-        }
+        // Ensure the cryptoStream is flushed before it closes
+        cryptoStream.FlushFinalBlock();
     }
 
     private async Task DecryptFileAsync(string encryptedFilePath)
