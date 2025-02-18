@@ -151,7 +151,8 @@ public class FilesController : ControllerBase
         var hashBytes = sha256.ComputeHash(stream);
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
- private Task RemovePdfMetadata(string filePath)
+
+    private Task RemovePdfMetadata(string filePath)
     {
         try
         {
@@ -178,6 +179,7 @@ public class FilesController : ControllerBase
 
         return Task.CompletedTask;
     }
+
     private bool IsAuthenticated()
     {
         if (Request.Cookies.TryGetValue("authToken", out var encryptedToken))
@@ -205,6 +207,7 @@ public class FilesController : ControllerBase
             return null;
         }
     }
+
     private async Task EncryptFileAsync(string filePath)
     {
         try
