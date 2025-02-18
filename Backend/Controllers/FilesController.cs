@@ -146,7 +146,7 @@ public class FilesController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult> GetFile(int id)
+    public async Task<ActionResult> GetFile(string id)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
@@ -235,7 +235,7 @@ public class FilesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteFile(int id)
+    public async Task<ActionResult> DeleteFile(string id)
     {
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
