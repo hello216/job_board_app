@@ -174,6 +174,48 @@ public class FilesController : ControllerBase
         }
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteFile(int id)
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
+
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var fileRecord = await _context.Files.FindAsync(id);
+
+            if (fileRecord == null)
+                return NotFound("File not found.");
+
+            if (fileRecord.UserId != currentUserId)
+                return Unauthorized("You do not own this file.");
+
+            var encryptedFilePath = Path.Combine(_filesFolder, fileRecord.Name + ".enc");
+
+            // Delete the file
+            if (System.IO.File.Exists(encryptedFilePath))
+            {
+                System.IO.File.Delete(encryptedFilePath);
+            }
+
+            _context.Files.Remove(fileRecord);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "File deleted successfully." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to delete file: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     private async Task<byte[]> ReadMagicNumber(IFormFile file)
     {
         using var stream = file.OpenReadStream();
