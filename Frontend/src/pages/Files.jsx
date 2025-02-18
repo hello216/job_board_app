@@ -171,8 +171,8 @@ const Files = () => {
                 {files.map(file => (
                     <li key={file.id}>
                         <span>{file.name}</span>
-                        <button className="custom-button" onClick={() => handleDownloadFile(file.Id)}>Download</button>
-                        <button className="custom-button" onClick={() => handleDeleteFile(file.Id)}>Delete</button>
+                        <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
+                        <button className="custom-button" onClick={() => handleDeleteFile(file.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
