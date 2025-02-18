@@ -44,7 +44,7 @@ public class FilesController : ControllerBase
     }
 
     [EnableRateLimiting("FileUploadLimit")]
-    [HttpPost]
+    [HttpPost("upload")]
     public async Task<ActionResult> UploadFile(IFormFile file, string fileType)
     {
         if (!IsAuthenticated())
@@ -117,8 +117,55 @@ public class FilesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to upload file: {ex.Message} {ex.StackTrace}", ex.InnerException ?? ex);
+            _logger.LogError($"Failed to upload file: {ex.Message}", ex);
             return StatusCode(500, "Internal Server Error");
+        }
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult> GetFile(int id)
+    {
+        if (!IsAuthenticated())
+            return Unauthorized("No authentication token provided.");
+
+        Files fileRecord = null;
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            fileRecord = await _context.Files.FindAsync(id);
+
+            if (fileRecord == null)
+                return NotFound("File not found.");
+
+            if (fileRecord.UserId != currentUserId)
+                return Unauthorized("You do not own this file.");
+
+            var encryptedFilePath = Path.Combine(_filesFolder, fileRecord.Name + ".enc");
+            await DecryptFileAsync(encryptedFilePath);
+
+            // Read and return the decrypted file
+            var decryptedFilePath = encryptedFilePath + ".dec";
+            var bytes = await System.IO.File.ReadAllBytesAsync(decryptedFilePath);
+
+            return File(bytes, "application/pdf", fileRecord.Name);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to retrieve file: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+        finally
+        {
+            // Securely delete the decrypted file after sending it
+            if (fileRecord != null)
+            {
+                var encryptedFilePath = Path.Combine(_filesFolder, fileRecord.Name + ".enc");
+                var decryptedFilePath = encryptedFilePath + ".dec";
+                if (System.IO.File.Exists(decryptedFilePath))
+                {
+                    System.IO.File.Delete(decryptedFilePath);
+                }
+            }
         }
     }
 
