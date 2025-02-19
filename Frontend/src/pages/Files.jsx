@@ -118,8 +118,6 @@ const Files = () => {
             formData.append('file', newFile);
             formData.append('fileType', fileType);
 
-            console.log(`file type: ${fileType}`);
-
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/upload`, {
                 method: 'POST',
                 body: formData,
@@ -130,6 +128,8 @@ const Files = () => {
                 if (response.status === 400) {
                     const errorData = await response.json();
                     setErrors(errorData.errors || { general: 'Failed to upload the file.' });
+                } else if (response.status === 429) {
+                  setErrors({ general: 'Too many requests. Please try again later.' });
                 } else if (response.status === 500) {
                     setErrors({ general: 'Internal server error while uploading file.' });
                 } else {
