@@ -3,8 +3,17 @@
     height: 100%;
 }
 
+.files-container form {
+    margin: 0 5%;
+}
+
+.files-container form label, input, select, button {
+    margin: 1% 0;
+}
+
 .files-container ul {
     list-style-type: none;
+    margin-top: 5%;
 }
 
 .files-container #file-actions {
