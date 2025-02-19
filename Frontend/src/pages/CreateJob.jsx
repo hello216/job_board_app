@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ValidateSanitize from '../services/validateSanitizeService';
-import Navbar from '../components/Navbar';
 import '../css/EditJob.css';
 
 const CreateJob = () => {
@@ -134,10 +133,6 @@ const CreateJob = () => {
 
   return (
     <div className="container">
-      <div className="nav-container">
-        <Navbar />
-      </div>
-    
       {Object.keys(errors).length > 0 && (
         <div className="alert alert-danger">
           {Object.keys(errors).map((key) => (
