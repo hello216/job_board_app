@@ -1,13 +1,29 @@
 .files-container ul {
-	list-style-type: none;
+    list-style-type: none;
 }
 
-.files-container #files-actions {
-	display: flex;
-	justify-content: space-around;
-	flex-wrap: wrap;
+.files-container #file-actions {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
 }
 
-.files-container #files-actions button {
-	width: 25%;
+.files-container #file-actions button {
+    width: 25%;
+}
+
+/* Spinner styling */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3; /* Light grey */
+    border-top: 3px solid #3498db; /* Blue */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

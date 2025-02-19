@@ -7,6 +7,7 @@ const Files = () => {
     const [newFile, setNewFile] = useState(null);
     const [fileType, setFileType] = useState(null);
     const [errors, setErrors] = useState({});
+    const [isUploading, setIsUploading] = useState(false);
 
     useEffect(() => {
         fetchUserFiles();
@@ -110,8 +111,10 @@ const Files = () => {
     const handleUploadFile = async (event) => {
         event.preventDefault();
 
-        if (!newFile || !fileType)
-            return;
+        if (!newFile || !fileType) return;
+
+        setIsUploading(true); // Start the spinner
+        setErrors({}); // Clear previous errors
 
         try {
             const formData = new FormData();
@@ -129,7 +132,7 @@ const Files = () => {
                     const errorData = await response.json();
                     setErrors(errorData.errors || { general: 'Failed to upload the file.' });
                 } else if (response.status === 429) {
-                  setErrors({ general: 'Too many requests. Please try again later.' });
+                    setErrors({ general: 'Too many requests. Please try again later.' });
                 } else if (response.status === 500) {
                     setErrors({ general: 'Internal server error while uploading file.' });
                 } else {
@@ -139,11 +142,12 @@ const Files = () => {
                 return;
             }
 
-            setErrors({}); // Clear any previous errors
             fetchUserFiles(); // Refresh the list
         } catch (error) {
             console.error('Failed to upload file:', error);
             setErrors({ general: 'An unexpected error occurred while uploading the file.' });
+        } finally {
+            setIsUploading(false); // Stop the spinner
         }
     };
 
@@ -199,7 +203,13 @@ const Files = () => {
                     <option value="Resume">Resume</option>
                     <option value="CoverLetter">Cover Letter</option>
                 </select>
-                <button type="submit" className="custom-button">Upload File</button>
+                <button type="submit" className="custom-button" disabled={isUploading}>
+                    {isUploading ? (
+                        <span className="spinner"></span>
+                    ) : (
+                        'Upload File'
+                    )}
+                </button>
             </form>
 
             <ul>
