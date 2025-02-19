@@ -118,7 +118,7 @@ const CreateJob = () => {
         }
       } else {
         // Directly set a generic error message if response is not JSON
-        setErrors({ general: 'Invalid URL.' });
+        setErrors({ general: 'Invalid Inputs.' });
       }
     } catch (error) {
       console.log(error);
