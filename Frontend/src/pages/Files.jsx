@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Files.css';
+import Navbar from '../components/Navbar';
 
 const Files = () => {
     const [files, setFiles] = useState([]);
@@ -186,6 +187,7 @@ const Files = () => {
 
     return (
         <div className="files-container">
+            <Navbar />
             <h2>Files</h2>
 
             {Object.keys(errors).length > 0 && (
