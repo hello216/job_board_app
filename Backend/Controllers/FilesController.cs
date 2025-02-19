@@ -106,6 +106,15 @@ public class FilesController : ControllerBase
                 Directory.CreateDirectory(_filesFolder);
             }
 
+            // Scan file for viruses
+            var isClean = await IsFileClean(filePath);
+            if (!isClean)
+            {
+                _logger.LogWarning($"Malware detected in file: {sanitizedFileName}");
+                System.IO.File.Delete(filePath);
+                return BadRequest("Malware detected in the uploaded file.");
+            }
+
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
@@ -451,6 +460,44 @@ public class FilesController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError($"Failed to decrypt file: {ex.Message} {ex.StackTrace}", ex);
+            throw;
+        }
+    }
+
+    // Scan file with ClamAV
+    private async Task<bool> IsFileClean(string filePath)
+    {
+        try
+        {
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "clamscan",
+                    Arguments = $"--no-summary {filePath}",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            var output = await process.StandardOutput.ReadToEndAsync();
+            process.WaitForExit();
+
+            if (process.ExitCode == 0)
+            {
+                return true;
+            }
+            else
+            {
+                _logger.LogError($"Malware detected: {output}");
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to scan file with ClamAV: {ex.Message}");
             throw;
         }
     }
