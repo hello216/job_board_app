@@ -197,7 +197,7 @@ const Files = () => {
             )}
 
             <form onSubmit={handleUploadFile}>
-                <label for="file">Only PDF files allowed</label>
+                <label for="file">Only PDF files under 5MB allowed</label>
                 <input name="file" type="file" onChange={handleChangeFile}/>
                 <select name="fileType" value={fileType} onChange={handleFileTypeChange}>
                     <option value="">Select File Type</option>
