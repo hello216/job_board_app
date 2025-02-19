@@ -51,7 +51,7 @@ builder.Services.AddRateLimiter(_ =>
             // Maximum allowed requests in queue
             options.QueueLimit = 0;
             // Time window
-            options.Window = TimeSpan.FromMinutes(1);
+            options.Window = TimeSpan.FromMinutes(10);
         });
 });
 
