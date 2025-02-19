@@ -40,6 +40,40 @@ const Files = () => {
         }
     };
 
+    const handleViewFile = async (fileId) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/pdf',
+                },
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    setErrors({ general: 'File not found.' });
+                } else {
+                    console.error('Failed to download file:', response.status);
+                    setErrors({ general: 'Failed to download file.' });
+                }
+                return;
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            window.open(url, '_blank'); // Opens in a new tab
+
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+            }, 100); // Revoke object URL after opening to free up memory
+        } catch (error) {
+            console.error('Failed to open file:', error);
+            setErrors({ general: 'An unexpected error occurred while opening the file.' });
+        }
+    };
+
     const handleDownloadFile = async (fileId) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
@@ -172,8 +206,9 @@ const Files = () => {
                 {files.map(file => (
                     <li key={file.id}>
                         <h5>{file.name} - {file.fileType}</h5>
+                        <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
                         <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
-                        <button className="custom-button" onClick={() => handleDeleteFile(file.id)}>Delete</button>
+                        <button className="custom-button-danger" onClick={() => handleDeleteFile(file.id)}>Delete</button>
                     </li>
                 ))}
             </ul>
