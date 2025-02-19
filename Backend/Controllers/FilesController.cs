@@ -181,6 +181,14 @@ public class FilesController : ControllerBase
             var decryptedFilePath = encryptedFilePath + ".dec";
             var bytes = await System.IO.File.ReadAllBytesAsync(decryptedFilePath);
 
+            // Compare the file hash with the stored hash
+            string encryptedFileHash = HashFile(encryptedFilePath);
+            if (fileRecord.Hash != encryptedFileHash)
+            {
+                _logger.LogWarning($"Hash mismatch for file {id}. Stored hash: {fileRecord.Hash}, Decrypted hash: {encryptedFileHash}");
+                return StatusCode(500, "File integrity check failed: hash mismatch.");
+            }
+
             return File(bytes, "application/pdf", fileRecord.Name);
         }
         catch (Exception ex)
@@ -391,13 +399,16 @@ public class FilesController : ControllerBase
         var encryptionKey = Convert.FromBase64String(Environment.GetEnvironmentVariable("ENCRYPTION_KEY"));
         using var aes = Aes.Create();
         aes.Key = encryptionKey;
+        aes.GenerateIV(); // Generate a new IV for each encryption
 
         using var fileStream = new FileStream(filePath, FileMode.Open);
         using var outputStream = new FileStream(filePath + ".enc", FileMode.Create);
 
+        // Write IV at the beginning of the file
+        await outputStream.WriteAsync(aes.IV, 0, aes.IV.Length);
+
         using var cryptoStream = new CryptoStream(outputStream, aes.CreateEncryptor(), CryptoStreamMode.Write);
         await fileStream.CopyToAsync(cryptoStream);
-
         // Ensure the cryptoStream is flushed before it closes
         cryptoStream.FlushFinalBlock();
     }
@@ -412,7 +423,7 @@ public class FilesController : ControllerBase
             }
 
             var key = Convert.FromBase64String(EncryptionKey);
-            if (key.Length != 32) // AES-256 requires 256-bit key
+            if (key.Length != 32)
             {
                 throw new ArgumentException("Invalid key size. Expected AES-256 key (32 bytes).");
             }
@@ -426,7 +437,10 @@ public class FilesController : ControllerBase
             ms.Position = 0;
 
             var iv = new byte[16]; // AES IV is 16 bytes
-            ms.Read(iv, 0, iv.Length);
+            if (ms.Read(iv, 0, iv.Length) != iv.Length)
+            {
+                throw new Exception("Could not read IV from encrypted file.");
+            }
             aes.IV = iv;
 
             using var cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read);
