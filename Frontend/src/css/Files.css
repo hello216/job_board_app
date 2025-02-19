@@ -1,3 +1,13 @@
 .files-container ul {
 	list-style-type: none;
 }
+
+.files-container #files-actions {
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+.files-container #files-actions button {
+	width: 25%;
+}

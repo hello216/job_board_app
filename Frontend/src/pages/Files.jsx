@@ -206,9 +206,11 @@ const Files = () => {
                 {files.map(file => (
                     <li key={file.id}>
                         <h5>{file.name} - {file.fileType}</h5>
-                        <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
-                        <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
-                        <button className="custom-button-danger" onClick={() => handleDeleteFile(file.id)}>Delete</button>
+                        <div id="file-actions">
+                            <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
+                            <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
+                            <button className="custom-button-danger" onClick={() => handleDeleteFile(file.id)}>Delete</button>
+                        </div>
                     </li>
                 ))}
             </ul>
