@@ -16,6 +16,7 @@ using System.Text.Json;
 using DotNetEnv;
 using iText.Kernel.Pdf;
 using iText.Kernel.XMP;
+using System.Diagnostics;
 
 namespace Backend.Controllers;
 
