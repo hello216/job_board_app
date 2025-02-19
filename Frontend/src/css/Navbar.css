@@ -5,10 +5,16 @@
     width: 75%;
 }
 
+.navbar-container {
+    position: relative;
+}
+
 .nav-links {
     list-style-type: none;
     display: flex;
     justify-content: space-around;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-link {
@@ -22,12 +28,62 @@
     text-decoration: none;
 }
 
-@media (max-width: 600px) {
+/* Hamburger Menu */
+.hamburger {
+    display: none; /* Hidden by default on larger screens */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px; /* Increased padding for a larger tap area */
+    width: 50px; /* Increased width */
+    height: 50px; /* Increased height */
+}
+
+.hamburger-line {
+    display: block;
+    width: 30px; /* Increased width of lines for visibility */
+    height: 4px; /* Increased height of lines for visibility */
+    background-color: white;
+    margin: 6px 0; /* Adjusted margin for spacing */
+    transition: all 0.3s ease;
+}
+
+@media only screen and (max-width: 768px) {
+    .hamburger {
+        display: block; /* Show hamburger on mobile */
+    }
+
     .nav-links {
+        display: none; /* Hide by default on mobile */
         flex-direction: column;
         align-items: center;
+        position: absolute;
+        top: 100%; /* Below the navbar */
+        left: 0;
+        right: 0;
+        background-color: var(--color-primary);
+        border-radius: 0 0 5px 5px;
     }
+
+    .nav-links.open {
+        display: flex; /* Show when toggled */
+    }
+
     .nav-link {
         margin: 0.5rem 0;
+        padding: 3%;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Hamburger animation when open */
+    .hamburger.open .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(7px, 7px); /* Adjusted for larger lines */
+    }
+    .hamburger.open .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger.open .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(9px, -9px); /* Adjusted for larger lines */
     }
 }
