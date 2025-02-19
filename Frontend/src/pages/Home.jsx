@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import '../css/Home.css';
 
 const Home = () => {
@@ -93,18 +94,13 @@ const Home = () => {
 
   return (
     <div id="home-container" className="container my-5">
+      <div className="nav-container">
+        <Navbar />
+      </div>
+
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div id="home-top">
-        <div className="d-flex justify-content-between mb-3" id="new-job-btn">
-          <button type="button" className="custom-button me-2" onClick={() => window.location.href = '/create-job'}>
-            Add Application
-          </button>
-          <button type="button" className="custom-button me-2" onClick={() => window.location.href = '/files'}>
-            Files
-          </button>
-        </div>
-
         <div className="search-bar">
           <input
             type="text"

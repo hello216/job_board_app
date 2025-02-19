@@ -5,6 +5,7 @@ import {
   PieChart, Pie,
   AreaChart, Area,
 } from 'recharts';
+import Navbar from '../components/Navbar';
 import '../css/Dashboard.css';
 
 import TimeToMetric from '../components/dashboard/TimeToMetric';
@@ -54,6 +55,10 @@ const Dashboard = () => {
 
   return (
     <div id="dashboard-container">
+      <div className="nav-container">
+        <Navbar />
+      </div>
+
       <div className="graph-container">
         <h3>Average Time to Interview/Offer</h3>
         <div className="component-container">

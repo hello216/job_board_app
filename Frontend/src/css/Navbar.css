@@ -1,15 +1,14 @@
 .navbar {
     background-color: var(--color-primary);
-    padding: 1rem;
+    padding: 1%;
     border-radius: 5px;
+    width: 75%;
 }
 
 .nav-links {
     list-style-type: none;
     display: flex;
     justify-content: space-around;
-    margin: 0;
-    padding: 0;
 }
 
 .nav-link {
