@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import '../css/Files.css';
 
 const Files = () => {
     const [files, setFiles] = useState([]);
@@ -170,7 +171,7 @@ const Files = () => {
             <ul>
                 {files.map(file => (
                     <li key={file.id}>
-                        <span>{file.name}</span>
+                        <h5>{file.name} - {file.fileType}</h5>
                         <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
                         <button className="custom-button" onClick={() => handleDeleteFile(file.id)}>Delete</button>
                     </li>
