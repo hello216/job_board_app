@@ -153,26 +153,28 @@ const Files = () => {
     };
 
     const handleDeleteFile = async (fileId) => {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
-                method: 'DELETE',
-                credentials: 'include',
-            });
+        if (window.confirm("Are you sure you want to delete this file?")) {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
+                    method: 'DELETE',
+                    credentials: 'include',
+                });
 
-            if (!response.ok) {
-                if (response.status === 404) {
-                    setErrors({ general: 'File not found.' });
-                } else {
-                    console.error('Failed to delete file:', response.status);
-                    setErrors({ general: 'Failed to delete file.' });
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        setErrors({ general: 'File not found.' });
+                    } else {
+                        console.error('Failed to delete file:', response.status);
+                        setErrors({ general: 'Failed to delete file.' });
+                    }
+                    return;
                 }
-                return;
-            }
 
-            fetchUserFiles(); // Refresh the list
-        } catch (error) {
-            console.error('Failed to delete file:', error);
-            setErrors({ general: 'An unexpected error occurred while deleting the file.' });
+                fetchUserFiles(); // Refresh the list
+            } catch (error) {
+                console.error('Failed to delete file:', error);
+                setErrors({ general: 'An unexpected error occurred while deleting the file.' });
+            }
         }
     };
 
