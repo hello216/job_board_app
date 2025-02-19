@@ -53,6 +53,8 @@ public class FilesController : ControllerBase
         if (!IsAuthenticated())
             return Unauthorized("No authentication token provided.");
 
+        string filePath = null;
+
         try
         {
             var currentUserId = GetCurrentUserId();
@@ -100,7 +102,7 @@ public class FilesController : ControllerBase
             }
 
             var randomizedName = Guid.NewGuid().ToString() + ".pdf";
-            var filePath = Path.Combine(_filesFolder, randomizedName);
+            filePath = Path.Combine(_filesFolder, randomizedName);
 
             if (!Directory.Exists(_filesFolder))
             {
@@ -156,8 +158,20 @@ public class FilesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Failed to upload file: {ex.Message}", ex);
-            return StatusCode(500, "Internal Server Error");
+            if (ex is InvalidOperationException)
+            {
+                _logger.LogError($"File upload failed due to scanning issues: {ex.Message}");
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                return BadRequest($"File upload failed. {ex.Message}");
+            }
+            else
+            {
+                _logger.LogError($"Failed to upload file: {ex.Message}", ex);
+                return StatusCode(500, "Internal Server Error");
+            }
         }
     }
 
@@ -496,10 +510,10 @@ public class FilesController : ControllerBase
                 return false;
             }
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not InvalidOperationException)
         {
             _logger.LogError($"Failed to scan file with ClamAV: {ex.Message}");
-            throw;
+            throw new InvalidOperationException($"Unable to scan the file for viruses: {ex.Message}", ex);
         }
     }
 }
