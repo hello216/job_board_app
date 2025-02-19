@@ -107,6 +107,11 @@ public class FilesController : ControllerBase
                 Directory.CreateDirectory(_filesFolder);
             }
 
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
             // Scan file for viruses
             var isClean = await IsFileClean(filePath);
             if (!isClean)
@@ -114,11 +119,6 @@ public class FilesController : ControllerBase
                 _logger.LogWarning($"Malware detected in file: {sanitizedFileName}");
                 System.IO.File.Delete(filePath);
                 return BadRequest("Malware detected in the uploaded file.");
-            }
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
             }
 
             try
