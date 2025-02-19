@@ -218,7 +218,7 @@ const Files = () => {
                 </button>
             </form>
 
-            <ul>
+            <ul id="files-list">
                 {files.map(file => (
                     <li key={file.id}>
                         <h5>{file.name} - {file.fileType}</h5>
