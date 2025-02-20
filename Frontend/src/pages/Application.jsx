@@ -166,21 +166,23 @@ const Application = () => {
           }).format(new Date(job.createdAt))}</p>
         </div>
 
-        <h3>Linked Files</h3>
-        {files.length === 0 ? (
-          <p>No files are linked to this job application.</p>
-        ) : (
-          <ul className="files-list">
-            {files.map(file => (
-              <li key={file.id} className="file-item">
-                <div className="file-actions">
-                  <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
-                  <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="linked-files">
+          <h3>Linked Files</h3>
+          {files.length === 0 ? (
+            <p>No files are linked to this job application.</p>
+          ) : (
+            <ul className="files-list">
+              {files.map(file => (
+                <li key={file.id} className="file-item">
+                  <div className="file-actions">
+                    <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
+                    <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
