@@ -27,6 +27,30 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Files",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    FileType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    Hash = table.Column<string>(type: "TEXT", nullable: false),
+                    SizeInBytes = table.Column<long>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Files", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Files_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Jobs",
                 columns: table => new
                 {
@@ -53,6 +77,30 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "JobFiles",
+                columns: table => new
+                {
+                    FilesId = table.Column<string>(type: "TEXT", nullable: false),
+                    JobsId = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobFiles", x => new { x.FilesId, x.JobsId });
+                    table.ForeignKey(
+                        name: "FK_JobFiles_Files_FilesId",
+                        column: x => x.FilesId,
+                        principalTable: "Files",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JobFiles_Jobs_JobsId",
+                        column: x => x.JobsId,
+                        principalTable: "Jobs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "JobStatusHistories",
                 columns: table => new
                 {
@@ -72,6 +120,16 @@ namespace Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Files_UserId",
+                table: "Files",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobFiles_JobsId",
+                table: "JobFiles",
+                column: "JobsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Jobs_UserId",
@@ -94,7 +152,13 @@ namespace Backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "JobFiles");
+
+            migrationBuilder.DropTable(
                 name: "JobStatusHistories");
+
+            migrationBuilder.DropTable(
+                name: "Files");
 
             migrationBuilder.DropTable(
                 name: "Jobs");

@@ -17,6 +17,43 @@ namespace Backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
 
+            modelBuilder.Entity("Backend.Models.Files", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("SizeInBytes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Files");
+                });
+
             modelBuilder.Entity("Backend.Models.JobStatusHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -123,6 +160,32 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("FilesJobs", b =>
+                {
+                    b.Property<string>("FilesId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("JobsId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("FilesId", "JobsId");
+
+                    b.HasIndex("JobsId");
+
+                    b.ToTable("JobFiles", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Models.Files", b =>
+                {
+                    b.HasOne("Backend.Models.Users", "User")
+                        .WithMany("Files")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Backend.Models.JobStatusHistory", b =>
                 {
                     b.HasOne("Backend.Models.Jobs", "Job")
@@ -145,6 +208,21 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("FilesJobs", b =>
+                {
+                    b.HasOne("Backend.Models.Files", null)
+                        .WithMany()
+                        .HasForeignKey("FilesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Jobs", null)
+                        .WithMany()
+                        .HasForeignKey("JobsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Backend.Models.Jobs", b =>
                 {
                     b.Navigation("StatusHistories");
@@ -152,6 +230,8 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Users", b =>
                 {
+                    b.Navigation("Files");
+
                     b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
