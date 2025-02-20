@@ -272,6 +272,65 @@ public class FilesController : ControllerBase
         }
     }
 
+    [HttpPut("link/{fileId}")]
+    public async Task<IActionResult> LinkFileToJob(string fileId, [FromBody] LinkFileRequest request)
+    {
+        if (request == null || string.IsNullOrEmpty(request.JobId))
+        {
+            return BadRequest("Job ID is required.");
+        }
+
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var file = await _context.Files
+                .Include(f => f.Jobs)
+                .FirstOrDefaultAsync(f => f.Id == fileId);
+
+            if (file == null)
+            {
+                return NotFound("File not found.");
+            }
+
+            var job = await _context.Jobs.FindAsync(request.JobId);
+            if (job == null)
+            {
+                return NotFound("Job application not found.");
+            }
+
+            if (file.UserId != currentUserId)
+            {
+                return Unauthorized("You do not have permission to access this file.");
+            }
+
+            if (job.UserId != currentUserId)
+            {
+                return Unauthorized("You do not have permission to access this job application.");
+            }
+
+            // Add the job to the file's Jobs list if not already linked
+            if (!file.Jobs.Any(j => j.Id == request.JobId))
+            {
+                file.Jobs.Add(job);
+                file.UpdateTimestamps();
+                _context.Files.Update(file);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new { message = "File successfully linked to job application." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to link file to job: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteFile(string id)
     {
@@ -523,4 +582,9 @@ public class FilesModel
     public string Id { get; set; }
     public string Name { get; set; }
     public string FileType { get; set; }
+}
+
+public class LinkFileRequest
+{
+    public string JobId { get; set; }
 }
