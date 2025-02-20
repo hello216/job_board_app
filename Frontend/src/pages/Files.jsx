@@ -9,14 +9,14 @@ const Files = () => {
     const [fileType, setFileType] = useState(null);
     const [errors, setErrors] = useState({});
     const [isUploading, setIsUploading] = useState(false);
-    const [selectedFileId, setSelectedFileId] = useState(null); // State for the file to link
-    const [jobApplications, setJobApplications] = useState([]); // State for job applications
-    const [selectedJobId, setSelectedJobId] = useState(null); // State for selected job application
-    const [showLinkModal, setShowLinkModal] = useState(false); // State for modal visibility
+    const [selectedFileId, setSelectedFileId] = useState(null); 
+    const [jobApplications, setJobApplications] = useState([]);
+    const [selectedJobId, setSelectedJobId] = useState(null);
+    const [showLinkModal, setShowLinkModal] = useState(false);
 
     useEffect(() => {
         fetchUserFiles();
-        fetchJobApplications(); // Fetch job applications when component mounts
+        fetchJobApplications();
     }, []);
 
     const fetchUserFiles = async () => {
@@ -29,7 +29,6 @@ const Files = () => {
             if (!response.ok) {
                 if (response.status === 401 || response.status === 403) {
                     console.error('Access denied or unauthorized.');
-                    // Handle unauthorized access
                 } else if (response.status === 404) {
                     setErrors({ general: 'No files found.' });
                 } else {
@@ -49,7 +48,7 @@ const Files = () => {
 
     const fetchJobApplications = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/getuserjobs`, { // Adjust endpoint as needed
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/getuserjobs`, {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -145,7 +144,7 @@ const Files = () => {
         if (!newFile || !fileType) return;
 
         setIsUploading(true); // Start the spinner
-        setErrors({}); // Clear previous errors
+        setErrors({});
 
         try {
             const formData = new FormData();
@@ -249,11 +248,11 @@ const Files = () => {
                 return;
             }
 
-            setErrors({}); // Clear errors
+            setErrors({});
             setShowLinkModal(false); // Hide modal
             setSelectedFileId(null); // Reset selected file
             setSelectedJobId(null); // Reset selected job
-            fetchUserFiles(); // Refresh files list (optional, if file data updates)
+            fetchUserFiles();
         } catch (error) {
             console.error('Failed to link file to job:', error);
             setErrors({ general: 'An unexpected error occurred while linking the file.' });
@@ -277,7 +276,7 @@ const Files = () => {
             )}
 
             <form onSubmit={handleUploadFile}>
-                <label for="file">Only PDF files under 5MB allowed</label>
+                <label htmlFor="file">Only PDF files under 5MB allowed</label>
                 <input name="file" type="file" onChange={handleChangeFile}/>
                 <select name="fileType" value={fileType} onChange={handleFileTypeChange}>
                     <option value="">Select File Type</option>
