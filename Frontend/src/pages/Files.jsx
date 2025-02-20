@@ -9,9 +9,14 @@ const Files = () => {
     const [fileType, setFileType] = useState(null);
     const [errors, setErrors] = useState({});
     const [isUploading, setIsUploading] = useState(false);
+    const [selectedFileId, setSelectedFileId] = useState(null); // State for the file to link
+    const [jobApplications, setJobApplications] = useState([]); // State for job applications
+    const [selectedJobId, setSelectedJobId] = useState(null); // State for selected job application
+    const [showLinkModal, setShowLinkModal] = useState(false); // State for modal visibility
 
     useEffect(() => {
         fetchUserFiles();
+        fetchJobApplications(); // Fetch job applications when component mounts
     }, []);
 
     const fetchUserFiles = async () => {
@@ -39,6 +44,31 @@ const Files = () => {
         } catch (error) {
             console.error('Failed to fetch user files:', error);
             setErrors({ general: 'An unexpected error occurred while fetching files.' });
+        }
+    };
+
+    const fetchJobApplications = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/getuserjobs`, { // Adjust endpoint as needed
+                method: 'GET',
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    console.error('Access denied or unauthorized.');
+                } else {
+                    console.error('Failed to fetch job applications:', response.status);
+                    setErrors({ general: 'Failed to fetch job applications.' });
+                }
+                return;
+            }
+
+            const jobsData = await response.json();
+            setJobApplications(jobsData);
+        } catch (error) {
+            console.error('Failed to fetch job applications:', error);
+            setErrors({ general: 'An unexpected error occurred while fetching job applications.' });
         }
     };
 
@@ -187,6 +217,49 @@ const Files = () => {
         setFileType(event.target.value);
     };
 
+    const handleFileLink = (fileId) => {
+        setSelectedFileId(fileId);
+        setShowLinkModal(true); // Show modal to select job application
+    };
+
+    const handleLinkFileToJob = async () => {
+        if (!selectedFileId || !selectedJobId) {
+            setErrors({ general: 'Please select a file and job application.' });
+            return;
+        }
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/link/${selectedFileId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ jobId: selectedJobId }),
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                if (response.status === 400) {
+                    const errorData = await response.json();
+                    setErrors(errorData.errors || { general: 'Failed to link file to job application.' });
+                } else {
+                    console.error('Failed to link file:', response.status);
+                    setErrors({ general: 'Failed to link file to job application.' });
+                }
+                return;
+            }
+
+            setErrors({}); // Clear errors
+            setShowLinkModal(false); // Hide modal
+            setSelectedFileId(null); // Reset selected file
+            setSelectedJobId(null); // Reset selected job
+            fetchUserFiles(); // Refresh files list (optional, if file data updates)
+        } catch (error) {
+            console.error('Failed to link file to job:', error);
+            setErrors({ general: 'An unexpected error occurred while linking the file.' });
+        }
+    };
+
     return (
         <div className="files-container">
             <div className="nav-container">
@@ -225,6 +298,7 @@ const Files = () => {
                     <li key={file.id}>
                         <h5>{file.name} - {file.fileType}</h5>
                         <div id="file-actions">
+                            <button className="custom-button" onClick={() => handleFileLink(file.id)}>Attach to Application</button>
                             <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
                             <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
                             <button className="custom-button-danger" onClick={() => handleDeleteFile(file.id)}>Delete</button>
@@ -232,6 +306,30 @@ const Files = () => {
                     </li>
                 ))}
             </ul>
+
+            {/* Modal for Linking File to Job Application */}
+            {showLinkModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Link File to Job Application</h3>
+                        <select
+                            value={selectedJobId || ''}
+                            onChange={(e) => setSelectedJobId(e.target.value)}
+                        >
+                            <option value="">Select Job Application</option>
+                            {jobApplications.map(job => (
+                                <option key={job.id} value={job.id}>
+                                    {job.title || `Untitled Job`} at {job.company || `Unknown Company`}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="modal-actions">
+                            <button className="custom-button" onClick={handleLinkFileToJob}>Link</button>
+                            <button className="custom-button-danger" onClick={() => setShowLinkModal(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
