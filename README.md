@@ -26,9 +26,9 @@ echo "ALLOWED_ORIGINS=http://localhost:3000" >> .env && \
 echo "DB_PATH=jobs.db" >> .env
 ```
 
-Create migrations
+Run database migrations
 ```bash
-dotnet ef migrations add InitialCreate && dotnet ef database update
+dotnet ef database update
 ```
 
 Run app server
