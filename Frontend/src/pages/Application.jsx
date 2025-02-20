@@ -11,36 +11,36 @@ const Application = () => {
   const jobId = window.location.pathname.split('/').pop();
 
   useEffect(() => {
-    const fetchJobDetails = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, {
-          method: 'GET',
-          credentials: 'include',
-        });
+      fetchJobDetails();
+    }, [jobId]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setJob(data);
-          setFiles(data.files || []);
-        } else if (response.status === 404) {
-          setError('Job application not found.');
-        } else if (response.status === 401 || response.status === 403) {
-          setError('Access denied or unauthorized.');
-        } else if (response.status === 429) {
-          setError('Too many requests. Please try again later.');
-        } else {
-          setError('Failed to retrieve job application details.');
-        }
-      } catch (error) {
-        console.error('Error fetching job details:', error);
-        setError('An unexpected error occurred while fetching job details.');
-      } finally {
-        setIsLoading(false);
+  const fetchJobDetails = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${jobId}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setJob(data);
+        setFiles(data.files || []);
+      } else if (response.status === 404) {
+        setError('Job application not found.');
+      } else if (response.status === 401 || response.status === 403) {
+        setError('Access denied or unauthorized.');
+      } else if (response.status === 429) {
+        setError('Too many requests. Please try again later.');
+      } else {
+        setError('Failed to retrieve job application details.');
       }
-    };
-
-    fetchJobDetails();
-  }, [jobId]);
+    } catch (error) {
+      console.error('Error fetching job details:', error);
+      setError('An unexpected error occurred while fetching job details.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleViewFile = async (fileId) => {
     try {
