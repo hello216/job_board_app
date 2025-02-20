@@ -331,6 +331,68 @@ public class FilesController : ControllerBase
         }
     }
 
+    [HttpPut("unlink/{fileId}")]
+    public async Task<IActionResult> RemoveFileFromJob(string fileId, [FromBody] LinkFileRequest request)
+    {
+        if (request == null || string.IsNullOrEmpty(request.JobId))
+        {
+            return BadRequest("Job ID is required.");
+        }
+
+        try
+        {
+            var currentUserId = GetCurrentUserId();
+            if (currentUserId == null)
+            {
+                return Unauthorized("No authentication token provided.");
+            }
+
+            var file = await _context.Files
+                .Include(f => f.Jobs)
+                .FirstOrDefaultAsync(f => f.Id == fileId);
+
+            if (file == null)
+            {
+                return NotFound("File not found.");
+            }
+
+            var job = await _context.Jobs.FindAsync(request.JobId);
+            if (job == null)
+            {
+                return NotFound("Job application not found.");
+            }
+
+            if (file.UserId != currentUserId)
+            {
+                return Unauthorized("You do not have permission to access this file.");
+            }
+
+            if (job.UserId != currentUserId)
+            {
+                return Unauthorized("You do not have permission to access this job application.");
+            }
+
+            // Check if the link exists before attempting to remove
+            var existingJob = file.Jobs.FirstOrDefault(j => j.Id == request.JobId);
+            if (existingJob == null)
+            {
+                return BadRequest("This file is not linked to the specified job application.");
+            }
+
+            file.Jobs.Remove(existingJob);
+            file.UpdateTimestamps();
+            _context.Files.Update(file);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "File successfully unlinked from job application." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Failed to unlink file from job: {ex.Message}", ex);
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteFile(string id)
     {
