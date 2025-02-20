@@ -3,10 +3,6 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-# No migrations DB files
-**/Migrations/*.cs
-Migrations/
-
 # No DB files
 *.db
 
@@ -496,3 +492,4 @@ $RECYCLE.BIN/
 jobs-bundle/
 gen-data.py
 files/
+dump.sql
