@@ -106,35 +106,40 @@ public class JobsController : ControllerBase
                 return Unauthorized("No authentication token provided.");
             }
 
-            var user = await _context.Users.FindAsync(currentUserId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
+            var job = await _context.Jobs
+                .Where(j => j.Id == id)
+                .Include(j => j.Files)
+                .Select(j => new
+                {
+                    j.Id,
+                    Status = j.Status.ToString(),
+                    j.Title,
+                    j.Company,
+                    j.Url,
+                    j.Location,
+                    j.Note,
+                    j.CreatedAt,
+                    j.UpdatedAt,
+                    j.UserId,
+                    Files = j.Files.Select(f => new
+                    {
+                        f.Id,
+                    })
+                })
+                .FirstOrDefaultAsync();
 
-            var job = await _context.Jobs.FindAsync(id);
             if (job == null)
             {
                 return NotFound("Job not found.");
             }
 
-            if (job.User != user)
+            // Ensure the job belongs to the current user
+            if (job.UserId != currentUserId)
             {
                 return Unauthorized("Not authorized to access this resource.");
             }
 
-            return Ok(new
-            {
-                job.Id,
-                Status = job.Status.ToString(),
-                job.Title,
-                job.Company,
-                job.Url,
-                job.Location,
-                job.Note,
-                job.CreatedAt,
-                job.UpdatedAt,
-            });
+            return Ok(job);
         }
         catch (Exception ex)
         {

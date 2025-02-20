@@ -11,6 +11,8 @@ import CreateJob from './pages/CreateJob';
 import EditJob from './pages/EditJob';
 import JobNote from './pages/JobNote';
 import Dashboard from './pages/Dashboard';
+import Files from './pages/Files';
+import Application from './pages/Application';
 
 function App() {
   return (
@@ -31,21 +33,31 @@ function App() {
             </ProtectedRoute>
           }
         />
-      <Route path="/edit-job/:id" element={
-        <ProtectedRoute>
-          <EditJob />
-        </ProtectedRoute>
-      } />
-      <Route path="/job-note/:id" element={
-        <ProtectedRoute>
-          <JobNote />
-        </ProtectedRoute>
-      } />
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      } />
+        <Route path="/edit-job/:id" element={
+          <ProtectedRoute>
+            <EditJob />
+          </ProtectedRoute>
+        } />
+        <Route path="/job-note/:id" element={
+          <ProtectedRoute>
+            <JobNote />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/files" element={
+          <ProtectedRoute>
+            <Files />
+          </ProtectedRoute>
+        } />
+        <Route path="/application/:jobId" element={
+          <ProtectedRoute>
+            <Application />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   )

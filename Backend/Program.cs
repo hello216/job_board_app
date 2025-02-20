@@ -41,6 +41,18 @@ builder.Services.AddRateLimiter(_ =>
             // Time window
             options.Window = TimeSpan.FromMinutes(1);
         });
+
+    _.AddFixedWindowLimiter(
+        policyName: "FileUploadLimit",
+        options =>
+        {
+            // Maximum allowed requests
+            options.PermitLimit = 2;
+            // Maximum allowed requests in queue
+            options.QueueLimit = 0;
+            // Time window
+            options.Window = TimeSpan.FromMinutes(10);
+        });
 });
 
 builder.Services.AddControllers();
@@ -54,6 +66,7 @@ builder.Services.AddSingleton<ICookieEncryptionService>(provider =>
     var encryptionKey = Environment.GetEnvironmentVariable("ENCRYPTION_KEY");
     return new CookieEncryptionService(encryptionKey);
 });
+builder.Services.AddSingleton<InputSanitizerService>();
 
 builder.Services.AddCors(options =>
 {

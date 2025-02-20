@@ -1,0 +1,88 @@
+@import './Globals.css';
+
+.application-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-background);
+    color: black;
+}
+
+.nav-container {
+    margin-bottom: 2%;
+}
+
+.application-details {
+    margin: 0 5%;
+    background-color: var(--color-primary);
+    border-radius: 5px;
+    box-shadow: 0 0.5% 1% rgba(0, 0, 0, 0.1);
+}
+
+.application-details h2 {
+    padding: 1%;
+}
+
+.job-info {
+    margin-top: 5%;
+}
+
+.job-info p {
+    margin: 1% 0;
+    font-size: 1rem;
+}
+
+.job-info strong {
+    font-weight: bold;
+    color: var(--color-third);
+}
+
+.custom-link {
+    color: var(--color-secondary);
+    text-decoration: none;
+}
+
+.custom-link:hover {
+    text-decoration: underline;
+}
+
+.linked-files {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.linked-files h3 {
+    width: 100%;
+}
+
+.files-list {
+    list-style-type: none;
+    margin-top: 1%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0;
+}
+
+.file-item {
+    width: 65%;
+    margin-bottom: 3%;
+    border: 0.1% solid var(--color-background);
+    border-radius: 5px;
+}
+
+.file-actions {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 0.1% solid #f5c6cb;
+    padding: 2%;
+    border-radius: 5px;
+    margin-top: 2%;
+}

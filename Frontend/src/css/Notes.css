@@ -6,7 +6,7 @@
 	flex-wrap: wrap;
 }
 
- .note-container p {
+.note-container p {
 	background-color: var(--color-primary);
 	width: 100%;
 	display: flex;

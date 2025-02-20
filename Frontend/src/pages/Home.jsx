@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import '../css/Home.css';
 
 const Home = () => {
@@ -93,14 +94,13 @@ const Home = () => {
 
   return (
     <div id="home-container" className="container my-5">
+      <div className="nav-container">
+        <Navbar />
+      </div>
+
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div id="home-top">
-        <div className="d-flex justify-content-between mb-3" id="new-job-btn">
-          <button type="button" className="custom-button me-2" onClick={() => window.location.href = '/create-job'}>
-            Add Application
-          </button>
-        </div>
         <div className="search-bar">
           <input
             type="text"
@@ -153,6 +153,7 @@ const Home = () => {
                   </td>
                   <td>{job.location}</td>
                   <td id="actions">
+                  <a href={`/application/${job.id}`} className="custom-button">Details</a>
                     <a href={`/job-note/${job.id}`} className="custom-button">Notes</a>
                     <a href={`/edit-job/${job.id}`} className="custom-button">Edit</a>
                     <button type="button" className="custom-button-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>

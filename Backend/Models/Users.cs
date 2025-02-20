@@ -22,6 +22,7 @@ public class Users
     public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
     public IEnumerable<Jobs?> Jobs { get; set; }
+    public ICollection<Files> Files { get; set; } = new List<Files>();
 
     public void UpdateTimestamps()
     {

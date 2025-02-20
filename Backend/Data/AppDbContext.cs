@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Users> Users { get; set; }
     public DbSet<Jobs> Jobs { get; set; }
     public DbSet<JobStatusHistory> JobStatusHistories { get; set; }
+    public DbSet<Files> Files { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,7 +20,6 @@ public class AppDbContext : DbContext
             .Property(u => u.Id)
             .ValueGeneratedOnAdd();
 
-        // Add an index on the Email column
         modelBuilder.Entity<Users>()
             .HasIndex(u => u.Email)
             .IsUnique();
@@ -41,5 +41,15 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<JobStatusHistory>()
             .Property(jsh => jsh.ChangedAt)
             .HasDefaultValueSql("getutcdate()");
+
+        modelBuilder.Entity<Jobs>()
+            .HasMany(j => j.Files)
+            .WithMany(f => f.Jobs)
+            .UsingEntity(j => j.ToTable("JobFiles"));
+
+        modelBuilder.Entity<Files>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.Files)
+            .HasForeignKey(f => f.UserId);
     }
 }

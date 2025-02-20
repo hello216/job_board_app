@@ -59,3 +59,10 @@ form .inputs {
 .inputs {
   margin: 2% 0;
 }
+
+.nav-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 1% 0;
+}
