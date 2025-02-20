@@ -9,7 +9,7 @@
 - [ ] **Status Tracking with Notifications**
   Track application status and send reminders via email or notifications.
 
-- [ ] **Resume and Cover Letter Storage**
+- [X] **Resume and Cover Letter Storage**
   Upload and manage resumes, cover letters, and other job-related documents.
 
 - [X] **Search and Filter**
