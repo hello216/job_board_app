@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import '../css/Application.css';
+import JSZip from 'jszip';
 
 const Application = () => {
   const [job, setJob] = useState(null);
@@ -43,70 +44,79 @@ const Application = () => {
   };
 
   const handleViewFile = async (fileId) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/pdf',
-        },
-      });
+      try {
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
+              method: 'GET',
+              credentials: 'include',
+              headers: {
+                  'Accept': 'application/zip',
+              },
+          });
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          setError('File not found.');
-        } else {
-          console.error('Failed to download file:', response.status);
-          setError('Failed to download file.');
-        }
-        return;
+          if (!response.ok) {
+              if (response.status === 404) {
+                  setErrors({ general: 'File not found.' });
+              } else {
+                  console.error('Failed to fetch file:', response.status);
+                  setErrors({ general: 'Failed to fetch file.' });
+              }
+              return;
+          }
+
+          const zipBlob = await response.blob();
+          const zip = await JSZip.loadAsync(zipBlob); // Unzip
+          const pdfFileName = Object.keys(zip.files)[0]; // Get the PDF name
+          const pdfArrayBuffer = await zip.file(pdfFileName).async('arraybuffer'); // Get PDF as ArrayBuffer
+
+          // Create a Blob with explicit application/pdf MIME type
+          const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+          const url = window.URL.createObjectURL(pdfBlob);
+          window.open(url, '_blank'); // Open the PDF in a new tab
+
+          setTimeout(() => {
+              window.URL.revokeObjectURL(url);
+          }, 100); // Clean up
+      } catch (error) {
+          console.error('Failed to open file:', error);
+          setErrors({ general: 'An unexpected error occurred while opening the file.' });
       }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      window.open(url, '_blank'); // Opens in a new tab
-
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-      }, 100); // Revoke object URL after opening to free up memory
-    } catch (error) {
-      console.error('Failed to open file:', error);
-      setError('An unexpected error occurred while opening the file.');
-    }
   };
 
   const handleDownloadFile = async (fileId) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/pdf',
-        },
-      });
+      try {
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/${fileId}`, {
+              method: 'GET',
+              credentials: 'include',
+              headers: {
+                  'Accept': 'application/zip',
+              },
+          });
 
-      if (!response.ok) {
-        if (response.status === 404) {
-          setError('File not found.');
-        } else {
-          console.error('Failed to download file:', response.status);
-          setError('Failed to download file.');
-        }
-        return;
+          if (!response.ok) {
+              if (response.status === 404) {
+                  setErrors({ general: 'File not found.' });
+              } else {
+                  console.error('Failed to fetch file:', response.status);
+                  setErrors({ general: 'Failed to fetch file.' });
+              }
+              return;
+          }
+
+          const zipBlob = await response.blob();
+          const zip = await JSZip.loadAsync(zipBlob); // Unzip
+          const pdfFileName = Object.keys(zip.files)[0]; // Get the PDF name
+          const pdfBlob = await zip.file(pdfFileName).async('blob'); // Extract the PDF
+
+          const url = window.URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = pdfFileName; // Use the actual PDF name
+          a.click();
+          window.URL.revokeObjectURL(url);
+      } catch (error) {
+          console.error('Failed to download file:', error);
+          setErrors({ general: 'An unexpected error occurred while downloading the file.' });
       }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'file.pdf';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to download file:', error);
-      setError('An unexpected error occurred while downloading the file.');
-    }
   };
 
   const handleUnlinkFileFromJob = async (fileId, jobId) => {
