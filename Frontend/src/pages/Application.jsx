@@ -109,6 +109,36 @@ const Application = () => {
     }
   };
 
+  const handleUnlinkFileFromJob = async (fileId, jobId) => {
+      try {
+          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/unlink/${fileId}`, {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ jobId }),
+              credentials: 'include',
+          });
+
+          if (!response.ok) {
+              const errorData = await response.json();
+              if (response.status === 400) {
+                  setErrors(errorData.errors || { general: errorData.message || 'Failed to unlink file from job application.' });
+              } else {
+                  console.error('Failed to unlink file:', response.status);
+                  setErrors({ general: 'Failed to unlink file from job application.' });
+              }
+              return;
+          }
+
+          setErrors({}); // Clear errors
+          fetchUserFiles(); // Refresh files list
+      } catch (error) {
+          console.error('Failed to unlink file from job:', error);
+          setErrors({ general: 'An unexpected error occurred while unlinking the file.' });
+      }
+  };
+
   if (isLoading) {
     return (
       <div className="application-container">
@@ -177,6 +207,7 @@ const Application = () => {
                   <div className="file-actions">
                     <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
                     <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
+                    <button className="custom-button" onClick={() => handleUnlinkFileFromJob(file.id, jobId)}>Unlink</button>
                   </div>
                 </li>
               ))}
