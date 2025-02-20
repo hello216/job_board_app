@@ -153,6 +153,7 @@ const Home = () => {
                   </td>
                   <td>{job.location}</td>
                   <td id="actions">
+                  <a href={`/application/${job.id}`} className="custom-button">Details</a>
                     <a href={`/job-note/${job.id}`} className="custom-button">Notes</a>
                     <a href={`/edit-job/${job.id}`} className="custom-button">Edit</a>
                     <button type="button" className="custom-button-danger" onClick={() => handleDeleteJob(job.id)}>Delete</button>
