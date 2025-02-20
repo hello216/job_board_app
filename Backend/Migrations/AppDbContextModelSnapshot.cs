@@ -123,21 +123,6 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("FilesJobs", b =>
-                {
-                    b.Property<string>("FilesId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("JobsId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("FilesId", "JobsId");
-
-                    b.HasIndex("JobsId");
-
-                    b.ToTable("JobFiles", (string)null);
-                });
-
             modelBuilder.Entity("Backend.Models.JobStatusHistory", b =>
                 {
                     b.HasOne("Backend.Models.Jobs", "Job")
@@ -158,15 +143,6 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FilesJobs", b =>
-                {
-                    b.HasOne("Backend.Models.Jobs", null)
-                        .WithMany()
-                        .HasForeignKey("JobsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Backend.Models.Jobs", b =>

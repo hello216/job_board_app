@@ -53,30 +53,6 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobFiles",
-                columns: table => new
-                {
-                    FilesId = table.Column<string>(type: "TEXT", nullable: false),
-                    JobsId = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_JobFiles", x => new { x.FilesId, x.JobsId });
-                    table.ForeignKey(
-                        name: "FK_JobFiles_Files_FilesId",
-                        column: x => x.FilesId,
-                        principalTable: "Files",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_JobFiles_Jobs_JobsId",
-                        column: x => x.JobsId,
-                        principalTable: "Jobs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "JobStatusHistories",
                 columns: table => new
                 {
@@ -98,11 +74,6 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobFiles_JobsId",
-                table: "JobFiles",
-                column: "JobsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Jobs_UserId",
                 table: "Jobs",
                 column: "UserId");
@@ -122,9 +93,6 @@ namespace Backend.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "JobFiles");
-
             migrationBuilder.DropTable(
                 name: "JobStatusHistories");
 
