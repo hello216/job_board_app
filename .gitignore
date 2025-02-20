@@ -492,3 +492,4 @@ $RECYCLE.BIN/
 jobs-bundle/
 gen-data.py
 files/
+dump.sql
