@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-// import '../css/Application.css';
+import '../css/Application.css';
 
 const Application = () => {
   const [job, setJob] = useState(null);
@@ -8,8 +8,7 @@ const Application = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Get job ID from URL parameters (assuming you're using React Router)
-  const jobId = window.location.pathname.split('/').pop(); // Extract jobId from /application/:jobId
+  const jobId = window.location.pathname.split('/').pop();
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -22,7 +21,7 @@ const Application = () => {
         if (response.ok) {
           const data = await response.json();
           setJob(data);
-          setFiles(data.files || []); // Assuming the job response includes linked files
+          setFiles(data.files || []);
         } else if (response.status === 404) {
           setError('Job application not found.');
         } else if (response.status === 401 || response.status === 403) {
@@ -174,7 +173,6 @@ const Application = () => {
           <ul className="files-list">
             {files.map(file => (
               <li key={file.id} className="file-item">
-                <h5>{file.name} - {file.fileType}</h5>
                 <div className="file-actions">
                   <button className="custom-button" onClick={() => handleViewFile(file.id)}>View</button>
                   <button className="custom-button" onClick={() => handleDownloadFile(file.id)}>Download</button>
