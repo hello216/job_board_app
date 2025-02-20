@@ -17,6 +17,7 @@ using DotNetEnv;
 using iText.Kernel.Pdf;
 using iText.Kernel.XMP;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace Backend.Controllers;
 
@@ -54,6 +55,7 @@ public class FilesController : ControllerBase
             return Unauthorized("No authentication token provided.");
 
         string filePath = null;
+        string zipPath = null;
 
         try
         {
@@ -101,47 +103,46 @@ public class FilesController : ControllerBase
                 return NotFound("User not found.");
             }
 
-            var randomizedName = Guid.NewGuid().ToString() + ".pdf";
-            filePath = Path.Combine(_filesFolder, randomizedName);
+            var randomizedName = Guid.NewGuid().ToString();
+            filePath = Path.Combine(_filesFolder, randomizedName + ".pdf");
+            zipPath = Path.Combine(_filesFolder, randomizedName + ".zip");
 
             if (!Directory.Exists(_filesFolder))
             {
                 Directory.CreateDirectory(_filesFolder);
             }
 
+            // Save uploaded file
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            // Scan file for viruses
-            var isClean = await IsFileClean(filePath);
-            if (!isClean)
+            // Zip the file
+            using (var zipArchive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
             {
-                _logger.LogWarning($"Malware detected in file: {sanitizedFileName}");
-                System.IO.File.Delete(filePath);
-                return BadRequest("Malware detected in the uploaded file.");
+                zipArchive.CreateEntryFromFile(filePath, sanitizedFileName);
             }
 
             try
             {
-                await RemovePdfMetadata(filePath);
+                await RemovePdfMetadata(filePath); // Still clean metadata from original PDF before zipping
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"Failed to remove PDF metadata, but continuing with upload: {ex.Message}");
             }
 
-            await EncryptFileAsync(filePath);
-            var hash = HashFile(filePath + ".enc");
+            await EncryptFileAsync(zipPath); // Encrypt the zip
+            var hash = HashFile(zipPath + ".enc");
 
             var dbFile = new Files
             {
                 UserId = user.Id,
                 User = user,
-                Name = randomizedName,
+                Name = randomizedName + ".zip",
                 Hash = hash,
-                SizeInBytes = new FileInfo(filePath + ".enc").Length,
+                SizeInBytes = new FileInfo(zipPath + ".enc").Length,
                 FileType = fileTypeEnum
             };
 
@@ -151,10 +152,12 @@ public class FilesController : ControllerBase
             // Clean up temporary and unencrypted files
             if (System.IO.File.Exists(filePath))
                 System.IO.File.Delete(filePath);
+            if (System.IO.File.Exists(zipPath))
+                System.IO.File.Delete(zipPath);
             if (System.IO.File.Exists(filePath + ".temp"))
                 System.IO.File.Delete(filePath + ".temp");
 
-            return Ok(new { message = "File uploaded successfully." });
+            return Ok(new { message = "File uploaded successfully.", fileId = dbFile.Id });
         }
         catch (Exception ex)
         {
@@ -170,6 +173,11 @@ public class FilesController : ControllerBase
             else
             {
                 _logger.LogError($"Failed to upload file: {ex.Message}", ex);
+                // Cleanup in case of failure
+                if (System.IO.File.Exists(filePath))
+                    System.IO.File.Delete(filePath);
+                if (System.IO.File.Exists(zipPath))
+                    System.IO.File.Delete(zipPath);
                 return StatusCode(500, "Internal Server Error");
             }
         }
@@ -199,13 +207,17 @@ public class FilesController : ControllerBase
                 return Unauthorized("You do not own this file.");
 
             var encryptedFilePath = Path.Combine(_filesFolder, fileRecord.Name + ".enc");
+            if (!System.IO.File.Exists(encryptedFilePath))
+                return NotFound("Encrypted file missing on server.");
+
+            // Decrypt the encrypted zip
             await DecryptFileAsync(encryptedFilePath);
+            var decryptedZipPath = encryptedFilePath + ".dec"; // This is the .zip file
 
-            // Read and return the decrypted file
-            var decryptedFilePath = encryptedFilePath + ".dec";
-            var bytes = await System.IO.File.ReadAllBytesAsync(decryptedFilePath);
+            // Read and return the decrypted zip
+            var bytes = await System.IO.File.ReadAllBytesAsync(decryptedZipPath);
 
-            // Compare the file hash with the stored hash
+            // Compare the file hash with the stored hash (of the encrypted file)
             string encryptedFileHash = HashFile(encryptedFilePath);
             if (fileRecord.Hash != encryptedFileHash)
             {
@@ -213,7 +225,7 @@ public class FilesController : ControllerBase
                 return StatusCode(500, "File integrity check failed: hash mismatch.");
             }
 
-            return File(bytes, "application/pdf", fileRecord.Name);
+            return File(bytes, "application/zip", fileRecord.Name);
         }
         catch (Exception ex)
         {
@@ -597,44 +609,6 @@ public class FilesController : ControllerBase
         {
             _logger.LogError($"Failed to decrypt file: {ex.Message} {ex.StackTrace}", ex);
             throw;
-        }
-    }
-
-    // Scan file with ClamAV
-    private async Task<bool> IsFileClean(string filePath)
-    {
-        try
-        {
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "clamscan",
-                    Arguments = $"--no-summary {filePath}",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
-            process.Start();
-            var output = await process.StandardOutput.ReadToEndAsync();
-            process.WaitForExit();
-
-            if (process.ExitCode == 0)
-            {
-                return true;
-            }
-            else
-            {
-                _logger.LogError($"Malware detected: {output}");
-                return false;
-            }
-        }
-        catch (Exception ex) when (ex is not InvalidOperationException)
-        {
-            _logger.LogError($"Failed to scan file with ClamAV: {ex.Message}");
-            throw new InvalidOperationException($"Unable to scan the file for viruses: {ex.Message}", ex);
         }
     }
 }

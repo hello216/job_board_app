@@ -7,7 +7,7 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sort, setSort] = useState({ column: '', ascending: true });
+  const [sort, setSort] = useState({ column: 'createdAt', ascending: false });
   const jobsPerPage = 10;
 
   useEffect(() => {
