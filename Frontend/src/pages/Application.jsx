@@ -110,33 +110,33 @@ const Application = () => {
   };
 
   const handleUnlinkFileFromJob = async (fileId, jobId) => {
-      try {
-          const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/unlink/${fileId}`, {
-              method: 'PUT',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ jobId }),
-              credentials: 'include',
-          });
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/unlink/${fileId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ jobId }),
+        credentials: 'include',
+      });
 
-          if (!response.ok) {
-              const errorData = await response.json();
-              if (response.status === 400) {
-                  setErrors(errorData.errors || { general: errorData.message || 'Failed to unlink file from job application.' });
-              } else {
-                  console.error('Failed to unlink file:', response.status);
-                  setErrors({ general: 'Failed to unlink file from job application.' });
-              }
-              return;
-          }
-
-          setErrors({}); // Clear errors
-          fetchUserFiles(); // Refresh files list
-      } catch (error) {
-          console.error('Failed to unlink file from job:', error);
-          setErrors({ general: 'An unexpected error occurred while unlinking the file.' });
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 400) {
+          setError(errorData.errors || { general: errorData.message || 'Failed to unlink file from job application.' });
+        } else {
+          console.error('Failed to unlink file:', response.status);
+          setError('Failed to unlink file from job application.');
+        }
+        return;
       }
+
+      setError(null); // Clear errors (using null to match state type)
+      fetchJobDetails(); // Refresh job details, including linked files
+    } catch (error) {
+      console.error('Failed to unlink file from job:', error);
+      setError('An unexpected error occurred while unlinking the file.');
+    }
   };
 
   if (isLoading) {
