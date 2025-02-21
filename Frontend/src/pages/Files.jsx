@@ -269,6 +269,12 @@ const Files = () => {
         }
     };
 
+    // Filter jobs not linked to the selected file
+    const availableJobs = jobApplications.filter(job => {
+        const file = files.find(f => f.id === selectedFileId);
+        return !file?.jobIds?.includes(job.id);
+    });
+
     return (
         <div className="files-container">
             <div className="nav-container">
@@ -326,11 +332,15 @@ const Files = () => {
                             onChange={(e) => setSelectedJobId(e.target.value)}
                         >
                             <option value="">Select Job Application</option>
-                            {jobApplications.map(job => (
-                                <option key={job.id} value={job.id}>
-                                    {job.title || `Untitled Job`} at {job.company || `Unknown Company`}
-                                </option>
-                            ))}
+                            {availableJobs.length > 0 ? (
+                                availableJobs.map(job => (
+                                    <option key={job.id} value={job.id}>
+                                        {job.title || `Untitled Job`} at {job.company || `Unknown Company`}
+                                    </option>
+                                ))
+                            ) : (
+                                <option disabled>No available job applications</option>
+                            )}
                         </select>
                         <div className="modal-actions">
                             <button className="custom-button" onClick={handleLinkFileToJob}>Link</button>
