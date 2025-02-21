@@ -7,7 +7,7 @@ const Files = () => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [newFile, setNewFile] = useState(null);
-    const [fileType, setFileType] = useState(null);
+    const [fileType, setFileType] = useState(undefined);
     const [errors, setErrors] = useState({});
     const [isUploading, setIsUploading] = useState(false);
     const [selectedFileId, setSelectedFileId] = useState(null); 
