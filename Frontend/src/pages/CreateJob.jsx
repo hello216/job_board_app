@@ -47,6 +47,7 @@ const CreateJob = () => {
     e.preventDefault();
     setErrors({});
 
+    const newErrors = {};
     const titleSanitized = ValidateSanitize.sanitizeAndValidateString(job.title);
     const companySanitized = ValidateSanitize.sanitizeAndValidateString(job.company);
     const urlResult = ValidateSanitize.sanitizeAndValidateUrl(job.url);
@@ -54,22 +55,27 @@ const CreateJob = () => {
     const statusResult = ValidateSanitize.sanitizeAndValidateStatus(job.status);
 
     if (titleSanitized.error) {
-      setErrors(prev => ({ ...prev, title: titleSanitized.error }));
+      console.log('title val error');
+      newErrors.title = titleSanitized.error;
     }
     if (companySanitized.error) {
-      setErrors(prev => ({ ...prev, company: companySanitized.error }));
+      console.log('company val error');
+      newErrors.company = companySanitized.error;
     }
     if (urlResult.error) {
-      setErrors(prev => ({ ...prev, url: urlResult.error }));
+      newErrors.url = urlResult.error;
     }
     if (locationSanitized.error) {
-      setErrors(prev => ({ ...prev, location: locationSanitized.error }));
+      console.log('location val error');
+      newErrors.location = locationSanitized.error;
     }
     if (statusResult.error) {
-      setErrors(prev => ({ ...prev, status: statusResult.error }));
+      newErrors.status = statusResult.error;
     }
 
-    if (Object.keys(errors).length > 0) {
+    // If there are errors, update state and stop submission
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -107,17 +113,13 @@ const CreateJob = () => {
         if (data.errors) {
           const extractedErrors = {};
           for (const [field, messages] of Object.entries(data.errors)) {
-            extractedErrors[field] = messages.join(', ');
-            // Convert 'Url' to 'url'
-            extractedErrors['url'] = extractedErrors['Url'];
-            delete extractedErrors['Url'];
+            extractedErrors[field.toLowerCase()] = messages.join(', ');
           }
           setErrors(extractedErrors);
         } else {
           setErrors({ general: data.title || 'Failed to create the job.' });
         }
       } else {
-        // Directly set a generic error message if response is not JSON
         setErrors({ general: 'Invalid Inputs.' });
       }
     } catch (error) {
