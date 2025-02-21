@@ -7,7 +7,7 @@ if [ ! -d "Backend" ] || [ ! -d "Frontend" ]; then
 fi
 
 # Prompt user for required values
-read -p "Enter the first part of the database path (e.g., /home/user/): " DB_PATH_PREFIX
+read -p "Enter the first part of the database path (e.g., /home/user/): " DB_PATH_PREFIX  # /files will be placed here too
 read -p "Enter the frontend domain (e.g., subdomain.your-domain.com): " ALLOWED_ORIGINS
 read -p "Enter the backend domain (e.g., subdomain.your-domain.com): " BACKEND_API_URL
 
@@ -28,6 +28,7 @@ ENCRYPTION_KEY=$ENCRYPTION_KEY
 ASPNETCORE_ENVIRONMENT=Production
 ALLOWED_ORIGINS=https://$ALLOWED_ORIGINS
 DB_PATH=${DB_PATH_PREFIX}jobs.db
+FILES_PATH=${DB_PATH_PREFIX}files
 EOL
 
 echo "✅ Backend .env configured successfully."
@@ -52,6 +53,7 @@ ENCRYPTION_KEY=$ENCRYPTION_KEY
 ASPNETCORE_ENVIRONMENT=Production
 ALLOWED_ORIGINS=https://$ALLOWED_ORIGINS
 DB_PATH=${DB_PATH_PREFIX}jobs.db
+FILES_PATH=${DB_PATH_PREFIX}files
 
 *** Frontend ***
 VITE_BACKEND_API_URL=https://$BACKEND_API_URL/api

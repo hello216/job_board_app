@@ -44,7 +44,8 @@ public class FilesController : ControllerBase
         _logger = logger;
         _cookieEncryptionService = cookieEncryptionService;
         _sanitizerService = sanitizerService;
-        _filesFolder = Path.Combine(env.ContentRootPath, "files");
+        _filesFolder = Path.GetFullPath(Path.Combine(env.ContentRootPath, 
+                    Environment.GetEnvironmentVariable("FILES_PATH") ?? "files"));
     }
 
     [EnableRateLimiting("FileUploadLimit")]
