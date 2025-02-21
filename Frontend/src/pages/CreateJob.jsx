@@ -55,18 +55,15 @@ const CreateJob = () => {
     const statusResult = ValidateSanitize.sanitizeAndValidateStatus(job.status);
 
     if (titleSanitized.error) {
-      console.log('title val error');
       newErrors.title = titleSanitized.error;
     }
     if (companySanitized.error) {
-      console.log('company val error');
       newErrors.company = companySanitized.error;
     }
     if (urlResult.error) {
       newErrors.url = urlResult.error;
     }
     if (locationSanitized.error) {
-      console.log('location val error');
       newErrors.location = locationSanitized.error;
     }
     if (statusResult.error) {
