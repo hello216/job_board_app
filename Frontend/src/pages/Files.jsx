@@ -15,6 +15,8 @@ const Files = () => {
     const [selectedJobId, setSelectedJobId] = useState(null);
     const [showLinkModal, setShowLinkModal] = useState(false);
 
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     useEffect(() => {
         fetchUserFiles();
         fetchJobApplications();
@@ -96,15 +98,46 @@ const Files = () => {
             const zip = await JSZip.loadAsync(zipBlob); // Unzip
             const pdfFileName = Object.keys(zip.files)[0]; // Get the PDF name
             const pdfArrayBuffer = await zip.file(pdfFileName).async('arraybuffer'); // Get PDF as ArrayBuffer
-
-            // Create a Blob with explicit application/pdf MIME type
             const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
             const url = window.URL.createObjectURL(pdfBlob);
-            window.open(url, '_blank'); // Open the PDF in a new tab
 
-            setTimeout(() => {
-                window.URL.revokeObjectURL(url);
-            }, 100); // Clean up
+            if (isMobile) {
+                // Mobile version: Use an iframe in a modal
+                const container = document.createElement('div');
+                container.style.position = 'fixed';
+                container.style.top = '0';
+                container.style.left = '0';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                container.style.background = 'rgba(0,0,0,0.8)';
+                container.style.zIndex = '1000';
+
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.style.width = '90%';
+                iframe.style.height = '90%';
+                iframe.style.margin = '5%';
+                container.appendChild(iframe);
+
+                const closeButton = document.createElement('button');
+                closeButton.textContent = 'Close';
+                closeButton.style.position = 'absolute';
+                closeButton.style.top = '10px';
+                closeButton.style.right = '10px';
+                closeButton.onclick = () => {
+                    document.body.removeChild(container);
+                    window.URL.revokeObjectURL(url);
+                };
+                container.appendChild(closeButton);
+
+                document.body.appendChild(container);
+            } else {
+                // Desktop version: Open in a new tab
+                window.open(url, '_blank'); // Open the PDF in a new tab
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                }, 100); // Clean up
+            }
         } catch (error) {
             console.error('Failed to open file:', error);
             setErrors({ general: 'An unexpected error occurred while opening the file.' });
@@ -135,13 +168,33 @@ const Files = () => {
             const zip = await JSZip.loadAsync(zipBlob); // Unzip
             const pdfFileName = Object.keys(zip.files)[0]; // Get the PDF name
             const pdfBlob = await zip.file(pdfFileName).async('blob'); // Extract the PDF
-
             const url = window.URL.createObjectURL(pdfBlob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = pdfFileName; // Use the actual PDF name
-            a.click();
-            window.URL.revokeObjectURL(url);
+
+            if (isMobile) {
+                // Mobile version: Try download, fallback to opening if it fails
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = pdfFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                // Fallback for iOS if download doesn't trigger
+                setTimeout(() => {
+                    if (document.body.contains(a)) {
+                        // If the element is still in the DOM, assume download failed
+                        window.open(url); // Open as a fallback
+                    }
+                    window.URL.revokeObjectURL(url);
+                }, 500);
+            } else {
+                // Desktop version: Use original download logic
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = pdfFileName; // Use the actual PDF name
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
         } catch (error) {
             console.error('Failed to download file:', error);
             setErrors({ general: 'An unexpected error occurred while downloading the file.' });
