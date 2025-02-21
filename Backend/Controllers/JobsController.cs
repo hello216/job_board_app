@@ -82,7 +82,7 @@ public class JobsController : ControllerBase
             CreateJobStatusHistory(job, job.Status);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Job created succesfully." });
+            return Ok(new { message = "Job created successfully.", jobId = job.Id });
         }
         catch (Exception ex)
         {

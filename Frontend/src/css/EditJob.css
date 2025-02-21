@@ -1,10 +1,5 @@
 @import './Globals.css';
 
-/*.container {
-  width: 100%;
-  height: 100%;
-}*/
-
 .container input, select, textarea {
   text-align: center;
 }
@@ -53,4 +48,12 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.container .go-home-link {
+  margin-bottom: 5%;
+}
+
+.container .modal {
+  margin: 0 5% 5% 5%;
 }
