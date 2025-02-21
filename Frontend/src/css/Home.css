@@ -206,17 +206,10 @@ form button, a {
 
   .pagination {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     flex-wrap: wrap;
     width: 100%;
-    padding: 0 5%;
     box-sizing: border-box; /* Include padding in width calculation */
-  }
-
-  .pagination li button,
-  .pagination li span {
-    padding: 0.5em;
-    font-size: 0.8em;
   }
 
   /* Remove width limit from nav */
