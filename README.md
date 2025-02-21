@@ -23,7 +23,8 @@ echo "JWT_SECRET_KEY=$(openssl rand -base64 32)" > .env && \
 echo "ENCRYPTION_KEY=$(openssl rand -base64 32)" >> .env && \
 echo "ASPNETCORE_ENVIRONMENT=Development" >> .env && \
 echo "ALLOWED_ORIGINS=http://localhost:3000" >> .env && \
-echo "DB_PATH=jobs.db" >> .env
+echo "DB_PATH=jobs.db" >> .env && \
+echo "FILES_PATH=./files" >> .env
 ```
 
 Run database migrations
