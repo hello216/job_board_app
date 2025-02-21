@@ -77,32 +77,24 @@ const EditJob = () => {
     e.preventDefault();
     setErrors({});
 
+    const validationErrors = {};
     const titleSanitized = ValidateSanitize.sanitizeAndValidateString(job.title);
+    if (titleSanitized.error) validationErrors.title = titleSanitized.error;
+
     const companySanitized = ValidateSanitize.sanitizeAndValidateString(job.company);
+    if (companySanitized.error) validationErrors.company = companySanitized.error;
+
     const urlResult = ValidateSanitize.sanitizeAndValidateUrl(job.url);
+    if (urlResult.error) validationErrors.url = urlResult.error;
+
     const locationSanitized = ValidateSanitize.sanitizeAndValidateString(job.location);
+    if (locationSanitized.error) validationErrors.location = locationSanitized.error;
+
     const statusResult = ValidateSanitize.sanitizeAndValidateStatus(job.status);
-    const noteSanitized = ValidateSanitize.sanitizeAndValidateString(job.note || '');
+    if (statusResult.error) validationErrors.status = statusResult.error;
 
-    console.log(job.status);
-
-    if (titleSanitized.error) {
-      setErrors(prev => ({ ...prev, title: titleSanitized.error }));
-    }
-    if (companySanitized.error) {
-      setErrors(prev => ({ ...prev, company: companySanitized.error }));
-    }
-    if (urlResult.error) {
-      setErrors(prev => ({ ...prev, url: urlResult.error }));
-    }
-    if (locationSanitized.error) {
-      setErrors(prev => ({ ...prev, location: locationSanitized.error }));
-    }
-    if (statusResult.error) {
-      setErrors(prev => ({ ...prev, status: statusResult.error }));
-    }
-
-    if (Object.keys(errors).length > 0) {
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
@@ -112,50 +104,40 @@ const EditJob = () => {
       company: companySanitized.sanitized,
       url: urlResult.sanitized,
       location: locationSanitized.sanitized,
-      note: noteSanitized.sanitized || '',
+      note: ValidateSanitize.sanitizeAndValidateString(job.note || '').sanitized || '',
     };
 
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
         credentials: 'include',
       });
 
-      const isJson = response.headers.get('content-type')?.includes('application/json');
-      let data;
-
       if (response.ok) {
         navigate('/');
         return;
-      } else if (response.status === 429) {
-        setErrors({ general: 'Too many requests. Please try again later.' });
-      } else {
-        if (isJson) {
-          data = await response.json();
-        } else {
-          return;
-        }
+      }
 
-        // Extract errors properly and display them
-        if (data.errors) {
-          console.log(data.errors);
-          const extractedErrors = {};
-          for (const [field, messages] of Object.entries(data.errors)) {
-            extractedErrors[field] = messages.join(', ');
-          }
-          setErrors(extractedErrors);
-        } else {
-          setErrors({ general: data.title || 'Failed to update the job.' });
+      const isJson = response.headers.get('content-type')?.includes('application/json');
+      let data = isJson ? await response.json() : null;
+
+      if (response.status === 429) {
+        setErrors({ general: 'Too many requests. Please try again later.' });
+      } else if (data?.errors) {
+        const extractedErrors = {};
+        for (const [field, messages] of Object.entries(data.errors)) {
+          extractedErrors[field] = messages.join(', ');
         }
+        setErrors(extractedErrors);
+      } else {
+        setErrors({ general: data?.title || 'Failed to update the job.' });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setErrors({ general: 'An unexpected error occurred.' });
-    };
+    }
   };
 
   const handleChange = (e) => {
