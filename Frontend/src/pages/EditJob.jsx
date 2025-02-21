@@ -207,7 +207,7 @@ const EditJob = () => {
         <button type="submit" className="custom-button">Update</button>
       </form>
 
-      <div>
+      <div className="go-home-link">
         <a href="/">Go Home</a>
       </div>
     </div>

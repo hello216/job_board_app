@@ -275,7 +275,7 @@ const CreateJob = () => {
         </div>
       )}
 
-      <div>
+      <div className="go-home-link">
         <a href="/">Go Home</a>
       </div>
     </div>
