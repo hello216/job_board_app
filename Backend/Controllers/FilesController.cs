@@ -264,6 +264,7 @@ public class FilesController : ControllerBase
 
             var files = await _context.Files
                 .Where(f => f.UserId == currentUserId)
+                .Include(f => f.Jobs)
                 .ToListAsync();
 
             if (files == null)
@@ -274,6 +275,7 @@ public class FilesController : ControllerBase
                 Id = file.Id,
                 Name = file.Name,
                 FileType = file.FileType.ToString(),
+                JobIds = file.Jobs.Select(j => j.Id).ToList()
             }).ToList();
 
             return Ok(filesModel);
@@ -619,6 +621,7 @@ public class FilesModel
     public string Id { get; set; }
     public string Name { get; set; }
     public string FileType { get; set; }
+    public List<string> JobIds { get; set; } = new List<string>();
 }
 
 public class LinkFileRequest
