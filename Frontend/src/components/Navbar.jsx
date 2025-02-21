@@ -11,12 +11,14 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-container">
-                <button className="hamburger" onClick={toggleMenu}>
+                {/* Hamburger button will be hidden on desktop via CSS */}
+                <button className={`hamburger ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
                     <span className="hamburger-line"></span>
                     <span className="hamburger-line"></span>
                     <span className="hamburger-line"></span>
                 </button>
-                <ul className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+                {/* Desktop and mobile nav links */}
+                <ul className="nav-links">
                     <li>
                         <a href="/" className="nav-link">Home</a>
                     </li>
@@ -31,6 +33,27 @@ const Navbar = () => {
                     </li>
                     <li>
                         <a href="/logout" className="nav-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            {/* Full-page overlay menu for mobile only (handled by CSS) */}
+            <div className={`mobile-overlay ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
+                <ul className="overlay-nav-links">
+                    <li>
+                        <a href="/" className="nav-link" onClick={toggleMenu}>Home</a>
+                    </li>
+                    <li>
+                        <a href="/create-job" className="nav-link" onClick={toggleMenu}>Add App</a>
+                    </li>
+                    <li>
+                        <a href="/files" className="nav-link" onClick={toggleMenu}>Files</a>
+                    </li>
+                    <li>
+                        <a href="/dashboard" className="nav-link" onClick={toggleMenu}>Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="/logout" className="nav-link" onClick={toggleMenu}>Logout</a>
                     </li>
                 </ul>
             </div>

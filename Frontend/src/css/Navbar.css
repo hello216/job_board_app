@@ -1,5 +1,5 @@
 .navbar {
-    background-color: var(--color-primary);
+    background-color: var(--color-secondary);
     padding: 1%;
     border-radius: 5px;
     width: 75%;
@@ -28,62 +28,110 @@
     text-decoration: none;
 }
 
-/* Hamburger Menu */
+/* Hamburger Menu (desktop hidden, mobile shown) */
 .hamburger {
-    display: none; /* Hidden by default on larger screens */
+    display: none; /* Hidden by default on desktop */
     background: none;
     border: none;
     cursor: pointer;
-    padding: 15px; /* Increased padding for a larger tap area */
-    width: 50px; /* Increased width */
-    height: 50px; /* Increased height */
+    padding: 15px;
+    width: 50px;
+    height: 50px;
 }
 
 .hamburger-line {
     display: block;
-    width: 30px; /* Increased width of lines for visibility */
-    height: 4px; /* Increased height of lines for visibility */
+    width: 30px;
+    height: 4px;
     background-color: white;
-    margin: 6px 0; /* Adjusted margin for spacing */
+    margin: 6px 0;
     transition: all 0.3s ease;
 }
 
+/* Desktop-specific styles (no changes needed here, but explicitly defined for clarity) */
+@media only screen and (min-width: 769px) {
+    .hamburger {
+        display: none !important; /* Ensure hamburger is hidden on desktop */
+    }
+
+    .nav-links {
+        display: flex !important; /* Ensure desktop nav links are always visible */
+    }
+
+    .mobile-overlay {
+        display: none !important; /* Ensure overlay is hidden on desktop */
+    }
+}
+
+/* Mobile styles (max-width: 768px) */
 @media only screen and (max-width: 768px) {
     .hamburger {
         display: block; /* Show hamburger on mobile */
     }
 
     .nav-links {
-        display: none; /* Hide by default on mobile */
+        display: none; /* Hide the default nav links on mobile */
+    }
+
+    /* Full-page overlay menu */
+    .mobile-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(77, 72, 97, 0.2); /* Very transparent version of #4D4861, 20% opacity */
+        z-index: 1000; /* Ensure it stays on top */
+        backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
+        transition: opacity 0.3s ease; /* Smooth fade in/out */
+        opacity: 0; /* Start hidden */
+    }
+
+    .mobile-overlay.open {
+        display: block;
+        opacity: 1; /* Fully visible when open */
+    }
+
+    .overlay-nav-links {
+        list-style-type: none;
+        margin: 0;
+        padding: 40px; /* Increased padding around the list for better spacing */
+        display: flex;
         flex-direction: column;
         align-items: center;
         position: absolute;
-        top: 100%; /* Below the navbar */
-        left: 0;
-        right: 0;
-        background-color: var(--color-primary);
-        border-radius: 0 0 5px 5px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
-    .nav-links.open {
-        display: flex; /* Show when toggled */
-    }
-
-    .nav-link {
-        margin: 0.5rem 0;
-        padding: 3%;
-        width: 100%;
+    .overlay-nav-links .nav-link {
+        color: black;
+        text-decoration: none;
+        font-size: 1.8rem; /* Increased font size for better visibility and tap area */
+        margin: 2rem 0; /* Increased vertical margin for more spacing between links */
+        padding: 15px 20px; /* Increased padding for a larger tap area */
+        width: 80%; /* Reduced width to center better, but still large enough for tapping */
         text-align: center;
+        display: block; /* Ensure the link is a block element for full tap coverage */
+        border-radius: 8px; /* Optional: Adds a slight rounding for better UX */
+        background-color: rgba(255, 255, 255, 0.1); /* Optional: Slight background for contrast */
+    }
+
+    .overlay-nav-links .nav-link:hover {
+        color: var(--color-third);
+        background-color: var(--color-background);
     }
 
     /* Hamburger animation when open */
     .hamburger.open .hamburger-line:nth-child(1) {
-        transform: rotate(45deg) translate(7px, 7px); /* Adjusted for larger lines */
+        transform: rotate(45deg) translate(7px, 7px);
     }
     .hamburger.open .hamburger-line:nth-child(2) {
         opacity: 0;
     }
     .hamburger.open .hamburger-line:nth-child(3) {
-        transform: rotate(-45deg) translate(9px, -9px); /* Adjusted for larger lines */
+        transform: rotate(-45deg) translate(9px, -9px);
     }
 }
