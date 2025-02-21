@@ -295,7 +295,6 @@ const Files = () => {
                 <label htmlFor="file">Only PDF files under 5MB allowed</label>
                 <input name="file" id="file" type="file" onChange={handleChangeFile}/>
                 <select name="fileType" value={fileType} onChange={handleFileTypeChange}>
-                    <option value="">Select File Type</option>
                     <option value="Resume">Resume</option>
                     <option value="CoverLetter">Cover Letter</option>
                 </select>
