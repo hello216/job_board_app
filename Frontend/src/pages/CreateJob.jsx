@@ -14,34 +14,66 @@ const CreateJob = () => {
 
   const [statuses, setStatuses] = useState([]);
   const [errors, setErrors] = useState({});
+  const [files, setFiles] = useState([]);
+  const [selectedFileId, setSelectedFileId] = useState(null);
+  const [jobId, setJobId] = useState(null);
+  const [showLinkModal, setShowLinkModal] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStatuses = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/getstatuses`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setStatuses(data);
-        } else if (response.status === 429) {
-          setErrors({ general: 'Too many requests. Please try again later.' });
-        } else {
-          setErrors({ general: 'Failed to fetch job statuses.' });
-        }
-      } catch (error) {
-        console.log(error);
-        setErrors({ general: 'An unexpected error occurred while fetching job statuses.' });
-      }
-    };
-
     fetchStatuses();
+    fetchUserFiles();
   }, []);
+
+  const fetchStatuses = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/jobs/getstatuses`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatuses(data);
+      } else if (response.status === 429) {
+        setErrors({ general: 'Too many requests. Please try again later.' });
+      } else {
+        setErrors({ general: 'Failed to fetch job statuses.' });
+      }
+    } catch (error) {
+      console.log(error);
+      setErrors({ general: 'An unexpected error occurred while fetching job statuses.' });
+    }
+  };
+
+  const fetchUserFiles = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/all`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          console.error('Access denied or unauthorized.');
+        } else if (response.status === 404) {
+          setErrors({ general: 'No files found.' });
+        } else {
+          console.error('Failed to fetch files:', response.status);
+          setErrors({ general: 'Failed to fetch files.' });
+        }
+        return;
+      }
+
+      const filesData = await response.json();
+      setFiles(filesData);
+    } catch (error) {
+      console.error('Failed to fetch user files:', error);
+      setErrors({ general: 'An unexpected error occurred while fetching files.' });
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,7 +131,10 @@ const CreateJob = () => {
       let data;
 
       if (response.ok) {
-        navigate('/');
+        const data = await response.json();
+        const createdJobId = data.jobId;
+        setJobId(createdJobId);
+        setShowLinkModal(true);  // Show the file linking modal
         return;
       } else if (response.status === 429) {
         setErrors({ general: 'Too many requests. Please try again later.' });
@@ -128,6 +163,40 @@ const CreateJob = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setJob((prevJob) => ({ ...prevJob, [name]: value }));
+  };
+
+  const handleLinkFileToJob = async () => {
+    if (!selectedFileId || !jobId) {
+      console.log(selectedFileId);
+      console.log(jobId);
+      setErrors({ general: 'Please select a file to link.' });
+      return;
+    }
+
+    // console.log(selectedFileId);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/link/${selectedFileId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ jobId }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        setErrors({ general: 'Failed to link file to job application.' });
+        return;
+      }
+
+      setErrors({});
+      setShowLinkModal(false);
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to link file:', error);
+      setErrors({ general: 'An unexpected error occurred while linking the file.' });
+    }
   };
 
   return (
@@ -185,6 +254,22 @@ const CreateJob = () => {
 
         <button type="submit" className="custom-button">Add</button>
       </form>
+
+      {showLinkModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Link a File to This Job</h3>
+            <select value={selectedFileId || ''} onChange={(e) => setSelectedFileId(e.target.value)}>
+              <option value="">Select a File</option>
+              {files.map(file => (
+                <option key={file.id} value={file.id}>{file.name} - {file.fileType}</option>
+              ))}
+            </select>
+            <button className="custom-button" onClick={handleLinkFileToJob}>Link</button>
+            <button className="custom-button-danger" onClick={() => setShowLinkModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
 
       <div>
         <a href="/">Go Home</a>
