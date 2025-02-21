@@ -81,7 +81,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: var(--color-secondary);
+        background-color: rgba(77, 72, 97, 0.2); /* Very transparent version of #4D4861, 20% opacity */
         z-index: 1000; /* Ensure it stays on top */
         backdrop-filter: blur(5px); /* Optional: Adds a blur effect to the background */
         transition: opacity 0.3s ease; /* Smooth fade in/out */
@@ -107,7 +107,7 @@
     }
 
     .overlay-nav-links .nav-link {
-        color: white;
+        color: black;
         text-decoration: none;
         font-size: 1.8rem; /* Increased font size for better visibility and tap area */
         margin: 2rem 0; /* Increased vertical margin for more spacing between links */
