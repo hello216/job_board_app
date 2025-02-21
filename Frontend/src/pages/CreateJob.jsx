@@ -17,7 +17,7 @@ const CreateJob = () => {
   const [files, setFiles] = useState([]);
   const [selectedFileId, setSelectedFileId] = useState(null);
   const [jobId, setJobId] = useState(null);
-  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [showLinkModal, setShowLinkModal] = useState(true);
 
   const navigate = useNavigate();
 
@@ -131,10 +131,16 @@ const CreateJob = () => {
       let data;
 
       if (response.ok) {
-        const data = await response.json();
+        data = await response.json();
         const createdJobId = data.jobId;
         setJobId(createdJobId);
-        setShowLinkModal(true);  // Show the file linking modal
+
+        // Link the file to the job (only if a file is selected)
+        if (selectedFileId) {
+          await handleLinkFileToJob(createdJobId);
+        }
+
+        navigate('/');
         return;
       } else if (response.status === 429) {
         setErrors({ general: 'Too many requests. Please try again later.' });
@@ -160,20 +166,13 @@ const CreateJob = () => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setJob((prevJob) => ({ ...prevJob, [name]: value }));
-  };
-
-  const handleLinkFileToJob = async () => {
-    if (!selectedFileId || !jobId) {
+  const handleLinkFileToJob = async (createdJobId) => {
+    if (!selectedFileId) {
       console.log(selectedFileId);
-      console.log(jobId);
+      console.log(createdJobId);
       setErrors({ general: 'Please select a file to link.' });
       return;
     }
-
-    // console.log(selectedFileId);
 
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/files/link/${selectedFileId}`, {
@@ -181,7 +180,7 @@ const CreateJob = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ jobId }),
+        body: JSON.stringify({ jobId: createdJobId }),
         credentials: 'include',
       });
 
@@ -197,6 +196,11 @@ const CreateJob = () => {
       console.error('Failed to link file:', error);
       setErrors({ general: 'An unexpected error occurred while linking the file.' });
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setJob((prevJob) => ({ ...prevJob, [name]: value }));
   };
 
   return (
@@ -265,7 +269,7 @@ const CreateJob = () => {
                 <option key={file.id} value={file.id}>{file.name} - {file.fileType}</option>
               ))}
             </select>
-            <button className="custom-button" onClick={handleLinkFileToJob}>Link</button>
+            <button className="custom-button" onClick={() => setShowLinkModal(false)}>Confirm File Selection</button>
             <button className="custom-button-danger" onClick={() => setShowLinkModal(false)}>Cancel</button>
           </div>
         </div>
