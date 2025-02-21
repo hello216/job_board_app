@@ -36,6 +36,10 @@ const ValidateSanitize = {
       sanitizedInput = sanitizedInput.replace(regex, '');
     });
 
+    if (sanitizedInput.length > 30) {
+      return { error: 'Input exceeds 30 characters', sanitized: sanitizedInput.substring(0, 30) };
+    }
+
     return { error: null, sanitized: sanitizedInput };
   },
 
