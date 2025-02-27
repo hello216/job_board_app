@@ -21,7 +21,7 @@ const JobNote = () => {
 
         if (response.ok) {
           const jobData = await response.json();
-          const noteSanitized = ValidateSanitize.sanitizeAndValidateString(jobData.note || '');
+          const noteSanitized = ValidateSanitize.sanitizeAndValidateNotes(jobData.note || '');
 
           if(noteSanitized.error){
             setErrors(prev => ({ ...prev, note: noteSanitized.error }));

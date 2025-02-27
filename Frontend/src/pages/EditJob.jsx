@@ -104,7 +104,7 @@ const EditJob = () => {
       company: companySanitized.sanitized,
       url: urlResult.sanitized,
       location: locationSanitized.sanitized,
-      note: ValidateSanitize.sanitizeAndValidateString(job.note || '').sanitized || '',
+      note: ValidateSanitize.sanitizeAndValidateNotes(job.note || '').sanitized || '',
     };
 
     try {
