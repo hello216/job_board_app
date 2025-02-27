@@ -44,6 +44,8 @@ const ValidateSanitize = {
   },
 
   sanitizeAndValidateNotes: (input) => {
+      const MAX_LENGTH = 500;
+
       if (typeof input !== 'string') {
           return { error: null, sanitized: input };
       }
@@ -63,9 +65,8 @@ const ValidateSanitize = {
           sanitizedInput = sanitizedInput.replace(regex, '');
       });
 
-      // Enforce 250-character limit
-      if (sanitizedInput.length > 250) {
-          return { error: 'Input exceeds 250 characters', sanitized: sanitizedInput.substring(0, 250) };
+      if (sanitizedInput.length > MAX_LENGTH) {
+          return { error: `Input exceeds ${MAX_LENGTH} characters`, sanitized: sanitizedInput.substring(0, MAX_LENGTH) };
       }
 
       return { error: null, sanitized: sanitizedInput };
