@@ -201,7 +201,7 @@ const EditJob = () => {
 
         <div className="inputs">
           <label className="form-label">Note:</label>
-          <textarea className="form-control" name="note" value={job.note} onChange={handleChange} />
+          <textarea className="form-control" name="note" value={job.note} onChange={handleChange} placeholder="500 characters limit"/>
         </div>
 
         <button type="submit" className="custom-button">Update</button>

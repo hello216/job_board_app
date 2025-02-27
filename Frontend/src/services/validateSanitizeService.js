@@ -44,28 +44,32 @@ const ValidateSanitize = {
   },
 
   sanitizeAndValidateNotes: (input) => {
-    if (typeof input !== 'string') {
-      return { error: null, sanitized: input };
-    }
+      const MAX_LENGTH = 500;
 
-    let sanitizedInput = input.replace(/<script>.*?<\/script>/gmi, '');
-    sanitizedInput = sanitizedInput.replace(/<style>.*?<\/style>/gmi, '');
+      if (typeof input !== 'string') {
+          return { error: null, sanitized: input };
+      }
 
-    // Allow periods in addition to word characters and whitespace
-    sanitizedInput = sanitizedInput.replace(/[^\w\s\.]/g, '');
+      // Remove script and style tags (handles multiline cases)
+      let sanitizedInput = input.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+      sanitizedInput = sanitizedInput.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '');
 
-    // Remove suspicious keywords
-    const suspiciousKeywords = ['UNION', 'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'FROM', 'WHERE', 'OR', 'AND', 'EXECUTE', 'SYSTEM', 'EXIT', '|', ';', '&&', '||'];
-    suspiciousKeywords.forEach(keyword => {
-      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-      sanitizedInput = sanitizedInput.replace(regex, '');
-    });
+      // Allow standard punctuation while removing harmful characters
+      sanitizedInput = sanitizedInput.replace(/[^a-zA-Z0-9\s.,'!?;:()"-]/g, '');
 
-    if (sanitizedInput.length > 250) {
-      return { error: 'Input exceeds 250 characters', sanitized: sanitizedInput.substring(0, 250) };
-    }
+      // Remove SQL keywords case-insensitively and globally
+      const suspiciousKeywords = ['UNION', 'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'FROM', 'WHERE', 
+                                  'OR', 'AND', 'EXECUTE', 'SYSTEM', 'EXIT', '|', '&&', '||'];
+      suspiciousKeywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'gi'); 
+          sanitizedInput = sanitizedInput.replace(regex, '');
+      });
 
-    return { error: null, sanitized: sanitizedInput };
+      if (sanitizedInput.length > MAX_LENGTH) {
+          return { error: `Input exceeds ${MAX_LENGTH} characters`, sanitized: sanitizedInput.substring(0, MAX_LENGTH) };
+      }
+
+      return { error: null, sanitized: sanitizedInput };
   },
 
   sanitizeAndValidateUrl: (url) => {

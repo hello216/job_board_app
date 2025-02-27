@@ -9,10 +9,15 @@
 .note-container p {
 	background-color: var(--color-primary);
 	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	display: block;
 	font-size: 1.5rem;
+	word-wrap: break-word; /* Ensures long words wrap */
+	overflow-wrap: break-word; /* Alternative for better support */
+	white-space: normal; /* Allows text to wrap */
+	text-align: center; /* Centers text properly */
+	overflow: hidden; /* Ensures no content overflows */
+	max-width: 100%; /* Prevents content from exceeding the container */
+	padding: 2%;
 }
 
 .note-container #links {
